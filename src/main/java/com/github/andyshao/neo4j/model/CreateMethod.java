@@ -1,8 +1,6 @@
-package com.github.andyshao.neo4j.annotation;
+package com.github.andyshao.neo4j.model;
 
 import java.io.Serializable;
-
-import com.github.andyshao.neo4j.model.SqlMethod;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.andyshao.neo4j.annotation.Create;
-import com.github.andyshao.neo4j.annotation.CreateMethod;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.SqlClip;
 import com.github.andyshao.neo4j.mapper.MapperScanner;
+import com.github.andyshao.neo4j.model.CreateMethod;
 import com.github.andyshao.neo4j.model.MatchMethod;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
