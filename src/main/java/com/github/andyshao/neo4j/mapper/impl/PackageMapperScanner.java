@@ -1,5 +1,6 @@
 package com.github.andyshao.neo4j.mapper.impl;
 
+import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -10,15 +11,19 @@ import com.github.andyshao.neo4j.annotation.Create;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.SqlClip;
+import com.github.andyshao.neo4j.annotation.SqlClipInject;
 import com.github.andyshao.neo4j.mapper.MapperScanner;
 import com.github.andyshao.neo4j.model.CreateMethod;
 import com.github.andyshao.neo4j.model.MatchMethod;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 import com.github.andyshao.neo4j.model.SqlClipMethod;
+import com.github.andyshao.neo4j.model.SqlClipMethodParam;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.MethodOperation;
 import com.github.andyshao.reflect.PackageOperation;
+import com.github.andyshao.reflect.ParameterOperation;
+import com.github.andyshao.reflect.annotation.Param;
 import com.github.andyshao.util.stream.CollectorImpl;
 import com.google.common.collect.Lists;
 
@@ -68,6 +73,18 @@ public class PackageMapperScanner implements MapperScanner{
                                             SqlClipMethod sqlClipMethod = new SqlClipMethod();
                                             sqlClipMethod.setSqlClipName(sqlClip.sqlClipName());
                                             sqlClipMethod.setDefinition(method);
+                                            String[] paramNames = ParameterOperation.getMethodParamNames(method);
+                                            Parameter[] parameters = method.getParameters();
+                                            SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
+                                            sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
+                                            for(int i=0; i<paramNames.length; i++) {
+                                                SqlClipMethodParam sqlClipMethodParam = new SqlClipMethodParam();
+                                                sqlClipMethodParams[i] = sqlClipMethodParam;
+                                                sqlClipMethodParam.setNativeName(paramNames[i]);
+                                                sqlClipMethodParam.setDefinition(parameters[i]);
+                                                sqlClipMethodParam.setParam(parameters[i].getAnnotation(Param.class));
+                                                sqlClipMethodParam.setSqlClipInject(parameters[i].getAnnotation(SqlClipInject.class));
+                                            }
                                             return sqlClipMethod;
                                         }).collect(Collectors.toList());
                             }).collect(collector)
