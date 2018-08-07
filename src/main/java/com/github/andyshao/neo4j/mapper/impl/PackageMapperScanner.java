@@ -63,33 +63,32 @@ public class PackageMapperScanner implements MapperScanner{
                 ret.setDaoClass(clazz);
                 ret.setClipClasses(annotation.clipClasses());
                 
-                final Map<String, SqlClipMethod> sqlClipMethods = 
-                        Stream.of(annotation.clipClasses())
-                            .<List<SqlClipMethod>>map(clipClazz -> {
-                                return Stream.of(MethodOperation.superGetMethods(clipClazz))
-                                        .filter(method -> method.getAnnotation(SqlClip.class) != null)
-                                        .<SqlClipMethod>map(method -> {
-                                            SqlClip sqlClip = method.getAnnotation(SqlClip.class);
-                                            SqlClipMethod sqlClipMethod = new SqlClipMethod();
-                                            sqlClipMethod.setSqlClipName(sqlClip.sqlClipName());
-                                            sqlClipMethod.setDefinition(method);
-                                            String[] paramNames = ParameterOperation.getMethodParamNames(method);
-                                            Parameter[] parameters = method.getParameters();
-                                            SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
-                                            sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
-                                            for(int i=0; i<paramNames.length; i++) {
-                                                SqlClipMethodParam sqlClipMethodParam = new SqlClipMethodParam();
-                                                sqlClipMethodParams[i] = sqlClipMethodParam;
-                                                sqlClipMethodParam.setNativeName(paramNames[i]);
-                                                sqlClipMethodParam.setDefinition(parameters[i]);
-                                                sqlClipMethodParam.setParam(parameters[i].getAnnotation(Param.class));
-                                                sqlClipMethodParam.setSqlClipInject(parameters[i].getAnnotation(SqlClipInject.class));
-                                            }
-                                            return sqlClipMethod;
-                                        }).collect(Collectors.toList());
-                            }).collect(collector)
-                            .stream()
-                            .collect(Collectors.toConcurrentMap(SqlClipMethod::getSqlClipName , it -> it));
+                final Map<String, SqlClipMethod> sqlClipMethods = Stream.of(annotation.clipClasses())
+                        .<List<SqlClipMethod>>map(clipClazz -> {
+                            return Stream.of(MethodOperation.superGetMethods(clipClazz))
+                                    .filter(method -> method.getAnnotation(SqlClip.class) != null)
+                                    .<SqlClipMethod>map(method -> {
+                                        SqlClip sqlClip = method.getAnnotation(SqlClip.class);
+                                        SqlClipMethod sqlClipMethod = new SqlClipMethod();
+                                        sqlClipMethod.setSqlClipName(sqlClip.sqlClipName());
+                                        sqlClipMethod.setDefinition(method);
+                                        String[] paramNames = ParameterOperation.getMethodParamNames(method);
+                                        Parameter[] parameters = method.getParameters();
+                                        SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
+                                        sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
+                                        for(int i=0; i<paramNames.length; i++) {
+                                            SqlClipMethodParam sqlClipMethodParam = new SqlClipMethodParam();
+                                            sqlClipMethodParams[i] = sqlClipMethodParam;
+                                            sqlClipMethodParam.setNativeName(paramNames[i]);
+                                            sqlClipMethodParam.setDefinition(parameters[i]);
+                                            sqlClipMethodParam.setParam(parameters[i].getAnnotation(Param.class));
+                                            sqlClipMethodParam.setSqlClipInject(parameters[i].getAnnotation(SqlClipInject.class));
+                                        }
+                                        return sqlClipMethod;
+                                    }).collect(Collectors.toList());
+                        }).collect(collector)
+                        .stream()
+                        .collect(Collectors.toConcurrentMap(SqlClipMethod::getSqlClipName , it -> it));
                 
                 
                 ConcurrentMap<MethodKey , SqlMethod> sqlMethods = Stream.of(MethodOperation.superGetMethods(clazz))
@@ -97,20 +96,35 @@ public class PackageMapperScanner implements MapperScanner{
                     .<SqlMethod>map(method -> {
                         Create create = method.getAnnotation(Create.class);
                         Match match = method.getAnnotation(Match.class);
+                        SqlMethod sqlMethod = null;
                         if(create != null) {
                             CreateMethod cm = new CreateMethod();
                             cm.setDefinition(method);
                             cm.setSql(create.sql());
                             cm.setSqlClipMethod(sqlClipMethods.get(create.sqlInject().sqlClipName()));
-                            return cm;
-                        } else if (match != null) {
+                            sqlMethod = cm;
+                        } else {
                             MatchMethod mm = new MatchMethod();
                             mm.setDefinition(method);
                             mm.setSql(match.sql());
                             mm.setSqlClipMethod(sqlClipMethods.get(match.sqlInject().sqlClipName()));
-                            return mm;
-                        } else return null;
-                    }).collect(Collectors.toConcurrentMap(it -> new MethodKey(it.getDefinition().getName(), it.getDefinition().getParameterTypes()) , it -> it));
+                            sqlMethod = mm;
+                        }
+                        
+                        String[] paramNames = ParameterOperation.getMethodParamNames(method);
+                        Parameter[] parameters = method.getParameters();
+                        SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
+                        for(int i=0; i<paramNames.length; i++) {
+                            SqlClipMethodParam sqlClipMethodParam = new SqlClipMethodParam();
+                            sqlClipMethodParams[i] = sqlClipMethodParam;
+                            sqlClipMethodParam.setNativeName(paramNames[i]);
+                            sqlClipMethodParam.setDefinition(parameters[i]);
+                            sqlClipMethodParam.setParam(parameters[i].getAnnotation(Param.class));
+                            sqlClipMethodParam.setSqlClipInject(parameters[i].getAnnotation(SqlClipInject.class));
+                        }
+                        return sqlMethod;
+                    }).collect(Collectors.toConcurrentMap(it -> new MethodKey(it.getDefinition().getName(), 
+                        it.getDefinition().getParameterTypes()) , it -> it));
                 ret.setSqlMethods(sqlMethods);
                 
                 return ret;
