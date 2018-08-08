@@ -1,0 +1,19 @@
+package com.github.andyshao.neo4j.demo;
+
+import com.github.andyshao.lang.StringOperation;
+import com.github.andyshao.neo4j.annotation.SqlClip;
+import com.github.andyshao.neo4j.model.Pageable;
+
+public class ApiSearchDaoClips extends GeneralDaoClips{
+    @SqlClip(sqlClipName = "findByPageWithPk")
+    public String findByPageWithPk(Pageable<ApiKey> pageable) {
+        StringBuilder query = new StringBuilder();
+        query.append("MATCH (n:Api) WHERE 1=1 ");
+        ApiKey apiKey = pageable.getData();
+        if(StringOperation.isEmptyOrNull(apiKey.getApiName())) query.append(" AND n.apiKey = '").append(apiKey.getApiName()).append("'");
+        if(StringOperation.isEmptyOrNull(apiKey.getSystemAlias())) query.append(" AND n.systemAlias = '").append(apiKey.getSystemAlias()).append("'");
+        query.append(" RETURN n");
+        query.append(pageable(pageable));
+        return query.toString();
+    }
+}

@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @SuppressWarnings("serial")
-public class PageReturn<T extends Serializable> implements Serializable{
+public class PageReturn<T> implements Serializable{
     private Integer pageNum = 0;
     private Integer pageSize = 10;
     private List<T> data = Lists.newArrayList();
