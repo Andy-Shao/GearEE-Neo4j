@@ -1,7 +1,5 @@
 package com.github.andyshao.neo4j.demo;
 
-import org.neo4j.ogm.annotation.NodeEntity;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +13,6 @@ import lombok.EqualsAndHashCode;
  *
  */
 @Data
-@NodeEntity(label = "Api")
 @SuppressWarnings("serial")
 @EqualsAndHashCode(callSuper = true, exclude = "others")
 public class  Api extends ApiKey {
