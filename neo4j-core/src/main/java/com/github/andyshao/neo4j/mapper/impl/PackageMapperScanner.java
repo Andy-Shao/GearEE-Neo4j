@@ -1,6 +1,8 @@
 package com.github.andyshao.neo4j.mapper.impl;
 
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -19,12 +21,13 @@ import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 import com.github.andyshao.neo4j.model.SqlClipMethod;
 import com.github.andyshao.neo4j.model.SqlClipMethodParam;
 import com.github.andyshao.neo4j.model.SqlMethod;
-import com.github.andyshao.reflect.MethodOperation;
+import com.github.andyshao.neo4j.model.SqlMethodParam;
 import com.github.andyshao.reflect.PackageOperation;
 import com.github.andyshao.reflect.ParameterOperation;
 import com.github.andyshao.reflect.annotation.Param;
 import com.github.andyshao.util.stream.CollectorImpl;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.Setter;
 
@@ -39,7 +42,7 @@ import lombok.Setter;
  */
 public class PackageMapperScanner implements MapperScanner{
     @Setter
-    private String packagePath;
+    private Package packagePath;
     private static final CollectorImpl<List<SqlClipMethod> , List<SqlClipMethod> , List<SqlClipMethod>> collector =
             new CollectorImpl.Builder<List<SqlClipMethod> , List<SqlClipMethod> , List<SqlClipMethod>>()
                 .withSupplier(Lists::newArrayList)
@@ -51,84 +54,102 @@ public class PackageMapperScanner implements MapperScanner{
                 .withCharacteristics(CollectorImpl.CH_CONCURRENT_ID)
                 .build();
 
+    static final void parse(Class<?> clazz, Map<Class<?> , Class<?>> daoInterfaceMapping) {
+        if(!clazz.isInterface()) throw new IllegalArgumentException("Class type should be interface");
+        
+        Neo4jDao neo4jDao = clazz.getAnnotation(Neo4jDao.class);
+        if(neo4jDao == null) return;
+        
+        Arrays.stream(clazz.getInterfaces()).forEach(it -> parse(it, daoInterfaceMapping));
+        daoInterfaceMapping.put(neo4jDao.clipClass(), clazz);
+    }
+    
     @Override
     public Map<String , Neo4jDaoInfo> scan() {
-        return null;
-//        return Stream.of(PackageOperation.getPackageClasses(Package.getPackage(packagePath)))
-//            .filter(clazz -> clazz.getAnnotation(Neo4jDao.class) != null)
-//            .<Neo4jDaoInfo>map(clazz -> {
-//                Neo4jDaoInfo ret = new Neo4jDaoInfo();
-//                Neo4jDao annotation = clazz.getAnnotation(Neo4jDao.class);
-//                ret.setName(annotation.name());
-//                ret.setDaoClass(clazz);
-//                ret.setClipClasses(annotation.clipClasses());
-//                
-//                final Map<String, SqlClipMethod> sqlClipMethods = Stream.of(annotation.clipClasses())
-//                        .<List<SqlClipMethod>>map(clipClazz -> {
-//                            return Stream.of(MethodOperation.superGetMethods(clipClazz))
-//                                    .filter(method -> method.getAnnotation(SqlClip.class) != null)
-//                                    .<SqlClipMethod>map(method -> {
-//                                        SqlClip sqlClip = method.getAnnotation(SqlClip.class);
-//                                        SqlClipMethod sqlClipMethod = new SqlClipMethod();
-//                                        sqlClipMethod.setSqlClipName(sqlClip.sqlClipName());
-//                                        sqlClipMethod.setDefinition(method);
-//                                        String[] paramNames = ParameterOperation.getMethodParamNames(method);
-//                                        Parameter[] parameters = method.getParameters();
-//                                        SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
-//                                        sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
-//                                        for(int i=0; i<paramNames.length; i++) {
-//                                            SqlClipMethodParam sqlClipMethodParam = new SqlClipMethodParam();
-//                                            sqlClipMethodParams[i] = sqlClipMethodParam;
-//                                            sqlClipMethodParam.setNativeName(paramNames[i]);
-//                                            sqlClipMethodParam.setDefinition(parameters[i]);
-//                                            sqlClipMethodParam.setParam(parameters[i].getAnnotation(Param.class));
-//                                            sqlClipMethodParam.setSqlClipInject(parameters[i].getAnnotation(SqlClipInject.class));
-//                                        }
-//                                        return sqlClipMethod;
-//                                    }).collect(Collectors.toList());
-//                        }).collect(collector)
-//                        .stream()
-//                        .collect(Collectors.toConcurrentMap(SqlClipMethod::getSqlClipName , it -> it));
-//                
-//                
-//                ConcurrentMap<MethodKey , SqlMethod> sqlMethods = Stream.of(MethodOperation.superGetMethods(clazz))
-//                    .filter(method -> method.getAnnotation(Create.class) != null || method.getAnnotation(Match.class) != null)
-//                    .<SqlMethod>map(method -> {
-//                        Create create = method.getAnnotation(Create.class);
-//                        Match match = method.getAnnotation(Match.class);
-//                        SqlMethod sqlMethod = null;
-//                        if(create != null) {
-//                            CreateMethod cm = new CreateMethod();
-//                            cm.setDefinition(method);
-//                            cm.setSql(create.sql());
-//                            cm.setSqlClipMethod(sqlClipMethods.get(create.sqlInject().sqlClipName()));
-//                            sqlMethod = cm;
-//                        } else {
-//                            MatchMethod mm = new MatchMethod();
-//                            mm.setDefinition(method);
-//                            mm.setSql(match.sql());
-//                            mm.setSqlClipMethod(sqlClipMethods.get(match.sqlInject().sqlClipName()));
-//                            sqlMethod = mm;
-//                        }
-//                        
-//                        String[] paramNames = ParameterOperation.getMethodParamNames(method);
-//                        Parameter[] parameters = method.getParameters();
-//                        SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
-//                        for(int i=0; i<paramNames.length; i++) {
-//                            SqlClipMethodParam sqlClipMethodParam = new SqlClipMethodParam();
-//                            sqlClipMethodParams[i] = sqlClipMethodParam;
-//                            sqlClipMethodParam.setNativeName(paramNames[i]);
-//                            sqlClipMethodParam.setDefinition(parameters[i]);
-//                            sqlClipMethodParam.setParam(parameters[i].getAnnotation(Param.class));
-//                            sqlClipMethodParam.setSqlClipInject(parameters[i].getAnnotation(SqlClipInject.class));
-//                        }
-//                        return sqlMethod;
-//                    }).collect(Collectors.toConcurrentMap(it -> new MethodKey(it.getDefinition().getName(), 
-//                        it.getDefinition().getParameterTypes()) , it -> it));
-//                ret.setSqlMethods(sqlMethods);
-//                
-//                return ret;
-//            }).collect(Collectors.toConcurrentMap(Neo4jDaoInfo::getName , info -> info));
+        return Stream.of(PackageOperation.getPackageClasses(packagePath))
+            .filter(clazz -> clazz.isInterface())
+            .filter(clazz -> clazz.getAnnotation(Neo4jDao.class) != null)
+            .map(clazz -> {
+                Neo4jDaoInfo result = new Neo4jDaoInfo();
+                Neo4jDao neo4jDao = clazz.getAnnotation(Neo4jDao.class);
+                if(neo4jDao.name().isEmpty()) result.setName(clazz.getSimpleName());
+                else result.setName(neo4jDao.name());
+                HashMap<Class<?> , Class<?>> daoInterfaceMapping = Maps.newHashMap();
+                result.setDaoInterfaceMapping(daoInterfaceMapping);
+                parse(clazz , daoInterfaceMapping);
+                
+                final Map<String, SqlClipMethod> sqlClipMethods = daoInterfaceMapping.values().stream()
+                    .filter(it -> {
+                        Neo4jDao anno = it.getAnnotation(Neo4jDao.class);
+                        if(anno == null) return false;
+                        if(anno.clipClass() != null) return true;
+                        return false;
+                    })
+                    .<Class<?>>map(it -> it.getAnnotation(Neo4jDao.class).clipClass())
+                    .map(it -> {
+                        
+                        return Stream.of(it.getMethods())
+                            .filter(method -> method.getAnnotation(SqlClip.class) != null)
+                            .<SqlClipMethod>map(method -> {
+                                SqlClipMethod sqlClipMethod = new SqlClipMethod();
+                                sqlClipMethod.setDefinition(method);
+                                SqlClip sqlClip = method.getAnnotation(SqlClip.class);
+                                sqlClipMethod.setSqlClipName(sqlClip.sqlClipName());
+                                
+                                String[] paramNames = ParameterOperation.getMethodParamNamesByReflect(method);
+                                Parameter[] parameters = method.getParameters();
+                                SqlClipMethodParam[] sqlClipMethodParams = new SqlClipMethodParam[paramNames.length];
+                                for(int i=0; i<paramNames.length; i++) {
+                                    SqlClipMethodParam param = new SqlClipMethodParam();
+                                    sqlClipMethodParams[i] = param;
+                                    param.setDefinition(parameters[i]);
+                                    param.setNativeName(paramNames[i]);
+                                    param.setParam(parameters[i].getAnnotation(Param.class));
+                                }
+                                sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
+                                return sqlClipMethod;
+                            }).collect(Collectors.toList());
+                    }).collect(collector)
+                    .stream()
+                    .collect(Collectors.toMap(SqlClipMethod::getSqlClipName , it -> it, (left, right) -> right));
+                
+                ConcurrentMap<MethodKey , SqlMethod> sqlMethods = Arrays.stream(clazz.getMethods())
+                    .filter(it -> it.getAnnotation(Create.class) != null || it.getAnnotation(Match.class) != null)
+                    .map(method -> {
+                        Create create = method.getAnnotation(Create.class);
+                        Match match = method.getAnnotation(Match.class);
+                        SqlMethod sqlMethod = null;
+                        if(create != null) {
+                            CreateMethod cm = new CreateMethod();
+                            cm.setDefinition(method);
+                            cm.setSql(create.sql());
+                            cm.setSqlClipMethod(sqlClipMethods.get(create.sqlInject().sqlClipName()));
+                            sqlMethod = cm;
+                        } else {
+                            MatchMethod mm = new MatchMethod();
+                            mm.setDefinition(method);
+                            mm.setSql(match.sql());
+                            mm.setSqlClipMethod(sqlClipMethods.get(match.sqlInject().sqlClipName()));
+                            sqlMethod = mm;
+                        }
+                        
+                        String[] paramNames = ParameterOperation.getMethodParamNamesByReflect(method);
+                        Parameter[] parameters = method.getParameters();
+                        SqlMethodParam[] sqlMethodParams = new SqlMethodParam[paramNames.length];
+                        for(int i=0; i<paramNames.length; i++) {
+                            SqlMethodParam item = new SqlMethodParam();
+                            sqlMethodParams[i] = item;
+                            item.setNativeName(paramNames[i]);
+                            item.setDefinition(parameters[i]);
+                            item.setParam(parameters[i].getAnnotation(Param.class));
+                        }
+                        sqlMethod.setSqlMethodParams(sqlMethodParams);
+                        return sqlMethod;
+                    }).collect(Collectors.toConcurrentMap(it -> new MethodKey(it.getDefinition().getName(), 
+                      it.getDefinition().getParameterTypes()) , it -> it));
+                result.setSqlMethods(sqlMethods);
+                return result;
+            }).collect(Collectors.toMap(Neo4jDaoInfo::getName , it -> it));
     }
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * 
@@ -15,7 +16,8 @@ import lombok.EqualsAndHashCode;
  *
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @SuppressWarnings("serial")
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class MatchMethod extends SqlMethod implements Serializable{
 }

@@ -3,8 +3,6 @@ package com.github.andyshao.neo4j.spring.util.dao;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.neo4j.ogm.annotation.NodeEntity;
 

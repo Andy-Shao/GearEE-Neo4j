@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
 
 import com.github.andyshao.lang.ArrayWrapper;
 import com.github.andyshao.lang.Convert;
