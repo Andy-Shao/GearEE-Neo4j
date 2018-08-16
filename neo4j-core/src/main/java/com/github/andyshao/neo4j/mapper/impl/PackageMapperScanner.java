@@ -9,10 +9,12 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.annotation.Create;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.SqlClip;
+import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.mapper.MapperScanner;
 import com.github.andyshao.neo4j.model.CreateMethod;
 import com.github.andyshao.neo4j.model.MatchMethod;
@@ -125,12 +127,24 @@ public class PackageMapperScanner implements MapperScanner{
                             cm.setSql(create.sql());
                             cm.setSqlClipMethod(sqlClipMethods.get(create.sqlInject().sqlClipName()));
                             sqlMethod = cm;
+                            if(!StringOperation.isTrimEmptyOrNull(create.sql()) && !StringOperation.isTrimEmptyOrNull(create.sqlInject().sqlClipName()))
+                                throw new IllegalConfigException(String.format("Both of sql & sqlInject have value in %s#%s @Create configuration" , 
+                                    method.getDeclaringClass(), method.getName()));
+                            if(StringOperation.isTrimEmptyOrNull(create.sql()) && StringOperation.isTrimEmptyOrNull(create.sqlInject().sqlClipName()))
+                                throw new IllegalConfigException(String.format("One of sql & sqlInject should be configured in %s#%s @Create configuration" , 
+                                    method.getDeclaringClass(), method.getName()));
                         } else {
                             MatchMethod mm = new MatchMethod();
                             mm.setDefinition(method);
                             mm.setSql(match.sql());
                             mm.setSqlClipMethod(sqlClipMethods.get(match.sqlInject().sqlClipName()));
                             sqlMethod = mm;
+                            if(!StringOperation.isTrimEmptyOrNull(match.sql()) && !StringOperation.isTrimEmptyOrNull(match.sqlInject().sqlClipName()))
+                                throw new IllegalConfigException(String.format("Both of sql & sqlInject have value in %s#%s @Match configuration" , 
+                                    method.getDeclaringClass(), method.getName()));
+                            if(StringOperation.isTrimEmptyOrNull(match.sql()) && StringOperation.isTrimEmptyOrNull(match.sqlInject().sqlClipName()))
+                                throw new IllegalConfigException(String.format("One of sql & sqlInject should be configured in %s#%s @Match configuration" , 
+                                    method.getDeclaringClass(), method.getName()));
                         }
                         
                         String[] paramNames = ParameterOperation.getMethodParamNamesByReflect(method);
@@ -149,7 +163,7 @@ public class PackageMapperScanner implements MapperScanner{
                       it.getDefinition().getParameterTypes()) , it -> it));
                 result.setSqlMethods(sqlMethods);
                 return result;
-            }).collect(Collectors.toMap(Neo4jDaoInfo::getName , it -> it));
+            }).collect(Collectors.toMap(Neo4jDaoInfo::getName , it -> it, (left, right) -> right));
     }
 
 }

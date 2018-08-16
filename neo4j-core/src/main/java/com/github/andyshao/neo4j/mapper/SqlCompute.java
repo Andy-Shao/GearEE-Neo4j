@@ -1,6 +1,7 @@
 package com.github.andyshao.neo4j.mapper;
 
-import com.github.andyshao.neo4j.model.MethodKey;
+import java.lang.reflect.Method;
+
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 
 /**
@@ -13,5 +14,5 @@ import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
  *
  */
 public interface SqlCompute {
-    String compute(MethodKey methodKey, Neo4jDaoInfo neo4jDaoInfo, Object...values);
+    String compute(Method method, Neo4jDaoInfo neo4jDaoInfo, Object...values);
 }

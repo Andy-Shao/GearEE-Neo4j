@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.demo;
 
 import java.io.Serializable;
 
+import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.annotation.SqlClip;
 import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.reflect.annotation.Param;
@@ -17,6 +18,8 @@ public class GeneralDaoClips {
             query.append(" SKIP ").append(skip);
             query.append(" LIMIT #{page.pageSize}");
         }
-        return query.toString();
+        String sql = query.toString();
+        sql = StringOperation.replaceAll(sql , "#{page.pageSize}" , String.valueOf(page.getPageSize()));
+        return sql;
     }
 }
