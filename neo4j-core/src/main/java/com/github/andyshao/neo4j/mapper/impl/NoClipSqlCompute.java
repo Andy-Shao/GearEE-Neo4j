@@ -1,11 +1,9 @@
 package com.github.andyshao.neo4j.mapper.impl;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.SqlCompute;

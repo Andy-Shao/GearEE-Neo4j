@@ -17,7 +17,7 @@ import lombok.Data;
 @Data
 @SuppressWarnings("serial")
 public class Pageable<T> implements Serializable{
-    private Integer pageNum = 0;
+    private Integer pageNum = 1;
     private Integer pageSize = 10;
     private T data;
 }

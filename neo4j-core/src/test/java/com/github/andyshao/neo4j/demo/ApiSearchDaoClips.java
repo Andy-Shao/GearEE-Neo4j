@@ -10,8 +10,8 @@ public class ApiSearchDaoClips extends GeneralDaoClips{
         StringBuilder query = new StringBuilder();
         query.append("MATCH (n:Api) WHERE 1=1 ");
         ApiKey apiKey = pageable.getData();
-        if(StringOperation.isEmptyOrNull(apiKey.getApiName())) query.append(" AND n.apiKey = '").append(apiKey.getApiName()).append("'");
-        if(StringOperation.isEmptyOrNull(apiKey.getSystemAlias())) query.append(" AND n.systemAlias = '").append(apiKey.getSystemAlias()).append("'");
+        if(!StringOperation.isTrimEmptyOrNull(apiKey.getApiName())) query.append(" AND n.apiKey = '").append(apiKey.getApiName()).append("'");
+        if(!StringOperation.isTrimEmptyOrNull(apiKey.getSystemAlias())) query.append(" AND n.systemAlias = '").append(apiKey.getSystemAlias()).append("'");
         query.append(" RETURN n");
         query.append(pageable(pageable));
         return query.toString();

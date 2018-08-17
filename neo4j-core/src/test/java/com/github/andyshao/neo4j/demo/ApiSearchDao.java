@@ -11,7 +11,7 @@ import com.github.andyshao.reflect.annotation.Param;
 
 @Neo4jDao(clipClass = ApiSearchDaoClips.class)
 public interface ApiSearchDao {
-    @Match(sql = "MATCH (n:Api) WHERE n.systemAlias = #{pk.systemAlias} AND n.apiName = #{pk.apiName}")
+    @Match(sql = "MATCH (n:Api) WHERE n.systemAlias = #{pk.systemAlias} AND n.apiName = #{pk.apiName} RETURN n")
     Optional<Api> findByPk(@Param("pk") ApiKey pk);
     
     
