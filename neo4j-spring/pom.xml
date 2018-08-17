@@ -63,14 +63,14 @@
             <groupId>com.github.Andy-Shao</groupId>
             <artifactId>GearEE-Neo4j-core</artifactId>
         </dependency>
-        <!-- <dependency>
+        <dependency>
         	<groupId>org.springframework.data</groupId>
         	<artifactId>spring-data-neo4j</artifactId>
-        </dependency> -->
-        <dependency>
+        </dependency>
+        <!-- <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-ogm-core</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
         	<groupId>com.google.guava</groupId>
         	<artifactId>guava</artifactId>

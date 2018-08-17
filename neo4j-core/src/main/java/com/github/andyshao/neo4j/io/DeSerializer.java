@@ -11,6 +11,6 @@ import com.github.andyshao.lang.NotSupportConvertException;
  * @author Andy.Shao
  *
  */
-public interface Serializer {
-    String serialize(Object input) throws NotSupportConvertException;
+public interface DeSerializer {
+    <T> T serialize(String input, Class<T> type) throws NotSupportConvertException;
 }
