@@ -3,7 +3,6 @@ package com.github.andyshao.neo4j.model;
 import java.io.Serializable;
 import java.lang.reflect.Parameter;
 
-import com.github.andyshao.neo4j.annotation.SqlInject;
 import com.github.andyshao.reflect.annotation.Param;
 
 import lombok.Data;
@@ -22,6 +21,5 @@ import lombok.Data;
 public class SqlClipMethodParam implements Serializable{
     private Parameter definition;
     private Param param;
-    private SqlInject sqlInject;
     private String nativeName;
 }

@@ -109,7 +109,6 @@ public class PackageMapperScanner implements MapperScanner{
                                     param.setDefinition(parameters[i]);
                                     param.setNativeName(paramNames[i]);
                                     param.setParam(parameters[i].getAnnotation(Param.class));
-                                    param.setSqlInject(parameters[i].getAnnotation(SqlInject.class));
                                 }
                                 sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
                                 return sqlClipMethod;
