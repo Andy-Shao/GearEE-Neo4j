@@ -73,6 +73,7 @@ public class PackageMapperScanner implements MapperScanner{
             .filter(clazz -> clazz.getAnnotation(Neo4jDao.class) != null)
             .map(clazz -> {
                 Neo4jDaoInfo result = new Neo4jDaoInfo();
+                result.setDefinitionClass(clazz);
                 Neo4jDao neo4jDao = clazz.getAnnotation(Neo4jDao.class);
                 if(neo4jDao.name().isEmpty()) result.setName(clazz.getSimpleName());
                 else result.setName(neo4jDao.name());
