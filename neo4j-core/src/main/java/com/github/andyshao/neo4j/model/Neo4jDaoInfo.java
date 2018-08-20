@@ -20,7 +20,7 @@ import lombok.Data;
 @SuppressWarnings("serial")
 public class Neo4jDaoInfo implements Serializable{
     private String name;
-    private Class<?> definitionClass;
+    private Class<?> daoClass;
     private Map<Class<?>, Class<?>> daoInterfaceMapping = Maps.newHashMap(); 
     private Map<MethodKey , SqlMethod> sqlMethods = Maps.newConcurrentMap();
 }

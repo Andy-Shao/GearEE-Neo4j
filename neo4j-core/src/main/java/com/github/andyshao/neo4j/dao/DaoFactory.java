@@ -1,5 +1,6 @@
 package com.github.andyshao.neo4j.dao;
 
+import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 
 /**
@@ -12,5 +13,5 @@ import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
  *
  */
 public interface DaoFactory {
-    Object getDao(Neo4jDaoInfo info);
+    Object getDao(Neo4jDaoInfo info) throws Neo4jException;
 }
