@@ -18,11 +18,7 @@ public class ApiModifyDaoClips extends GeneralDaoClips{
     public String saveSelectiveClips(@Param("api")Api api) {
         StringBuilder query = new StringBuilder("CREATE (n:Api) SET n.systemAlias = #{api.systemAlias} AND n.apiName = #{api.apiName}");
         if(!StringOperation.isEmptyOrNull(api.getOthers())) query.append(", n.others = #{api.others}");
-        String sql = query.toString();
-        sql = StringOperation.replaceAll(sql , "#{api.systemAlias}" , api.getSystemAlias());
-        sql = StringOperation.replaceAll(sql , "#{api.apiName}" , api.getApiName());
-        sql = StringOperation.replaceAll(sql , "#{api.others}" , api.getOthers());
-        return sql;
+        return query.toString();
     }
     
     @SqlClip(sqlClipName = "replaceSelective")
@@ -30,9 +26,6 @@ public class ApiModifyDaoClips extends GeneralDaoClips{
         StringBuilder query = new StringBuilder("MERGE (n:Api {systemAlias: #{api.systemAlias}, apiName: #{api.apiName}}) SET ");
         query.append(" n.apiName = #{api.apiName}");
         if(!StringOperation.isEmptyOrNull(api.getOthers())) query.append(", n.others = '").append(api.getOthers()).append("'");
-        String sql = query.toString();
-        sql = StringOperation.replaceAll(sql , "#{api.systemAlias}" , api.getSystemAlias());
-        sql = StringOperation.replaceAll(sql , "#{api.apiName}" , api.getApiName());
-        return sql;
+        return query.toString();
     }
 }
