@@ -14,7 +14,6 @@ import com.github.andyshao.neo4j.annotation.Create;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.SqlClip;
-import com.github.andyshao.neo4j.annotation.SqlInject;
 import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.mapper.MapperScanner;
 import com.github.andyshao.neo4j.model.CreateMethod;
