@@ -14,6 +14,7 @@ import com.github.andyshao.neo4j.annotation.Create;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.SqlClip;
+import com.github.andyshao.neo4j.annotation.SqlInject;
 import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.mapper.MapperScanner;
 import com.github.andyshao.neo4j.model.CreateMethod;
@@ -108,6 +109,7 @@ public class PackageMapperScanner implements MapperScanner{
                                     param.setDefinition(parameters[i]);
                                     param.setNativeName(paramNames[i]);
                                     param.setParam(parameters[i].getAnnotation(Param.class));
+                                    param.setSqlInject(parameters[i].getAnnotation(SqlInject.class));
                                 }
                                 sqlClipMethod.setSqlClipMethodParams(sqlClipMethodParams);
                                 return sqlClipMethod;
