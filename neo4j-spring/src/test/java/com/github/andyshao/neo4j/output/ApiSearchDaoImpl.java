@@ -25,7 +25,7 @@ public class ApiSearchDaoImpl implements ApiSearchDao {
         param.setDaoName("ApiSearchDao");
         param.setMethodName("findByPk");
         param.setTargetClass(ApiSearchDao.class);
-        return this.daoProcessor.findOne(daoProcessor , Api.class);
+        return this.daoProcessor.execute(param , Api.class);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ApiSearchDaoImpl implements ApiSearchDao {
         param.setDaoName("ApiSearchDao");
         param.setMethodName("findByPk");
         param.setTargetClass(ApiSearchDao.class);
-        return this.daoProcessor.findByPage(daoProcessor , Api.class);
+        return this.daoProcessor.findByPage(param , Api.class);
     }
 
 }

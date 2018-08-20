@@ -15,8 +15,7 @@ import com.github.andyshao.neo4j.model.PageReturn;
  *
  */
 public interface DaoProcessor {
-    <T> T process(DaoProcessorParam param, Class<T> retType);
-    <T> Optional<T> findOne(DaoProcessor param, Class<T> retType);
-    <T> PageReturn<T> findByPage(DaoProcessor param, Class<T> retType);
-    <T> List<T> findList(DaoProcessor param, Class<T> retType);
+    <T> Optional<T> execute(DaoProcessorParam param, Class<T> retType);
+    <T> PageReturn<T> findByPage(DaoProcessorParam param, Class<T> retType);
+    <T> List<T> multiRet(DaoProcessorParam param, Class<T> retType);
 }

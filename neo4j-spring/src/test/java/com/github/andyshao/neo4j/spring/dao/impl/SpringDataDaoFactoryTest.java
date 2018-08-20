@@ -25,22 +25,17 @@ public class SpringDataDaoFactoryTest {
         this.daoFactory.setDaoProcessor(new DaoProcessor() {
             
             @Override
-            public <T> T process(DaoProcessorParam param , Class<T> retType) {
+            public <T> Optional<T> execute(DaoProcessorParam param , Class<T> retType) {
                 return null;
             }
             
             @Override
-            public <T> Optional<T> findOne(DaoProcessor param , Class<T> retType) {
+            public <T> List<T> multiRet(DaoProcessorParam param , Class<T> retType) {
                 return null;
             }
             
             @Override
-            public <T> List<T> findList(DaoProcessor param , Class<T> retType) {
-                return null;
-            }
-            
-            @Override
-            public <T> PageReturn<T> findByPage(DaoProcessor param , Class<T> retType) {
+            public <T> PageReturn<T> findByPage(DaoProcessorParam param , Class<T> retType) {
                 return null;
             }
         });

@@ -19,25 +19,19 @@ import com.github.andyshao.neo4j.model.PageReturn;
 public class SpringDaoProcessor implements DaoProcessor {
 
     @Override
-    public <T> T process(DaoProcessorParam param , Class<T> retType) {
+    public <T> Optional<T> execute(DaoProcessorParam param , Class<T> retType) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <T> Optional<T> findOne(DaoProcessor param , Class<T> retType) {
+    public <T> PageReturn<T> findByPage(DaoProcessorParam param , Class<T> retType) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <T> PageReturn<T> findByPage(DaoProcessor param , Class<T> retType) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <T> List<T> findList(DaoProcessor param , Class<T> retType) {
+    public <T> List<T> multiRet(DaoProcessorParam param , Class<T> retType) {
         // TODO Auto-generated method stub
         return null;
     }
