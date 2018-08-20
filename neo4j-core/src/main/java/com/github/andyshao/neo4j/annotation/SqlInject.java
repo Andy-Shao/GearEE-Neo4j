@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  */
 @Inherited
 @Documented
-@Target({ElementType.ANNOTATION_TYPE, ElementType.PARAMETER})
+@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SqlInject {
     String sqlClipName();
