@@ -9,7 +9,7 @@ import com.github.andyshao.reflect.annotation.Param;
 
 @Neo4jDao(clipClass = ApiModifyDaoClips.class)
 public interface ApiModifyDao {
-    @Create(sqlInject = @SqlInject(sqlClipName = "insertSelective"))
+    @Create(sqlInject = @SqlInject(sqlClipName = "insertSelective"), returnType = Api.class)
     Optional<Api> saveSelective(@Param("api")Api api);
     
     

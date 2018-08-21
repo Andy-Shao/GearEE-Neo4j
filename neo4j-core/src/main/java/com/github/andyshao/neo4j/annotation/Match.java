@@ -23,4 +23,5 @@ import java.lang.annotation.Target;
 public @interface Match {
     String sql() default "";
     SqlInject sqlInject() default @SqlInject(sqlClipName = "");
+    Class<?> returnType() default Object.class;
 }
