@@ -23,5 +23,9 @@ import java.lang.annotation.Target;
 public @interface Match {
     String sql() default "";
     SqlInject sqlInject() default @SqlInject(sqlClipName = "");
+    /**
+     * a return type could be a java bean class, Integer, Long, Double, Float, String
+     * @return the return type your method will taking
+     */
     Class<?> returnType() default Object.class;
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.andyshao.neo4j.dao.DaoProcessor;
@@ -50,6 +51,7 @@ public class SpringDataDaoFactoryTest {
     }
     
     @Test
+    @Ignore
     public void test() {
         this.daoFactory.getDao(this.scan.get("ApiSearchDao"));
     }

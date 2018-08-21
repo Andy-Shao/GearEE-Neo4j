@@ -1,11 +1,11 @@
 package com.github.andyshao.neo4j.demo;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.SqlInject;
+import com.github.andyshao.neo4j.model.PageReturn;
 import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.reflect.annotation.Param;
 
@@ -16,7 +16,7 @@ public interface ApiSearchDao {
     
   
     @Match(sqlInject = @SqlInject(sqlClipName = "findByPageWithPk"), returnType = Api.class)
-    List<Api> findByPage(Pageable<ApiKey> pageable);
+    PageReturn<Api> findByPage(Pageable<ApiKey> pageable);
     
     void doExecution();
 }
