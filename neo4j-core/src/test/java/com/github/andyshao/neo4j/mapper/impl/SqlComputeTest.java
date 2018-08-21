@@ -43,6 +43,7 @@ public class SqlComputeTest {
         
         
         ClipSqlCompute clipSqlCompute = new ClipSqlCompute();
+        clipSqlCompute.setSqlFormatter(multiParamSqlFormatter);
         Pageable<ApiKey> pageable = new Pageable<ApiKey>();
         pageable.setData(values);
         query = clipSqlCompute.compute(MethodOperation.getDeclaredMethod(ApiSearchDao.class , "findByPage" , Pageable.class) , 

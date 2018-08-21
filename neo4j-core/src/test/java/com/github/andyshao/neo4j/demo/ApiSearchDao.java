@@ -17,4 +17,6 @@ public interface ApiSearchDao {
     
     @Match(sqlInject = @SqlInject(sqlClipName = "findByPageWithPk"))
     PageReturn<Api> findByPage(Pageable<ApiKey> pageable);
+    
+    void doExecution();
 }

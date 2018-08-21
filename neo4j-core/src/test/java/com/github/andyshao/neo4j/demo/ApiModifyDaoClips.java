@@ -18,6 +18,7 @@ public class ApiModifyDaoClips extends GeneralDaoClips{
     public String saveSelectiveClips(@Param("api")Api api) {
         StringBuilder query = new StringBuilder("CREATE (n:Api) SET n.systemAlias = #{api.systemAlias} AND n.apiName = #{api.apiName}");
         if(!StringOperation.isEmptyOrNull(api.getOthers())) query.append(", n.others = #{api.others}");
+        query.append(" RETURN n");
         return query.toString();
     }
     

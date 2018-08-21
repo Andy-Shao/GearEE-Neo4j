@@ -36,4 +36,10 @@ public class SpringDaoProcessor implements DaoProcessor {
         return null;
     }
 
+    @Override
+    public void execute(DaoProcessorParam param) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

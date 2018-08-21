@@ -38,6 +38,11 @@ public class SpringDataDaoFactoryTest {
             public <T> PageReturn<T> findByPage(DaoProcessorParam param , Class<T> retType) {
                 return null;
             }
+
+            @Override
+            public void execute(DaoProcessorParam param) {
+                
+            }
         });
         PackageMapperScanner scanner = new PackageMapperScanner();
         scanner.setPackagePath(ApiDao.class.getPackage());

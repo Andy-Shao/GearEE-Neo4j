@@ -1,6 +1,8 @@
 package com.github.andyshao.neo4j.mapper.impl;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,6 +12,7 @@ import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.mapper.NoParamCanMatchException;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
+import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 import com.github.andyshao.neo4j.model.SqlClipMethod;
@@ -34,6 +37,8 @@ import lombok.Setter;
 public class ClipSqlCompute implements SqlCompute {
     @Setter
     private SqlCompute next = new DoNothingSqlCompute();
+    @Setter
+    private SqlFormatter sqlFormatter;
     private final ConcurrentMap<Class<?> , Object> clipsCache = new ConcurrentHashMap<>();
 
     @Override
@@ -48,18 +53,28 @@ public class ClipSqlCompute implements SqlCompute {
         Method clipMethod = sqlClipMethod.getDefinition();
         Class<?>[] clipArgTypes = clipMethod.getParameterTypes();
         Object clips = clipsCache.computeIfAbsent(clipMethod.getDeclaringClass(), ClassOperation::newInstance);
+        SqlClipMethodParam[] sqlClipMethodParams = sqlClipMethod.getSqlClipMethodParams();
+        final Map<String , Object> params = new HashMap<>();
+        for(int i=0; i<sqlClipMethodParams.length; i++) {
+            String paramKey;
+            Param param = sqlClipMethodParams[i].getParam();
+            if(param != null) paramKey = param.value();
+            else paramKey = sqlClipMethodParams[i].getNativeName();
+            params.put(paramKey , values[i]);
+        }
         if(clipArgTypes.length == 0) return Optional.of(MethodOperation.invoked(clips , clipMethod).toString());
         if(clipArgTypes.length == 1) {
             Class<?> argType = clipArgTypes[0];
             for(Object value : values) {
-                if(argType.isAssignableFrom(value.getClass())) 
-                    return Optional.of(MethodOperation.invoked(clips , clipMethod , value).toString());
+                if(argType.isAssignableFrom(value.getClass())) {
+                    String originSql = MethodOperation.invoked(clips , clipMethod , value).toString();
+                    return sqlFormatter.format(originSql , params);
+                }
             }
             throw new NoParamCanMatchException(String.format("Cannot match the parameter from %s#%s to %s#%s" , 
                 method.getDeclaringClass().getName(), method.getName(), 
                 clipMethod.getDeclaringClass().getName(), clipMethod.getName()));
         } else {
-            SqlClipMethodParam[] sqlClipMethodParams = sqlClipMethod.getSqlClipMethodParams();
             SqlMethodParam[] sqlMethodParams = sqlMethod.getSqlMethodParams();
             final Object[] clipValues = new Object[sqlClipMethodParams.length];
             MATCH_PARAM:for(int i=0; i<clipValues.length; i++) {
@@ -83,7 +98,8 @@ public class ClipSqlCompute implements SqlCompute {
                 if(clipValues[i] == null) throw new NoParamCanMatchException(String.format("Cannot match the parameter %s in %s#%s", 
                     param.value(), clipMethod.getDeclaringClass().getName(), clipMethod.getName()));
             }
-            return Optional.of(MethodOperation.invoked(clips, clipMethod, clipValues).toString());
+            String originSql = MethodOperation.invoked(clips, clipMethod, clipValues).toString();
+            return sqlFormatter.format(originSql , params);
         }
     }
 
