@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 import org.neo4j.driver.v1.Transaction;
+import org.neo4j.driver.v1.Value;
+import org.neo4j.driver.v1.Values;
 
 import com.github.andyshao.neo4j.demo.Api;
 import com.github.andyshao.neo4j.demo.ApiDao;
@@ -15,8 +17,20 @@ public class DefaultApiDao implements ApiDao{
 
     @Override
     public CompletionStage<Optional<Api>> findByPk(ApiKey pk , Transaction tx) {
-        // TODO Auto-generated method stub
-        return null;
+        String sql = "MATCH (n:Api) WHERE n.systemAlias = $pk.systemAlias AND n.apiName = $pk.apiName RETURN n";
+        Value parameters = Values.parameters("pk.systemAlias", pk.getSystemAlias(), "pk.apiName", pk.getApiName());
+        
+        return tx.runAsync(sql, parameters).thenComposeAsync(src -> {
+            return src.singleAsync().thenApplyAsync(record -> {
+                if(record == null) return Optional.empty();
+                
+                Api api = new Api();
+                api.setApiName(record.get("apiName").asString());
+                api.setOthers(record.get("others").asString());
+                api.setSystemAlias(record.get("systemAlias").asString());
+                return Optional.of(api);
+            });
+        });
     }
 
     @Override
