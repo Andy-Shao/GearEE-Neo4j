@@ -21,6 +21,9 @@ public interface ApiDao {
     @Match(sqlInject = @SqlInject(sqlClipName = "findByPageWithPk"))
     CompletionStage<PageReturn<Api>> findByPage(@Param("page")Pageable<ApiKey> pageable,@Param("tx") Transaction tx);
     
+    @Match(sqlInject = @SqlInject(sqlClipName = "findByPageWithPkCount"))
+    CompletionStage<Optional<Long>> findByPageCount(@Param("page")Pageable<ApiKey> pageable,@Param("tx") Transaction tx);
+    
     @Create(sqlInject = @SqlInject(sqlClipName = "insertSelective"))
     CompletionStage<Optional<Api>> saveSelective(@Param("api")Api api,@Param("tx") Transaction tx);
     

@@ -9,7 +9,7 @@ import com.github.andyshao.reflect.annotation.Param;
 
 public class ApiDaoClips {
     @SqlClip(sqlClipName = "pageable")
-    public <T extends Serializable> String pageable(@Param("page")Pageable<T> page) {
+    public static final <T extends Serializable> String pageable(@Param("page")Pageable<T> page) {
         StringBuilder query = new StringBuilder();
         int position = (page.getPageNum() - 1) * page.getPageSize();
         if(position == 0) query.append(" LIMIT ").append(page.getPageSize());
@@ -24,22 +24,43 @@ public class ApiDaoClips {
     }
     
     @SqlClip(sqlClipName = "insertSelective")
-    public String saveSelectiveClips(@Param("api")Api api) {
-        StringBuilder query = new StringBuilder("CREATE (n:Api) SET n.systemAlias = #{api.systemAlias} AND n.apiName = #{api.apiName}");
-        if(!StringOperation.isEmptyOrNull(api.getOthers())) query.append(", n.others = #{api.others}");
-        query.append(" RETURN n");
+    public static final String saveSelectiveClips(@Param("api")Api api) {
+        StringBuilder query = new StringBuilder("CREATE (n:Api {systemAlias: $api.systeamAlias, apiName: $api.apiName");
+        if(!StringOperation.isEmptyOrNull(api.getOthers())) query.append(", others:$api.others");
+        query.append("}) RETURN n");
         return query.toString();
     }
     
     @SqlClip(sqlClipName = "findByPageWithPk")
-    public String findByPageWithPk(@Param("pageable")Pageable<ApiKey> pageable) {
+    public static final String findByPageWithPk(@Param("page")Pageable<ApiKey> pageable) {
+        StringBuilder query = findByPk(pageable);
+        query.append(" RETURN n");
+        query.append(pageable(pageable));
+        return query.toString();
+    }
+    
+    @SqlClip(sqlClipName = "findByPageWithPkCount")
+    public static final String findByPageWithPkCount(@Param("page")Pageable<ApiKey> pageable) {
+        StringBuilder query = findByPk(pageable);
+        query.append(" RETURN count(n)");
+        return query.toString();
+    }
+
+    private static StringBuilder findByPk(Pageable<ApiKey> pageable) {
         StringBuilder query = new StringBuilder();
         query.append("MATCH (n:Api) WHERE 1=1 ");
         ApiKey apiKey = pageable.getData();
-        if(!StringOperation.isTrimEmptyOrNull(apiKey.getApiName())) query.append(" AND n.apiKey = '").append(apiKey.getApiName()).append("'");
-        if(!StringOperation.isTrimEmptyOrNull(apiKey.getSystemAlias())) query.append(" AND n.systemAlias = '").append(apiKey.getSystemAlias()).append("'");
+        if(!StringOperation.isTrimEmptyOrNull(apiKey.getApiName())) query.append(" AND n.apiKey = $page.data.apiName");
+        if(!StringOperation.isTrimEmptyOrNull(apiKey.getSystemAlias())) query.append(" AND n.systemAlias = $page.data.systemAlias");
+        return query;
+    }
+    
+    @SqlClip(sqlClipName = "updateByPkSelective")
+    public static final String updateByPkSelective(@Param("api")Api api) {
+        StringBuilder query = new StringBuilder("CREATE (n:Api {systemAlias:$api.systemAlias, apiName:$api.apiName})");
+        query.append(" SET n.systemAlias = $api.systemAlias");
+        if(!StringOperation.isTrimEmptyOrNull(api.getOthers())) query.append(", n.others = $api.others");
         query.append(" RETURN n");
-        query.append(pageable(pageable));
         return query.toString();
     }
 }
