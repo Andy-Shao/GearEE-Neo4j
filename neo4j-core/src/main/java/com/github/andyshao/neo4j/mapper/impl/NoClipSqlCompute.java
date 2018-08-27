@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.github.andyshao.lang.StringOperation;
+import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
@@ -32,7 +33,7 @@ public class NoClipSqlCompute implements SqlCompute {
     private SqlFormatter sqlFormatter;
 
     @Override
-    public Optional<String> compute(Method method , Neo4jDaoInfo neo4jDaoInfo , Object... values) {
+    public Optional<Sql> compute(Method method , Neo4jDaoInfo neo4jDaoInfo , Object... values) {
         final MethodKey key = new MethodKey();
         key.setMethodName(method.getName());
         key.setParameTypes(method.getParameterTypes());
@@ -47,6 +48,8 @@ public class NoClipSqlCompute implements SqlCompute {
             if(param != null) paramKey = param.value();
             else paramKey = sqlMethodParams[i].getNativeName();
             params.put(paramKey , values[i]);
+        }
+        if(SqlCompute.isPageReturn(method) && SqlCompute.includePageable(method)) {
         }
         return sqlFormatter.format(sqlMethod.getSql() , params);
     }

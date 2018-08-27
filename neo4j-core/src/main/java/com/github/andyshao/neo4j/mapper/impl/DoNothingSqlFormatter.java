@@ -3,6 +3,7 @@ package com.github.andyshao.neo4j.mapper.impl;
 import java.util.Map;
 import java.util.Optional;
 
+import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 
 /**
@@ -17,7 +18,7 @@ import com.github.andyshao.neo4j.mapper.SqlFormatter;
 public class DoNothingSqlFormatter implements SqlFormatter{
 
 	@Override
-	public Optional<String> format(String query, Map<String, Object> params) {
-		return Optional.of(query);
+	public Optional<Sql> format(String query, Map<String, Object> params) {
+		return Optional.of(new Sql(query));
 	}
 }

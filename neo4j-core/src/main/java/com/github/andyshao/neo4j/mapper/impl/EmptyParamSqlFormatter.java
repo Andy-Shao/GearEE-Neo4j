@@ -3,6 +3,7 @@ package com.github.andyshao.neo4j.mapper.impl;
 import java.util.Map;
 import java.util.Optional;
 
+import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 
 import lombok.Setter;
@@ -21,8 +22,8 @@ public class EmptyParamSqlFormatter implements SqlFormatter {
     private SqlFormatter next;
 
     @Override
-    public Optional<String> format(String query , Map<String , Object> params) {
-        if(params.size() == 0) return Optional.of(query);
+    public Optional<Sql> format(String query , Map<String , Object> params) {
+        if(params.size() == 0) return Optional.of(new Sql(query));
         return next.format(query , params);
     }
 

@@ -31,5 +31,5 @@ public interface SqlFormatter {
 	    return Splitter.on('.').omitEmptyStrings().trimResults().splitToList(expression);
 	}
 	
-	Optional<String> format(String query, Map<String, Object> params);
+	Optional<Sql> format(String query, Map<String, Object> params);
 }

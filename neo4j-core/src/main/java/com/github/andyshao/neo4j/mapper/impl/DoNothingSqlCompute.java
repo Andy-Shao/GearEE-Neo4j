@@ -3,6 +3,7 @@ package com.github.andyshao.neo4j.mapper.impl;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 
@@ -18,7 +19,7 @@ import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 public class DoNothingSqlCompute implements SqlCompute {
 
     @Override
-    public Optional<String> compute(Method method , Neo4jDaoInfo neo4jDaoInfo , Object... values) {
+    public Optional<Sql> compute(Method method , Neo4jDaoInfo neo4jDaoInfo , Object... values) {
         return Optional.empty();
     }
 

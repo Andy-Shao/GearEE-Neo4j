@@ -16,11 +16,9 @@ public class ApiDaoClips {
         else {
             int skip = position - 1;
             query.append(" SKIP ").append(skip);
-            query.append(" LIMIT #{page.pageSize}");
+            query.append(" LIMIT ").append(page.getPageSize());
         }
-        String sql = query.toString();
-        sql = StringOperation.replaceAll(sql , "#{page.pageSize}" , String.valueOf(page.getPageSize()));
-        return sql;
+        return query.toString();
     }
     
     @SqlClip(sqlClipName = "insertSelective")
@@ -35,7 +33,7 @@ public class ApiDaoClips {
     public static final String findByPageWithPk(@Param("page")Pageable<ApiKey> pageable) {
         StringBuilder query = findByPk(pageable);
         query.append(" RETURN n");
-        query.append(pageable(pageable));
+//        query.append(pageable(pageable));
         return query.toString();
     }
     

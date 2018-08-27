@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.mapper.NoParamCanMatchException;
+import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
@@ -42,12 +42,12 @@ public class ClipSqlCompute implements SqlCompute {
     private final ConcurrentMap<Class<?> , Object> clipsCache = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<String> compute(Method method , Neo4jDaoInfo neo4jDaoInfo , Object... values) {
+    public Optional<Sql> compute(Method method , Neo4jDaoInfo neo4jDaoInfo , Object... values) {
         final MethodKey key = new MethodKey();
         key.setMethodName(method.getName());
         key.setParameTypes(method.getParameterTypes());
         SqlMethod sqlMethod = neo4jDaoInfo.getSqlMethods().get(key);
-        if(StringOperation.isTrimEmptyOrNull(sqlMethod.getSqlClipMethod().getSqlClipName())) return next.compute(method , neo4jDaoInfo , values);
+        if(sqlMethod.getSqlClipMethod() == null) return next.compute(method , neo4jDaoInfo , values);
         
         SqlClipMethod sqlClipMethod = sqlMethod.getSqlClipMethod();
         Method clipMethod = sqlClipMethod.getDefinition();
@@ -62,7 +62,7 @@ public class ClipSqlCompute implements SqlCompute {
             else paramKey = sqlClipMethodParams[i].getNativeName();
             params.put(paramKey , values[i]);
         }
-        if(clipArgTypes.length == 0) return Optional.of(MethodOperation.invoked(clips , clipMethod).toString());
+        if(clipArgTypes.length == 0) return Optional.of(new Sql(MethodOperation.invoked(clips , clipMethod).toString()));
         if(clipArgTypes.length == 1) {
             Class<?> argType = clipArgTypes[0];
             for(Object value : values) {
