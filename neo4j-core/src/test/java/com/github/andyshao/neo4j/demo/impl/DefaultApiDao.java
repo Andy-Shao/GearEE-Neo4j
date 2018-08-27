@@ -108,7 +108,10 @@ public class DefaultApiDao implements ApiDao{
         if(!StringOperation.isTrimEmptyOrNull(data.getApiName())) values.put("page.data.apiName" , data.getApiName());
         Value parameters = Values.value(values);
         return tx.runAsync(ApiDaoClips.findByPageWithPkCount(pageable), parameters).thenComposeAsync(src -> {
-            return src.singleAsync().thenApplyAsync(record -> record.get(0).isNull() ? Optional.empty() : Optional.of(record.get(0).asLong()));
+            return src.singleAsync().thenApplyAsync(record -> {
+                if(record == null) return Optional.empty();
+                return record.get(0).isNull() ? Optional.empty() : Optional.of(record.get(0).asLong());
+            });
         });
     }
 
