@@ -12,17 +12,15 @@ public class FindApi {
     }
     
     public static void testFindCount() {
-        try(
-                Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
-                Session session = driver.session();){
-            Transaction tx = session.beginTransaction();
-            tx.runAsync("MATCH (n:Api) RETURN count(n)").thenApplyAsync(src -> {
-                src.singleAsync().thenAcceptAsync(record -> {
-                    System.out.println(String.format("api size is: %d" , record.get(0).asLong()));
-                });
-                return null;
+        Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
+        Session session = driver.session();
+        Transaction tx = session.beginTransaction();
+        tx.runAsync("MATCH (n:Api) RETURN count(n)").thenApplyAsync(src -> {
+            src.singleAsync().thenAcceptAsync(record -> {
+                System.out.println(String.format("api size is: %d" , record.get(0).asLong()));
             });
-            tx.commitAsync();
-        }
+            return null;
+        });
+        tx.commitAsync();
     }
 }

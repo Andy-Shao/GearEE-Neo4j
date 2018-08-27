@@ -19,7 +19,7 @@ import com.google.common.base.Splitter;
 public interface SqlFormatter {
 	static Set<String> findReplacement(String query) {
 		Set<String> ret = new HashSet<>();
-		Pattern p = Pattern.compile("\\#\\{[a-zA-Z\\.0-9\\_]+\\}");
+		Pattern p = Pattern.compile("\\$[a-zA-Z\\.0-9\\_]+");
         Matcher m = p.matcher(query);
         while(m.find()) ret.add(m.group());
 		return ret;
@@ -27,8 +27,7 @@ public interface SqlFormatter {
 	
 	static List<String> analysisReplacement(String replacement) {
 	    String expression = replacement;
-	    expression = StringOperation.replaceAll(expression , "#{" , "");
-	    expression = StringOperation.replaceAll(expression , "}" , "");
+	    expression = StringOperation.replaceAll(expression , "$" , "");
 	    return Splitter.on('.').omitEmptyStrings().trimResults().splitToList(expression);
 	}
 	
