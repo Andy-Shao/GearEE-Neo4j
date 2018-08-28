@@ -3,6 +3,7 @@ package com.github.andyshao.neo4j.model;
 import java.io.Serializable;
 import java.lang.reflect.Parameter;
 
+import com.github.andyshao.reflect.GenericNode;
 import com.github.andyshao.reflect.annotation.Param;
 
 import lombok.Data;
@@ -22,4 +23,5 @@ public class SqlMethodParam implements Serializable{
     private Parameter definition;
     private Param param;
     private String nativeName;
+    private GenericNode typeInfo;
 }

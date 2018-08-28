@@ -11,6 +11,7 @@ import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
+import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.neo4j.model.SqlMethodParam;
 import com.github.andyshao.reflect.annotation.Param;
@@ -38,20 +39,23 @@ public class NoClipSqlCompute implements SqlCompute {
         key.setMethodName(method.getName());
         key.setParameTypes(method.getParameterTypes());
         SqlMethod sqlMethod = neo4jDaoInfo.getSqlMethods().get(key);
-        if(StringOperation.isTrimEmptyOrNull(sqlMethod.getSql())) return next.compute(method , neo4jDaoInfo , values);
+        String sql = sqlMethod.getSql();
+        if(StringOperation.isTrimEmptyOrNull(sql)) return next.compute(method , neo4jDaoInfo , values);
         
         SqlMethodParam[] sqlMethodParams = sqlMethod.getSqlMethodParams();
         Map<String , Object> params = new HashMap<>();
+        Pageable<?> pageable = null;
         for(int i=0; i<sqlMethodParams.length; i++) {
             String paramKey;
             Param param = sqlMethodParams[i].getParam();
             if(param != null) paramKey = param.value();
             else paramKey = sqlMethodParams[i].getNativeName();
-            params.put(paramKey , values[i]);
+            Object value = values[i];
+            params.put(paramKey , value);
+            if(value instanceof Pageable) pageable = (Pageable<?>) value;
         }
-        if(SqlCompute.isPageReturn(method) && SqlCompute.includePageable(method)) {
-        }
-        return sqlFormatter.format(sqlMethod.getSql() , params);
+        if(SqlCompute.isPageReturn(sqlMethod) && pageable != null) sql = sql + SqlCompute.pageable(pageable);
+        return sqlFormatter.format(sql , params);
     }
 
 }

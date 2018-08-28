@@ -15,6 +15,7 @@ import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
+import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.neo4j.model.SqlClipMethod;
 import com.github.andyshao.neo4j.model.SqlClipMethodParam;
 import com.github.andyshao.neo4j.model.SqlMethod;
@@ -55,12 +56,15 @@ public class ClipSqlCompute implements SqlCompute {
         Object clips = clipsCache.computeIfAbsent(clipMethod.getDeclaringClass(), ClassOperation::newInstance);
         SqlClipMethodParam[] sqlClipMethodParams = sqlClipMethod.getSqlClipMethodParams();
         final Map<String , Object> params = new HashMap<>();
+        Pageable<?> pageable = null;
         for(int i=0; i<sqlClipMethodParams.length; i++) {
             String paramKey;
             Param param = sqlClipMethodParams[i].getParam();
             if(param != null) paramKey = param.value();
             else paramKey = sqlClipMethodParams[i].getNativeName();
-            params.put(paramKey , values[i]);
+            Object value = values[i];
+            params.put(paramKey , value);
+            if(value instanceof Pageable) pageable = (Pageable<?>) value;
         }
         if(clipArgTypes.length == 0) return Optional.of(new Sql(MethodOperation.invoked(clips , clipMethod).toString()));
         if(clipArgTypes.length == 1) {
@@ -68,6 +72,7 @@ public class ClipSqlCompute implements SqlCompute {
             for(Object value : values) {
                 if(argType.isAssignableFrom(value.getClass())) {
                     String originSql = MethodOperation.invoked(clips , clipMethod , value).toString();
+                    if(SqlCompute.isPageReturn(sqlMethod) && pageable != null) originSql = originSql + SqlCompute.pageable(pageable);
                     return sqlFormatter.format(originSql , params);
                 }
             }
@@ -99,6 +104,7 @@ public class ClipSqlCompute implements SqlCompute {
                     param.value(), clipMethod.getDeclaringClass().getName(), clipMethod.getName()));
             }
             String originSql = MethodOperation.invoked(clips, clipMethod, clipValues).toString();
+            if(SqlCompute.isPageReturn(sqlMethod) && pageable != null) originSql = originSql + SqlCompute.pageable(pageable);
             return sqlFormatter.format(originSql , params);
         }
     }

@@ -3,6 +3,8 @@ package com.github.andyshao.neo4j.model;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import com.github.andyshao.reflect.GenericNode;
+
 import lombok.Data;
 
 /**
@@ -21,4 +23,5 @@ public class SqlMethod implements Serializable{
     private Method definition;
     private SqlClipMethod sqlClipMethod;
     private SqlMethodParam[] sqlMethodParams;
+    private GenericNode returnTypeInfo;
 }

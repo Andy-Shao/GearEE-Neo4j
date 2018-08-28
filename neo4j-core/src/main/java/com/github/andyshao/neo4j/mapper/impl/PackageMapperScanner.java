@@ -24,6 +24,8 @@ import com.github.andyshao.neo4j.model.SqlClipMethod;
 import com.github.andyshao.neo4j.model.SqlClipMethodParam;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.neo4j.model.SqlMethodParam;
+import com.github.andyshao.reflect.GenericNode;
+import com.github.andyshao.reflect.MethodOperation;
 import com.github.andyshao.reflect.PackageOperation;
 import com.github.andyshao.reflect.ParameterOperation;
 import com.github.andyshao.reflect.annotation.Param;
@@ -148,6 +150,9 @@ public class PackageMapperScanner implements MapperScanner{
                                     method.getDeclaringClass(), method.getName()));
                         }
                         
+                        sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
+                        
+                        List<GenericNode> parameterTypesInfo = MethodOperation.getParameterTypesInfo(method);
                         String[] paramNames = ParameterOperation.getMethodParamNamesByReflect(method);
                         Parameter[] parameters = method.getParameters();
                         SqlMethodParam[] sqlMethodParams = new SqlMethodParam[paramNames.length];
@@ -157,6 +162,7 @@ public class PackageMapperScanner implements MapperScanner{
                             item.setNativeName(paramNames[i]);
                             item.setDefinition(parameters[i]);
                             item.setParam(parameters[i].getAnnotation(Param.class));
+                            item.setTypeInfo(parameterTypesInfo.get(i));
                         }
                         sqlMethod.setSqlMethodParams(sqlMethodParams);
                         return sqlMethod;
