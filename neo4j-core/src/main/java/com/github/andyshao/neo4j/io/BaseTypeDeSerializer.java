@@ -50,11 +50,60 @@ public class BaseTypeDeSerializer implements DeSerializer {
         if(returnType.isAssignableFrom(IsoDuration.class)) return asIsoDuration(src, sqlMethod);
         if(returnType.isAssignableFrom(ZonedDateTime.class)) return asZonedDateTime(src, sqlMethod);
         if(returnType.isAssignableFrom(Date.class)) return asDate(src, sqlMethod);
+        return next.serialize(src , sqlMethod);
+    }
+    
+    static final CompletionStage<Optional<Date>> asDate(StatementResultCursor src , SqlMethod sqlMethod) {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    static final CompletionStage<Long> asLong(StatementResultCursor src , SqlMethod sqlMethod) {
+
+    static final CompletionStage<Optional<ZonedDateTime>> asZonedDateTime(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<IsoDuration>> asIsoDuration(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<OffsetTime>> asOffsetTime(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<LocalDateTime>> asLocalDateTime(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<LocalTime>> asLocalTime(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<LocalDate>> asLocalDate(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<byte[]>> asByteArray(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<Boolean>> asBoolean(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<Number>> asNumber(StatementResultCursor src , SqlMethod sqlMethod) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    static final CompletionStage<Optional<Long>> asLong(StatementResultCursor src , SqlMethod sqlMethod) {
         // TODO Auto-generated method stub
         return null;
     }
