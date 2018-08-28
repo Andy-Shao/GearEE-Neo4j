@@ -41,6 +41,7 @@ public class SqlComputeTest {
         
         method = MethodOperation.getDeclaredMethod(neo4jDaoInfo.getDaoClass() , "findByPage" , Pageable.class, Transaction.class);
         Pageable<Api> pageable = new Pageable<>();
+        pageable.setPageNum(15);
         pageable.setData(api);
         compute = clipSqlCompute.compute(method , neo4jDaoInfo , pageable, tx);
         System.out.println(compute);

@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
+import com.github.andyshao.neo4j.mapper.SqlComputes;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
@@ -54,7 +55,7 @@ public class NoClipSqlCompute implements SqlCompute {
             params.put(paramKey , value);
             if(value instanceof Pageable) pageable = (Pageable<?>) value;
         }
-        if(SqlCompute.isPageReturn(sqlMethod) && pageable != null) sql = sql + SqlCompute.pageable(pageable);
+        if(SqlComputes.isPageReturn(sqlMethod) && pageable != null) sql = sql + SqlComputes.pageable(pageable);
         return sqlFormatter.format(sql , params);
     }
 

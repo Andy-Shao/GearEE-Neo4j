@@ -12,6 +12,7 @@ import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.mapper.NoParamCanMatchException;
 import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
+import com.github.andyshao.neo4j.mapper.SqlComputes;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.neo4j.model.MethodKey;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
@@ -72,7 +73,7 @@ public class ClipSqlCompute implements SqlCompute {
             for(Object value : values) {
                 if(argType.isAssignableFrom(value.getClass())) {
                     String originSql = MethodOperation.invoked(clips , clipMethod , value).toString();
-                    if(SqlCompute.isPageReturn(sqlMethod) && pageable != null) originSql = originSql + SqlCompute.pageable(pageable);
+                    if(SqlComputes.isPageReturn(sqlMethod) && pageable != null) originSql = originSql + SqlComputes.pageable(pageable);
                     return sqlFormatter.format(originSql , params);
                 }
             }
@@ -104,7 +105,7 @@ public class ClipSqlCompute implements SqlCompute {
                     param.value(), clipMethod.getDeclaringClass().getName(), clipMethod.getName()));
             }
             String originSql = MethodOperation.invoked(clips, clipMethod, clipValues).toString();
-            if(SqlCompute.isPageReturn(sqlMethod) && pageable != null) originSql = originSql + SqlCompute.pageable(pageable);
+            if(SqlComputes.isPageReturn(sqlMethod) && pageable != null) originSql = originSql + SqlComputes.pageable(pageable);
             return sqlFormatter.format(originSql , params);
         }
     }
