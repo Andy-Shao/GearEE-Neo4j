@@ -17,5 +17,5 @@ import com.github.andyshao.neo4j.model.SqlMethod;
  *
  */
 public interface DeSerializer {
-    CompletionStage<?> serialize(StatementResultCursor src, SqlMethod sqlMethod) throws NotSupportConvertException;
+    CompletionStage<?> deSerialize(StatementResultCursor src, SqlMethod sqlMethod) throws NotSupportConvertException;
 }

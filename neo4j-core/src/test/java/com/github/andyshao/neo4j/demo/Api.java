@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.demo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * 
@@ -14,7 +15,9 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @SuppressWarnings("serial")
-@EqualsAndHashCode(callSuper = true, exclude = "others")
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class  Api extends ApiKey {
+    @EqualsAndHashCode.Exclude
     private String others;
 }

@@ -1,6 +1,7 @@
 package com.github.andyshao.neo4j.demo.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -113,6 +114,18 @@ public class DefaultApiDao implements ApiDao{
                 return record.get(0).isNull() ? Optional.empty() : Optional.of(record.get(0).asLong());
             });
         });
+    }
+
+    @Override
+    public CompletionStage<Void> removeByPk(ApiKey pk , Transaction tx) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public CompletionStage<List<Api>> findSameSystem(String systemAlias , Transaction tx) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

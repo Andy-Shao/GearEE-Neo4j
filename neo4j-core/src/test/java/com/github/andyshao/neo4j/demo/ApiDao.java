@@ -1,5 +1,6 @@
 package com.github.andyshao.neo4j.demo;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -29,6 +30,12 @@ public interface ApiDao {
     
     @Create(sql = "MERGE (n:Api {n.systemAlias:$api.systemAlias, n.apiName:$api.apiName}) SET n.others=$api.others RETURN n")
     CompletionStage<Optional<Api>> updateByPk(@Param("api")Api api,@Param("tx") Transaction tx);
+    
+    @Match(sql = "MATCH (n:Api {systemAlias:$pk.systemAlias, apiName:$pk.apiName}) DETACH DELETE n")
+    CompletionStage<Void> removeByPk(@Param("pk")ApiKey pk, @Param("tx")Transaction tx);
+    
+    @Match(sql = "MATCH (n:Api {systemAlias:$sys}) RETURN n")
+    CompletionStage<List<Api>> findSameSystem(@Param("sys")String systemAlias, @Param("tx")Transaction tx);
     
     default CompletionStage<Optional<Api>> saveOrUpdate(@Param("api")Api api, @Param("tx") Transaction tx){
         return findByPk(api , tx).thenComposeAsync(op -> {
