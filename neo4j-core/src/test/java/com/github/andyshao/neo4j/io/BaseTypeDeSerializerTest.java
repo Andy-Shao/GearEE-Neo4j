@@ -35,6 +35,7 @@ public class BaseTypeDeSerializerTest {
         System.out.println(join.get());
         System.out.println(commitAsync);
         session.close();
+        driver.close();
     }
     
     public CompletionStage<Optional<Integer>> types(){

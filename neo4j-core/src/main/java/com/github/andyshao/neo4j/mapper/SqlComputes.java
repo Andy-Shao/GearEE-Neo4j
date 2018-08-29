@@ -20,6 +20,8 @@ public final class SqlComputes {
     public static <T> String pageable(Pageable<T> page) {
         StringBuilder query = new StringBuilder();
         int position = (page.getPageNum() - 1) * page.getPageSize();
+        query.append(", ").append(page.getPageNum()).append(" AS pageNum");
+        query.append(", ").append(page.getPageSize()).append(" AS pageSize");
         if(position == 0) query.append(" LIMIT ").append(page.getPageSize());
         else {
             int skip = position - 1;

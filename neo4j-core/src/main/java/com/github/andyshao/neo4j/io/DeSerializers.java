@@ -1,5 +1,6 @@
 package com.github.andyshao.neo4j.io;
 
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,11 +11,15 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import org.neo4j.driver.v1.Value;
+import org.neo4j.driver.v1.types.Entity;
 import org.neo4j.driver.v1.types.IsoDuration;
 
+import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.model.SqlMethod;
+import com.github.andyshao.reflect.ConstructorOperation;
 import com.github.andyshao.reflect.GenericNode;
+import com.github.andyshao.reflect.MethodOperation;
 import com.github.andyshao.time.LocalDateTimeOperation;
 
 /**
@@ -61,7 +66,7 @@ public final class DeSerializers {
         return null;
     }
 
-    public static boolean isBaseType(Class<?> declareType) {
+    public static final boolean isBaseType(Class<?> declareType) {
         if(declareType.isAssignableFrom(Integer.class)) return true;
         if(declareType.isAssignableFrom(Short.class)) return true;
         if(declareType.isAssignableFrom(Character.class)) return true;
@@ -90,5 +95,20 @@ public final class DeSerializers {
         tmp = tmp.getComponentTypes().get(0);
         declareType = tmp.getDeclareType();
         return declareType;
+    }
+
+    public static final Object formatJavaBean(Class<?> returnType , List<Method> setMethods , Value va) {
+        if(va.isNull()) return null;
+        Entity entity = va.asEntity();
+        if(entity.size() == 0) return null;
+        Object tmp = ConstructorOperation.newInstance(returnType);
+        for(Method setMethod : setMethods) {
+            String key = setMethod.getName();
+            key = StringOperation.replaceFirst(key , "set" , "");
+            key = key.substring(0 , 1).toLowerCase() + key.substring(1);
+            Object value = formatValue(String.class , entity.get(key));
+            if(value != null) MethodOperation.invoked(tmp , setMethod , value);
+        }
+        return tmp;
     }
 }

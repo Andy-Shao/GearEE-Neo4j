@@ -1,7 +1,7 @@
 package com.github.andyshao.neo4j.io;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import org.neo4j.driver.v1.AuthTokens;
@@ -14,29 +14,31 @@ import com.github.andyshao.neo4j.demo.Api;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.MethodOperation;
 
-public class JavaBeanDeSerilizerTest {
+public class ListDeSerializerTest {
     public static void main(String[] args) {
         Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
         Session session = driver.session();
         Transaction tx = session.beginTransaction();
-        JavaBeanDeSerializer ds = new JavaBeanDeSerializer(new DefaultDeSerializer());
-        Object obj = tx.runAsync("MATCH (n:Api) RETURN n LIMIT 1").thenComposeAsync(src -> {
+        ListDeSerializer ds = new ListDeSerializer(new DefaultDeSerializer());
+        Object obj = tx.runAsync("MATCH (n:Api) RETURN n").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
-            Method declaredMethod = MethodOperation.getDeclaredMethod(JavaBeanDeSerilizerTest.class , "types");
+            Method declaredMethod = MethodOperation.getDeclaredMethod(ListDeSerializerTest.class , "types");
             sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(declaredMethod));
             sqlMethod.setDefinition(declaredMethod);
             return ds.deSerialize(src , sqlMethod);
         });
         @SuppressWarnings("unchecked")
-        CompletionStage<Optional<Api>> ret = (CompletionStage<Optional<Api>>) obj;
-        Optional<Api> op = ret.toCompletableFuture().join();
+        CompletionStage<List<Api>> ret = (CompletionStage<List<Api>>) obj;
+        List<Api> op = ret.toCompletableFuture().join();
         System.out.println(op);
+        
         tx.commitAsync();
         session.closeAsync();
         driver.close();
     }
     
-    public CompletionStage<Optional<Api>> types(){
+    
+    public CompletionStage<List<Api>> types(){
        return null;
     }
 }

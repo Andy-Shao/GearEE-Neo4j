@@ -6,10 +6,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 import org.neo4j.driver.v1.StatementResultCursor;
-import org.neo4j.driver.v1.types.Entity;
 
 import com.github.andyshao.lang.NotSupportConvertException;
-import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.ConstructorOperation;
 import com.github.andyshao.reflect.GenericNode;
@@ -40,19 +38,10 @@ public class JavaBeanDeSerializer implements DeSerializer{
         Class<?> returnType = DeSerializers.getReturnType(sqlMethod);
         List<Method> setMethods = MethodOperation.getSetMethods(returnType);
         return src.singleAsync().thenApplyAsync(record -> {
-            Object tmp = ConstructorOperation.newInstance(returnType);
-            for(Method setMethod : setMethods) {
-                String key = setMethod.getName();
-                key = StringOperation.replaceFirst(key , "set" , "");
-                key = key.substring(0 , 1).toLowerCase() + key.substring(1);
-                Entity entity = record.get(0).asEntity();
-                Object value = DeSerializers.formatValue(String.class , entity.get(key));
-                if(value != null) MethodOperation.invoked(tmp , setMethod , value);
-            }
-            return Optional.of(tmp);
+            return Optional.ofNullable(DeSerializers.formatJavaBean(returnType , setMethods , record.get(0)));
         });
     }
-    
+
     static final boolean shouldProcess(SqlMethod sqlMethod) {
         GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
         if(returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
