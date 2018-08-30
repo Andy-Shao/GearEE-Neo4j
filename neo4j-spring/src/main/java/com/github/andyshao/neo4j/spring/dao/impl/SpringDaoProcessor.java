@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.spring.dao.impl;
 
 import com.github.andyshao.neo4j.dao.DaoProcessor;
 import com.github.andyshao.neo4j.dao.DaoProcessorParam;
+import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 
 /**
  * 
@@ -15,7 +16,7 @@ import com.github.andyshao.neo4j.dao.DaoProcessorParam;
 public class SpringDaoProcessor implements DaoProcessor {
 
     @Override
-    public <T> T process(DaoProcessorParam param) {
+    public <T> T process(DaoProcessorParam param , Neo4jDaoInfo neo4jDaoInfo) {
         // TODO Auto-generated method stub
         return null;
     }
