@@ -3,6 +3,7 @@ package com.github.andyshao.neo4j.spring.dao.impl;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.andyshao.neo4j.dao.DaoProcessor;
@@ -32,7 +33,7 @@ public class SimpleDataFactoryTest {
     }
     
     @Test
-//    @Ignore
+    @Ignore
     public void test() {
         this.daoFactory.buildDao(this.scan.get("ApiDao"));
     }
