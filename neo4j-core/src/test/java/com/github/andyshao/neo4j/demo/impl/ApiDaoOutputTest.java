@@ -99,7 +99,7 @@ public class ApiDaoOutputTest {
         AnnotationSupportDeSerializer deSerializer = new AnnotationSupportDeSerializer();
         deSerializer.setNext(voidDeSerializer);
         
-        this.daoProcessor = new SimpleDaoProcessor(neo4jDaoInfo , sqlCompute , deSerializer); 
-        this.apiDao = new ApiDaoOutput(daoProcessor);
+        this.daoProcessor = new SimpleDaoProcessor(sqlCompute , deSerializer); 
+        this.apiDao = new ApiDaoOutput(daoProcessor, neo4jDaoInfo);
     }
 }

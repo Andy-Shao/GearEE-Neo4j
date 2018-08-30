@@ -1,5 +1,7 @@
 package com.github.andyshao.neo4j.dao;
 
+import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
+
 /**
  * 
  * Title:<br>
@@ -10,5 +12,5 @@ package com.github.andyshao.neo4j.dao;
  *
  */
 public interface DaoProcessor {
-    <T> T process(DaoProcessorParam param);
+    <T> T process(DaoProcessorParam param, Neo4jDaoInfo neo4jDaoInfo);
 }

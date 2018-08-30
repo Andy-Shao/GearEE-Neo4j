@@ -3,7 +3,6 @@ package com.github.andyshao.neo4j.spring.dao.impl;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.andyshao.neo4j.dao.DaoProcessor;
@@ -13,7 +12,7 @@ import com.github.andyshao.neo4j.demo.ApiDao;
 import com.github.andyshao.neo4j.mapper.impl.PackageMapperScanner;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 
-public class SpringDataDaoFactoryTest {
+public class SimpleDataFactoryTest {
     private volatile SimpleDaoFactory daoFactory;
     private volatile Map<String , Neo4jDaoInfo> scan;
     
@@ -23,8 +22,7 @@ public class SpringDataDaoFactoryTest {
         this.daoFactory.setDaoProcessor(new DaoProcessor() {
 
             @Override
-            public <T> T process(DaoProcessorParam param) {
-                // TODO Auto-generated method stub
+            public <T> T process(DaoProcessorParam param , Neo4jDaoInfo neo4jDaoInfo) {
                 return null;
             }
         });
@@ -34,8 +32,8 @@ public class SpringDataDaoFactoryTest {
     }
     
     @Test
-    @Ignore
+//    @Ignore
     public void test() {
-        this.daoFactory.getDao(this.scan.get("ApiSearchDao"));
+        this.daoFactory.buildDao(this.scan.get("ApiDao"));
     }
 }

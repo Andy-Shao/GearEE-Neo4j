@@ -27,12 +27,11 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class SimpleDaoProcessor implements DaoProcessor{
-    private final Neo4jDaoInfo neo4jDaoInfo;
     private final SqlCompute sqlCompute;
     private final DeSerializer deSerializer;
 
     @SuppressWarnings("unchecked")
-    public <T> T process(DaoProcessorParam param) {
+    public <T> T process(DaoProcessorParam param, Neo4jDaoInfo neo4jDaoInfo) {
         MethodKey methodKey = new MethodKey();
         methodKey.setMethodName(param.getMethodName());
         methodKey.setParameTypes(param.getArgTypes());
@@ -40,7 +39,6 @@ public class SimpleDaoProcessor implements DaoProcessor{
         Optional<Sql> query = sqlCompute.compute(sqlMethod.getDefinition() , neo4jDaoInfo , param.getArgs());
         if(!query.isPresent()) throw new Neo4jException("No Query find out");
         Sql sql = query.get();
-        System.out.println(sql);
         Transaction tx = null;
         for(Object arg : param.getArgs()) {
             if(arg instanceof Transaction) tx = (Transaction) arg;
