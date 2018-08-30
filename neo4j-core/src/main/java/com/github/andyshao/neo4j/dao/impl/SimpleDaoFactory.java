@@ -54,10 +54,8 @@ public class SimpleDaoFactory implements DaoFactory {
             classSignature = csig.classSignature + String.format("L%s;" , daoDesc);
         }
         final ClassWriter cw = new ClassWriter(0);
-//        cw.visit(Opcodes.V1_8 , Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER , classDesc , classSignature , "java/lang/Object" , 
-//            new String[] {daoDesc});
         cw.visit(Opcodes.V1_8 , Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER , classDesc , classSignature , "java/lang/Object" , 
-            new String[] {});
+            new String[] {daoDesc});
         { // Field definition
             FieldVisitor fv = cw.visitField(Opcodes.ACC_PRIVATE + Opcodes.ACC_FINAL , DAO_PROCESS_NAME , DAO_PROCESS_DESC , null , null);
             fv.visitEnd();
