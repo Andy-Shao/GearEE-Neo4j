@@ -20,7 +20,8 @@ public class BaseTypeDeSerializerTest {
         Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
         Session session = driver.session();
         Transaction tx = session.beginTransaction();
-        BaseTypeDeSerializer ds = new BaseTypeDeSerializer(new DefaultDeSerializer());
+        BaseTypeDeSerializer ds = new BaseTypeDeSerializer();
+        ds.setNext(new DefaultDeSerializer());
         Object find = tx.runAsync("MATCH (n:Api) RETURN count(n)").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
             sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(MethodOperation.getDeclaredMethod(BaseTypeDeSerializerTest.class , "types")));

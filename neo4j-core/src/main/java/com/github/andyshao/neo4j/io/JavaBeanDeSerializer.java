@@ -13,7 +13,7 @@ import com.github.andyshao.reflect.ConstructorOperation;
 import com.github.andyshao.reflect.GenericNode;
 import com.github.andyshao.reflect.MethodOperation;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * 
@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
  * @author Andy.Shao
  *
  */
-@RequiredArgsConstructor
 public class JavaBeanDeSerializer implements DeSerializer{
-    private final DeSerializer next;
+    @Setter
+    private DeSerializer next;
 
     @Override
     public CompletionStage<?> deSerialize(StatementResultCursor src , SqlMethod sqlMethod) throws NotSupportConvertException {

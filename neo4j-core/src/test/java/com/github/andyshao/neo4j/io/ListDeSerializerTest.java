@@ -19,7 +19,8 @@ public class ListDeSerializerTest {
         Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
         Session session = driver.session();
         Transaction tx = session.beginTransaction();
-        ListDeSerializer ds = new ListDeSerializer(new DefaultDeSerializer());
+        ListDeSerializer ds = new ListDeSerializer();
+        ds.setNext(new DefaultDeSerializer());
         Object obj = tx.runAsync("MATCH (n:Api) RETURN n").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
             Method declaredMethod = MethodOperation.getDeclaredMethod(ListDeSerializerTest.class , "types");

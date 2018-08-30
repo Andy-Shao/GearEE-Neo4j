@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.Sql;
 import com.github.andyshao.neo4j.mapper.SqlFormatter;
 import com.github.andyshao.reflect.FieldOperation;
@@ -32,8 +33,11 @@ public class MultiParamSqlFormatter implements SqlFormatter {
         Sql sql = new Sql(query);
         for(String it : replacements) {
             List<String> keys = SqlFormatter.analysisReplacement(it);
-            sql.getParameters().put(it.substring(1) , caculatePadding(params.get(keys.get(0)) , keys , 0));
+            String queryKey = it.replace('.' , '_');
+            query = StringOperation.replaceAll(query , it , queryKey);
+            sql.getParameters().put(queryKey.substring(1) , caculatePadding(params.get(keys.get(0)) , keys , 0));
         }
+        sql.setSql(query);
         return Optional.of(sql);
     }
 

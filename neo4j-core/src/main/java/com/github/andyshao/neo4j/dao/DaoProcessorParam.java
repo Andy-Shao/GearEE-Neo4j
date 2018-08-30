@@ -16,9 +16,7 @@ import lombok.Data;
 @Data
 @SuppressWarnings("serial")
 public class DaoProcessorParam implements Serializable{
-    private Class<?> targetClass;
     private String methodName;
     private Class<?>[] argTypes;
-    private String daoName;
     private Object[] args;
 }

@@ -14,7 +14,7 @@ import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.GenericNode;
 import com.github.andyshao.reflect.MethodOperation;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * 
@@ -25,9 +25,9 @@ import lombok.RequiredArgsConstructor;
  * @author Andy.Shao
  *
  */
-@RequiredArgsConstructor
 public class PageReturnDeSerializer implements DeSerializer {
-    private final DeSerializer next;
+    @Setter
+    private DeSerializer next;
 
     @Override
     public CompletionStage<?> deSerialize(StatementResultCursor src , SqlMethod sqlMethod) throws NotSupportConvertException {

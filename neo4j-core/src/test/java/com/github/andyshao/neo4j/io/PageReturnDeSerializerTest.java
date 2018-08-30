@@ -20,7 +20,8 @@ public class PageReturnDeSerializerTest {
         Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
         Session session = driver.session();
         Transaction tx = session.beginTransaction();
-        PageReturnDeSerializer ds = new PageReturnDeSerializer(new DefaultDeSerializer());
+        PageReturnDeSerializer ds = new PageReturnDeSerializer();
+        ds.setNext(new DefaultDeSerializer());
         Object obj = tx.runAsync("MATCH (n:Api) RETURN n, 0 AS pageNum, 10 AS pageSize").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
             Method declaredMethod = MethodOperation.getDeclaredMethod(PageReturnDeSerializerTest.class , "types", Pageable.class);

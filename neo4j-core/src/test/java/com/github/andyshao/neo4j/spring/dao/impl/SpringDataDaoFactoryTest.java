@@ -1,9 +1,6 @@
 package com.github.andyshao.neo4j.spring.dao.impl;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,7 +12,6 @@ import com.github.andyshao.neo4j.dao.impl.SimpleDaoFactory;
 import com.github.andyshao.neo4j.demo.ApiDao;
 import com.github.andyshao.neo4j.mapper.impl.PackageMapperScanner;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
-import com.github.andyshao.neo4j.model.PageReturn;
 
 public class SpringDataDaoFactoryTest {
     private volatile SimpleDaoFactory daoFactory;
@@ -27,25 +23,7 @@ public class SpringDataDaoFactoryTest {
         this.daoFactory.setDaoProcessor(new DaoProcessor() {
 
             @Override
-            public <T> CompletionStage<Optional<T>> execute(DaoProcessorParam param , Class<T> retType) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public CompletionStage<Void> execute(DaoProcessorParam param) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public <T> CompletionStage<PageReturn<T>> findByPage(DaoProcessorParam param , Class<T> retType) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public <T> CompletionStage<List<T>> multiRet(DaoProcessorParam param , Class<T> retType) {
+            public <T> T process(DaoProcessorParam param) {
                 // TODO Auto-generated method stub
                 return null;
             }
