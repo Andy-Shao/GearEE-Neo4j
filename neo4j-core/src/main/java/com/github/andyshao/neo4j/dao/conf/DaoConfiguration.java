@@ -1,7 +1,11 @@
 package com.github.andyshao.neo4j.dao.conf;
 
+import java.util.List;
+
+import com.github.andyshao.neo4j.dao.DaoContext;
 import com.github.andyshao.neo4j.dao.DaoFactory;
 import com.github.andyshao.neo4j.dao.DaoProcessor;
+import com.github.andyshao.neo4j.dao.impl.PackageScanDaoContext;
 import com.github.andyshao.neo4j.dao.impl.SimpleDaoFactory;
 import com.github.andyshao.neo4j.dao.impl.SimpleDaoProcessor;
 import com.github.andyshao.neo4j.io.AnnotationSupportDeSerializer;
@@ -65,5 +69,11 @@ public class DaoConfiguration {
         SimpleDaoFactory simpleDaoFactory = new SimpleDaoFactory();
         simpleDaoFactory.setDaoProcessor(daoProcessor);
         return simpleDaoFactory;
+    }
+    
+    public DaoContext daoContext(List<Package> pkg, DaoFactory daoFactory) {
+        PackageScanDaoContext packageScanDaoContext = new PackageScanDaoContext(pkg);
+        packageScanDaoContext.setDaoFactory(daoFactory);
+        return packageScanDaoContext;
     }
 }

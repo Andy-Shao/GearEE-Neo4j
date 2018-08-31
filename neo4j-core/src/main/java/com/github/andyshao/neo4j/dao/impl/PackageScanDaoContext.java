@@ -24,9 +24,11 @@ public class PackageScanDaoContext extends AbstractDaoContext {
         pkg.forEach(it -> {
             PackageMapperScanner scanner = new PackageMapperScanner();
             scanner.setPackagePath(it);
-            cacheByName.putAll(scanner.scan());
+            scanner.scan().forEach((k,v) -> {
+                cacheByName.put(k , v);
+                cacheByClass.put(v.getDaoClass() , v);
+            });
         });
-        cacheByClass.forEach((k,v) -> cacheByClass.put(v.getDaoClass() , v));
     }
 
     @Override
