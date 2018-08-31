@@ -49,7 +49,7 @@ public class Neo4jConf implements ImportAware{
     
     @Bean(destroyMethod = "close")
     @ConditionalOnBean(Driver.class)
-    public Driver neo4jDriver(AuthToken authToken, Config conf) {
+    public Driver neo4jDriver(@Autowired AuthToken authToken, @Autowired Config conf) {
         return GraphDatabase.driver(pros.getUrl() , authToken, conf);
     }
     
@@ -68,19 +68,19 @@ public class Neo4jConf implements ImportAware{
 
     @Bean
     @ConditionalOnBean(DaoContext.class)
-    public DaoContext neo4jDaoContext(DaoFactory daoFactory) {
+    public DaoContext neo4jDaoContext(@Autowired DaoFactory daoFactory) {
         return this.dc.daoContext(pkgs , daoFactory);
     }
 
     @Bean
     @ConditionalOnBean(DaoFactory.class)
-    public DaoFactory neo4jDaoFactory(DaoProcessor daoProcessor) {
+    public DaoFactory neo4jDaoFactory(@Autowired DaoProcessor daoProcessor) {
         return this.dc.daoFactory(daoProcessor);
     }
 
     @Bean
     @ConditionalOnBean(DaoProcessor.class)
-    public DaoProcessor neo4jDaoProcessor(SqlCompute sqlCompute , DeSerializer deSerializer) {
+    public DaoProcessor neo4jDaoProcessor(@Autowired SqlCompute sqlCompute , @Autowired DeSerializer deSerializer) {
         return this.dc.daoProcessor(sqlCompute , deSerializer);
     }
 
