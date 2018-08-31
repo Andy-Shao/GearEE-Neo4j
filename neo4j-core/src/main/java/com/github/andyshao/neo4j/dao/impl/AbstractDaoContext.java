@@ -20,7 +20,7 @@ import lombok.Setter;
  */
 public abstract class AbstractDaoContext implements DaoContext {
     @Setter
-    private DaoFactory daoFactory;
+    protected DaoFactory daoFactory;
     private final ConcurrentMap<Neo4jDaoInfo , Object> daoCache = new ConcurrentHashMap<>();
     protected abstract Neo4jDaoInfo findByName(String daoName);
     protected abstract Neo4jDaoInfo findByClass(Class<?> clazz);
@@ -41,5 +41,4 @@ public abstract class AbstractDaoContext implements DaoContext {
         
         return (T) daoCache.computeIfAbsent(neo4jDaoInfo , key -> daoFactory.buildDao(key));
     }
-
 }

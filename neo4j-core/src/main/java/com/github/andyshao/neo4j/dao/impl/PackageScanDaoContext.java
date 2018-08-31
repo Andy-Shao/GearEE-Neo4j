@@ -41,4 +41,12 @@ public class PackageScanDaoContext extends AbstractDaoContext {
         return cacheByClass.get(clazz);
     }
 
+    @Override
+    public Map<String, Object> getDaos() {
+        Map<String, Object> daos = new HashMap<>();
+        cacheByName.keySet()
+            .stream().forEach(key -> daos.put(key , this.getDao(key)));
+        return daos;
+    }
+
 }

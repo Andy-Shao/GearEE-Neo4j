@@ -1,5 +1,7 @@
 package com.github.andyshao.neo4j.dao;
 
+import java.util.Map;
+
 /**
  * 
  * Title:<br>
@@ -12,4 +14,5 @@ package com.github.andyshao.neo4j.dao;
 public interface DaoContext {
     Object getDao(String daoName);
     <T> T getDao(Class<T> clazz);
+    Map<String, Object> getDaos();
 }

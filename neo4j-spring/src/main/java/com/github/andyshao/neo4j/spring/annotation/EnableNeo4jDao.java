@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.github.andyshao.neo4j.spring.conf.Neo4jAutoCreateDaoConf;
 import com.github.andyshao.neo4j.spring.conf.Neo4jConf;
 
 /**
@@ -24,7 +25,7 @@ import com.github.andyshao.neo4j.spring.conf.Neo4jConf;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(Neo4jConf.class)
+@Import({Neo4jConf.class, Neo4jAutoCreateDaoConf.class})
 public @interface EnableNeo4jDao {
     Class<?>[] packageClasses();
 }

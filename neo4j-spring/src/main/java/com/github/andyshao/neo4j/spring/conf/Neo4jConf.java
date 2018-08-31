@@ -12,7 +12,7 @@ import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,57 +41,59 @@ import com.github.andyshao.neo4j.spring.conf.Neo4jPros.AuthTokenInfo;
  */
 @Configuration
 @EnableConfigurationProperties(Neo4jPros.class)
-public class Neo4jConf implements ImportAware{
+public class Neo4jConf implements ImportAware {
     private final DaoConfiguration dc = new DaoConfiguration();
     private List<Package> pkgs = new ArrayList<>();
     @Autowired
     private Neo4jPros pros;
-    
-    @Bean(destroyMethod = "close")
-    @ConditionalOnBean(Driver.class)
-    public Driver neo4jDriver(@Autowired AuthToken authToken, @Autowired Config conf) {
-        return GraphDatabase.driver(pros.getUrl() , authToken, conf);
-    }
-    
+
     @Bean
-    @ConditionalOnBean(Config.class)
+    @ConditionalOnMissingBean(AuthToken.class)
+    public AuthToken neo4jAuthToken() {
+        AuthTokenInfo info = new AuthTokenInfo();
+        info.setUsername("neo4j");
+        info.setPassword("1303595");
+        return AuthTokens.basic(info.getUsername() , info.getPassword() , info.getRealm());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(Config.class)
     public Config neo4jConfig() {
         return Config.defaultConfig();
     }
-    
-    @Bean
-    @ConditionalOnBean(AuthToken.class)
-    public AuthToken neo4jAuthToken() {
-        AuthTokenInfo info = pros.getAuthToken();
-        return AuthTokens.basic(info.getUsername() , info.getPassword(), info.getRealm());
-    }
 
     @Bean
-    @ConditionalOnBean(DaoContext.class)
+    @ConditionalOnMissingBean(DaoContext.class)
     public DaoContext neo4jDaoContext(@Autowired DaoFactory daoFactory) {
-        return this.dc.daoContext(pkgs , daoFactory);
+        return this.dc.daoContext(this.pkgs , daoFactory);
     }
 
     @Bean
-    @ConditionalOnBean(DaoFactory.class)
+    @ConditionalOnMissingBean(DaoFactory.class)
     public DaoFactory neo4jDaoFactory(@Autowired DaoProcessor daoProcessor) {
         return this.dc.daoFactory(daoProcessor);
     }
 
     @Bean
-    @ConditionalOnBean(DaoProcessor.class)
+    @ConditionalOnMissingBean(DaoProcessor.class)
     public DaoProcessor neo4jDaoProcessor(@Autowired SqlCompute sqlCompute , @Autowired DeSerializer deSerializer) {
         return this.dc.daoProcessor(sqlCompute , deSerializer);
     }
 
     @Bean
-    @ConditionalOnBean(DeSerializer.class)
+    @ConditionalOnMissingBean(DeSerializer.class)
     public DeSerializer neo4jDeSerializer() {
         return this.dc.deSerializer();
     }
 
+    @Bean(destroyMethod = "close")
+    @ConditionalOnMissingBean(Driver.class)
+    public Driver neo4jDriver(@Autowired AuthToken authToken , @Autowired Config conf) {
+        return GraphDatabase.driver("bolt://localhost:7687" , authToken , conf);
+    }
+
     @Bean
-    @ConditionalOnBean(SqlCompute.class)
+    @ConditionalOnMissingBean(SqlCompute.class)
     public SqlCompute neo4jSqlCompute() {
         return this.dc.sqlCompute();
     }
@@ -102,7 +104,8 @@ public class Neo4jConf implements ImportAware{
         AnnotationAttributes enableAttrs = AnnotationAttributes.fromMap(enableAttrMap);
         Class<?>[] packageClasses = enableAttrs.getClassArray("packageClasses");
         Set<Package> tmp = new HashSet<>();
-        for(Class<?> pkgClazz : packageClasses) tmp.add(pkgClazz.getPackage());
-        pkgs = new ArrayList<>(tmp);
+        for (Class<?> pkgClazz : packageClasses)
+            tmp.add(pkgClazz.getPackage());
+        this.pkgs = new ArrayList<>(tmp);
     }
 }
