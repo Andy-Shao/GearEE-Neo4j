@@ -123,7 +123,7 @@ public class SimpleDaoFactory implements DaoFactory {
                     else if(i == 4) mv.visitInsn(Opcodes.ICONST_4);
                     else if(i == 5) mv.visitInsn(Opcodes.ICONST_5);
                     else mv.visitIntInsn(Opcodes.BIPUSH , i);
-                    mv.visitVarInsn(Opcodes.ALOAD , i);
+                    mv.visitVarInsn(Opcodes.ALOAD , i+1);
                     mv.visitInsn(Opcodes.AASTORE);
                 }
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL , DAO_PROCESS_PARAM_NAME , "setArgs" , "([Ljava/lang/Object;)V", false);
