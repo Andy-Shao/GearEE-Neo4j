@@ -1,8 +1,10 @@
 package com.github.andyshao.neo4j.spring.conf;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -13,15 +15,22 @@ import lombok.Data;
  * @author Andy.Shao
  *
  */
-@Data
-@ConfigurationProperties(prefix = "gear.neo4j")
+@Getter
+@Builder
 public class Neo4jPros {
+    @Builder.Default
     private String url = "bolt://localhost:7687";
+    @Builder.Default
     private AuthTokenInfo authToken = new AuthTokenInfo();
     
-    @Data
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AuthTokenInfo {
+        @Builder.Default
         private String username = "neo4j";
+        @Builder.Default
         private String password = "neo4j";
         private String realm;
     }
