@@ -10,10 +10,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
+import org.neo4j.driver.internal.value.BooleanValue;
+import org.neo4j.driver.internal.value.FloatValue;
+import org.neo4j.driver.internal.value.IntegerValue;
+import org.neo4j.driver.internal.value.StringValue;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.types.Entity;
 import org.neo4j.driver.v1.types.IsoDuration;
 
+import com.github.andyshao.lang.NotSupportConvertException;
 import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.mapper.IllegalConfigException;
 import com.github.andyshao.neo4j.model.SqlMethod;
@@ -62,8 +67,16 @@ public final class DeSerializers {
         if(clazz.isAssignableFrom(IsoDuration.class)) return value.asIsoDuration();
         if(clazz.isAssignableFrom(ZonedDateTime.class)) return value.asZonedDateTime();
         if(clazz.isAssignableFrom(Date.class)) return LocalDateTimeOperation.toDate().convert(value.asLocalDateTime());
-        if(clazz.isAssignableFrom(String.class)) return value.asString();
-        return null;
+        if(clazz.isAssignableFrom(String.class)) return formatToString(value);
+        throw new NotSupportConvertException();
+    }
+    
+    public static final String formatToString(Value value) {
+        if(value instanceof StringValue) return value.asString();
+        else if(value instanceof IntegerValue) return String.valueOf(value.asInt());
+        else if(value instanceof FloatValue) return String.valueOf(value.asFloat());
+        else if(value instanceof BooleanValue) return String.valueOf(value.asBoolean());
+        throw new NotSupportConvertException();
     }
 
     public static final boolean isBaseType(Class<?> declareType) {
@@ -106,7 +119,7 @@ public final class DeSerializers {
             String key = setMethod.getName();
             key = StringOperation.replaceFirst(key , "set" , "");
             key = key.substring(0 , 1).toLowerCase() + key.substring(1);
-            Object value = formatValue(String.class , entity.get(key));
+            Object value = formatValue(setMethod.getParameterTypes()[0] , entity.get(key));
             if(value != null) MethodOperation.invoked(tmp , setMethod , value);
         }
         return tmp;
