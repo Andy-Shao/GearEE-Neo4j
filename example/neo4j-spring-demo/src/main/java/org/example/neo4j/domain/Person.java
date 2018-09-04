@@ -1,4 +1,4 @@
-package org.example.neo4j;
+package org.example.neo4j.domain;
 
 import lombok.Data;
 

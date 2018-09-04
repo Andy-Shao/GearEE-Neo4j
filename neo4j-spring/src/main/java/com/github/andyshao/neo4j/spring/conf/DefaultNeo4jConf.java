@@ -56,7 +56,6 @@ public abstract class DefaultNeo4jConf implements ImportAware {
     @Bean
     @ConditionalOnMissingBean
     public DaoContext neo4jDaoContext(@Autowired DaoFactory daoFactory) {
-        System.out.println(String.format("pkgs is %s" , scannerPackages()));
         return this.dc.daoContext(scannerPackages() , daoFactory);
     }
     

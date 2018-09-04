@@ -37,7 +37,8 @@ public class JavaBeanDeSerializer implements DeSerializer{
         if(annotation != null) return ConstructorOperation.newInstance(annotation.value()).deSerialize(src , sqlMethod);
         Class<?> returnType = DeSerializers.getReturnType(sqlMethod);
         List<Method> setMethods = MethodOperation.getSetMethods(returnType);
-        return src.singleAsync().thenApplyAsync(record -> {
+        return src.nextAsync().thenApplyAsync(record -> {
+            if(record == null) return Optional.empty();
             return Optional.ofNullable(DeSerializers.formatJavaBean(returnType , setMethods , record.get(0)));
         });
     }
