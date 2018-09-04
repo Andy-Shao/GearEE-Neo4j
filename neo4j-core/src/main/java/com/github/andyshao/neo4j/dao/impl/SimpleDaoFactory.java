@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.dao.impl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -86,6 +87,9 @@ public class SimpleDaoFactory implements DaoFactory {
         
         { // interface methods
             for(Method method : daoClass.getMethods()) {
+                int modifiers = method.getModifiers();
+                if(Modifier.isStatic(modifiers)) continue;
+                else if(method.isDefault()) continue;
                 Class<?>[] exceptions = method.getExceptionTypes();
                 String[] exceptionDescriptions = new String[exceptions.length];
                 for(int i=0; i<exceptionDescriptions.length; i++) {

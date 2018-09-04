@@ -2,13 +2,14 @@ package org.example.neo4j.dao;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 import org.example.neo4j.Neo4jTestApplication;
-import org.example.neo4j.Person;
+import org.example.neo4j.domain.Person;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.neo4j.driver.v1.Driver;
@@ -20,6 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.andyshao.neo4j.dao.DaoContext;
+import com.github.andyshao.neo4j.model.PageReturn;
+import com.github.andyshao.neo4j.model.Pageable;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -33,7 +36,7 @@ public class PersonDaoTest {
     private PersonDao personDao;
     
     @Test
-    public void test() {
+    public void testFindByName() {
         System.out.println("Starting...");
         PersonDao personDao = daoContext.getDao(PersonDao.class);
         assertTrue(personDao != null);
@@ -50,5 +53,65 @@ public class PersonDaoTest {
         Optional<Person> op = findByName.toCompletableFuture().join();
         if(op.isPresent()) System.out.println(op.get());
         System.out.println("END!!");
+    }
+    
+    @Test
+    public void testRemoveByName() {
+        final Transaction tx = this.driver.session().beginTransaction();
+        CompletionStage<Void> removeByName = this.personDao.removeByName("andy.shao" , tx);
+        removeByName.thenAcceptAsync(op -> tx.commitAsync());
+        removeByName.toCompletableFuture().join();
+    }
+    
+    @Test
+    public void testReplace() {
+        Transaction tx = this.driver.session().beginTransaction();
+        Person person = new Person();
+        person.setName("andy.shao");
+        person.setAge(28);
+        person.setPhone("13629439483");
+        this.personDao.replace(person , tx)
+            .thenApplyAsync(op -> tx.commitAsync())
+            .toCompletableFuture()
+            .join();
+    }
+    
+    @Test
+    public void testFindByPage() {
+        Transaction tx = this.driver.session().beginTransaction();
+        CompletionStage<PageReturn<Person>> findByPage = this.personDao.findByPage(new Pageable<>(), tx);
+        findByPage.thenAcceptAsync(pg -> tx.commitAsync());
+        PageReturn<Person> pg = findByPage.toCompletableFuture().join();
+        System.out.println(pg.getData());
+    }
+    
+    @Test
+    public void testFindByAge() {
+        Transaction tx = this.driver.session().beginTransaction();
+        CompletionStage<List<Person>> findByAge = this.personDao.findByAge(18 , tx);
+        findByAge.thenAcceptAsync(ls -> tx.commitAsync());
+        System.out.println(findByAge.toCompletableFuture().join());
+    }
+    
+    @Test
+    public void testUpdate() {
+        Transaction tx = this.driver.session().beginTransaction();
+        Person person = new Person();
+        person.setAge(30);
+        person.setName("andy.shao");
+        CompletionStage<Optional<Person>> update = this.personDao.updateSelectiveByPk(person , tx);
+        update.thenAcceptAsync(op -> tx.commitAsync()).toCompletableFuture().join();
+    }
+    
+    @Test
+    public void testTrySave() {
+        Transaction tx = this.driver.session().beginTransaction();
+        Person person = new Person();
+        person.setAge(19);
+        person.setName("andy.shao");
+        this.personDao.trySave(person , tx)
+            .thenAcceptAsync(op -> tx.commitAsync())
+            .toCompletableFuture()
+            .join();
     }
 }

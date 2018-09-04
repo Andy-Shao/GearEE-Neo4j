@@ -118,13 +118,11 @@ public class DefaultApiDao implements ApiDao{
 
     @Override
     public CompletionStage<Void> removeByPk(ApiKey pk , Transaction tx) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public CompletionStage<List<Api>> findSameSystem(String systemAlias , Transaction tx) {
-        // TODO Auto-generated method stub
         return null;
     }
 
