@@ -122,4 +122,12 @@ public class PersonDaoTest {
         mapAll.thenAcceptAsync(map -> tx.commitAsync());
         System.out.println(mapAll.toCompletableFuture().join());
     }
+    
+    @Test
+    public void testTotalSize() {
+        Transaction tx = this.driver.session().beginTransaction();
+        CompletionStage<Optional<Long>> totalSize = this.personDao.totalSize(tx);
+        totalSize.thenAcceptAsync(op -> tx.commitAsync());
+        System.out.println(totalSize.toCompletableFuture().join());
+    }
 }
