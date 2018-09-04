@@ -11,7 +11,6 @@ import org.neo4j.driver.v1.Transaction;
 import com.github.andyshao.neo4j.annotation.Create;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
-import com.github.andyshao.neo4j.annotation.SqlInject;
 import com.github.andyshao.neo4j.model.PageReturn;
 import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.reflect.annotation.Param;
@@ -36,7 +35,7 @@ public interface PersonDao {
     @Match(sql = "MATCH (n:Person) WHERE n.age > $age RETURN n")
     CompletionStage<List<Person>> findByAge(@Param("age")Integer age, @Param("tx") Transaction tx);
     
-    @Match(sqlInject = @SqlInject(sqlClipName = "updateSelectiveByPk"))
+    @Match
     CompletionStage<Optional<Person>> updateSelectiveByPk(@Param("person") Person person,@Param("tx") Transaction tx);
     
     default CompletionStage<Optional<Person>> trySave(Person person, Transaction tx){

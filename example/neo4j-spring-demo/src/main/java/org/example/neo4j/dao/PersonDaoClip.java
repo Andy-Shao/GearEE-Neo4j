@@ -7,7 +7,7 @@ import com.github.andyshao.neo4j.annotation.SqlClip;
 import com.github.andyshao.reflect.annotation.Param;
 
 public class PersonDaoClip {
-    @SqlClip(sqlClipName = "updateSelectiveByPk")
+    @SqlClip
     public String updateSelectiveByPk(@Param("p")Person person) {
         StringBuilder sb = new StringBuilder("MATCH (n:Person {name:$p.name})");
         sb.append(" SET n.name = $p.name");

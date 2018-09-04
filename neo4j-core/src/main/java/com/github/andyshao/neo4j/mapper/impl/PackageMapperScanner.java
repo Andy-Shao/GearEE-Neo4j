@@ -99,7 +99,7 @@ public class PackageMapperScanner implements MapperScanner{
                                 SqlClipMethod sqlClipMethod = new SqlClipMethod();
                                 sqlClipMethod.setDefinition(method);
                                 SqlClip sqlClip = method.getAnnotation(SqlClip.class);
-                                sqlClipMethod.setSqlClipName(sqlClip.sqlClipName());
+                                sqlClipMethod.setSqlClipName(sqlClip.sqlClipName().isEmpty() ? method.getName() : sqlClip.sqlClipName());
                                 
                                 String[] paramNames = ParameterOperation.getMethodParamNamesByReflect(method);
                                 Parameter[] parameters = method.getParameters();
@@ -128,25 +128,26 @@ public class PackageMapperScanner implements MapperScanner{
                             CreateMethod cm = new CreateMethod();
                             cm.setDefinition(method);
                             cm.setSql(create.sql());
-                            cm.setSqlClipMethod(sqlClipMethods.get(create.sqlInject().sqlClipName()));
+                            final String sqlClipName = create.sqlInject().sqlClipName();
+                            if(StringOperation.isTrimEmptyOrNull(create.sql())) {
+                                cm.setSqlClipMethod(sqlClipMethods.get(sqlClipName.isEmpty() ? method.getName() : sqlClipName));
+                            } else cm.setSqlClipMethod(sqlClipMethods.get(sqlClipName));
                             sqlMethod = cm;
-                            if(!StringOperation.isTrimEmptyOrNull(create.sql()) && !StringOperation.isTrimEmptyOrNull(create.sqlInject().sqlClipName()))
+                            if(!StringOperation.isTrimEmptyOrNull(create.sql()) && !StringOperation.isTrimEmptyOrNull(sqlClipName))
                                 throw new IllegalConfigException(String.format("Both of sql & sqlInject have value in %s#%s @Create configuration" , 
-                                    method.getDeclaringClass(), method.getName()));
-                            if(StringOperation.isTrimEmptyOrNull(create.sql()) && StringOperation.isTrimEmptyOrNull(create.sqlInject().sqlClipName()))
-                                throw new IllegalConfigException(String.format("One of sql & sqlInject should be configured in %s#%s @Create configuration" , 
                                     method.getDeclaringClass(), method.getName()));
                         } else {
                             MatchMethod mm = new MatchMethod();
                             mm.setDefinition(method);
                             mm.setSql(match.sql());
-                            mm.setSqlClipMethod(sqlClipMethods.get(match.sqlInject().sqlClipName()));
+                            String sqlClipName = match.sqlInject().sqlClipName();
+                            if(StringOperation.isTrimEmptyOrNull(match.sql())) {
+                                sqlClipName = sqlClipName.isEmpty() ? method.getName() : sqlClipName;
+                                mm.setSqlClipMethod(sqlClipMethods.get(sqlClipName));
+                            }else mm.setSqlClipMethod(sqlClipMethods.get(sqlClipName));
                             sqlMethod = mm;
-                            if(!StringOperation.isTrimEmptyOrNull(match.sql()) && !StringOperation.isTrimEmptyOrNull(match.sqlInject().sqlClipName()))
+                            if(!StringOperation.isTrimEmptyOrNull(match.sql()) && !StringOperation.isTrimEmptyOrNull(sqlClipName))
                                 throw new IllegalConfigException(String.format("Both of sql & sqlInject have value in %s#%s @Match configuration" , 
-                                    method.getDeclaringClass(), method.getName()));
-                            if(StringOperation.isTrimEmptyOrNull(match.sql()) && StringOperation.isTrimEmptyOrNull(match.sqlInject().sqlClipName()))
-                                throw new IllegalConfigException(String.format("One of sql & sqlInject should be configured in %s#%s @Match configuration" , 
                                     method.getDeclaringClass(), method.getName()));
                         }
                         
