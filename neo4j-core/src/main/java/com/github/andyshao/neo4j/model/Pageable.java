@@ -12,7 +12,7 @@ import lombok.Data;
  * Encoding:UNIX UTF-8
  * @author Andy.Shao
  *
- * @param <T>
+ * @param <T> Data type
  */
 @Data
 @SuppressWarnings("serial")
