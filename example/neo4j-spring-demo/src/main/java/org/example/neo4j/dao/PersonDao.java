@@ -1,6 +1,7 @@
 package org.example.neo4j.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -9,6 +10,7 @@ import org.example.neo4j.domain.Person;
 import org.neo4j.driver.v1.Transaction;
 
 import com.github.andyshao.neo4j.annotation.Create;
+import com.github.andyshao.neo4j.annotation.DeSerializer;
 import com.github.andyshao.neo4j.annotation.Match;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.model.PageReturn;
@@ -29,7 +31,7 @@ public interface PersonDao {
     @Match(sql = "MATCH (n:Person) RETURN n")
     CompletionStage<PageReturn<Person>> findByPage(@Param("pg")Pageable<Void> pageable,@Param("tx") Transaction tx);
     
-    @Match(sql = "MATCH (n:Person) RETURN n")
+    @Match(sql = "MATCH (n:Person) RETURN count(n)")
     CompletionStage<Optional<Long>> totalSize(Transaction tx);
     
     @Match(sql = "MATCH (n:Person) WHERE n.age > $age RETURN n")
@@ -44,4 +46,8 @@ public interface PersonDao {
             return replace(person , tx);
         });
     }
+    
+    @Match(sql = "MATCH (n:Person) RETURN n")
+    @DeSerializer(PersonMapper.class)
+    CompletionStage<Map<String , Person>> mapAll(Transaction tx);
 }

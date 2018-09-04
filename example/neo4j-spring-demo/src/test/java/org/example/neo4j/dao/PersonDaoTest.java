@@ -114,4 +114,12 @@ public class PersonDaoTest {
             .toCompletableFuture()
             .join();
     }
+    
+    @Test
+    public void testMapAll() {
+        Transaction tx = this.driver.session().beginTransaction();
+        CompletionStage<Map<String , Person>> mapAll = this.personDao.mapAll(tx);
+        mapAll.thenAcceptAsync(map -> tx.commitAsync());
+        System.out.println(mapAll.toCompletableFuture().join());
+    }
 }
