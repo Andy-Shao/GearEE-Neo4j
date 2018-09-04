@@ -25,7 +25,7 @@ public class PageReturnDeSerializerTest {
         Object obj = tx.runAsync("MATCH (n:Api) RETURN n, 0 AS pageNum, 10 AS pageSize").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
             Method declaredMethod = MethodOperation.getDeclaredMethod(PageReturnDeSerializerTest.class , "types", Pageable.class);
-            sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(declaredMethod));
+            sqlMethod.getSqlMethodRet().setReturnTypeInfo(MethodOperation.getReturnTypeInfo(declaredMethod));
             sqlMethod.setDefinition(declaredMethod);
             return ds.deSerialize(src , sqlMethod);
         });

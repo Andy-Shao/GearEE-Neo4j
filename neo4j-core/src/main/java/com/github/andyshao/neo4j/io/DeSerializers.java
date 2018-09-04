@@ -40,7 +40,7 @@ public final class DeSerializers {
     private DeSerializers() {}
     
     public static final void checkReturnType(SqlMethod sqlMethod) {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(!returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
             throw new IllegalConfigException(String.format("the return type of %s.%s should be %s in first level" , 
                 sqlMethod.getDefinition().getDeclaringClass().getName(), 
@@ -101,7 +101,7 @@ public final class DeSerializers {
     }
 
     public static final Class<?> getReturnType(SqlMethod sqlMethod){
-        GenericNode node = sqlMethod.getReturnTypeInfo();
+        GenericNode node = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         List<GenericNode> nodes = node.getComponentTypes();
         GenericNode tmp = nodes.get(0);
         Class<?> declareType = tmp.getDeclareType();
@@ -109,7 +109,25 @@ public final class DeSerializers {
         declareType = tmp.getDeclareType();
         return declareType;
     }
+    
+    public static final Object formatJavaBean(Class<?> returnType, SqlMethod sqlMethod, Value val) {
+        List<Method> setMethods = sqlMethod.getSqlMethodRet().getSetMethods(returnType);
+        if(val.isNull()) return null;
+        Entity entity = val.asEntity();
+        if(entity.size() == 0) return null;
+        Object tmp = ConstructorOperation.newInstance(returnType);
+        for(Method setMethod : setMethods) {
+            String key = setMethod.getName();
+            key = StringOperation.replaceFirst(key , "set" , "");
+            key = key.substring(0 , 1).toLowerCase() + key.substring(1);
+            key = sqlMethod.getSqlMethodRet().getRealName(key , returnType);
+            Object value = formatValue(setMethod.getParameterTypes()[0] , entity.get(key));
+            if(value != null) MethodOperation.invoked(tmp , setMethod , value);
+        }
+        return tmp;
+    }
 
+    @Deprecated
     public static final Object formatJavaBean(Class<?> returnType , List<Method> setMethods , Value va) {
         if(va.isNull()) return null;
         Entity entity = va.asEntity();

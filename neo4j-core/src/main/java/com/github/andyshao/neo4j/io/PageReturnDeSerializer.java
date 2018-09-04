@@ -1,6 +1,5 @@
 package com.github.andyshao.neo4j.io;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,7 +11,6 @@ import com.github.andyshao.neo4j.model.PageReturn;
 import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.GenericNode;
-import com.github.andyshao.reflect.MethodOperation;
 
 import lombok.Setter;
 
@@ -42,11 +40,10 @@ public class PageReturnDeSerializer implements DeSerializer {
                 return DeSerializers.formatValue(returnType , record.get(0));
             }).thenApplyAsync(records -> wrapPageReturn(pageNum , pageSize , records));
         } else {
-            List<Method> setMethods = MethodOperation.getSetMethods(returnType);
             return src.listAsync(record -> {
                 pageNum.set(record.get(1).asInt());
                 pageSize.set(record.get(2).asInt());
-                return DeSerializers.formatJavaBean(returnType , setMethods , record.get(0));
+                return DeSerializers.formatJavaBean(returnType , sqlMethod , record.get(0));
             }).thenApplyAsync(records -> wrapPageReturn(pageNum , pageSize , records));
         }
     }
@@ -60,7 +57,7 @@ public class PageReturnDeSerializer implements DeSerializer {
     }
 
     static final boolean shouldProcess(SqlMethod sqlMethod) {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
             GenericNode node = returnTypeInfo.getComponentTypes().get(0);
             Class<?> declareType = node.getDeclareType();

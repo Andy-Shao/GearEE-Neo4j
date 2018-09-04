@@ -1,6 +1,5 @@
 package com.github.andyshao.neo4j.io;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -9,7 +8,6 @@ import org.neo4j.driver.v1.StatementResultCursor;
 import com.github.andyshao.lang.NotSupportConvertException;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.GenericNode;
-import com.github.andyshao.reflect.MethodOperation;
 
 import lombok.Setter;
 
@@ -33,13 +31,12 @@ public class ListDeSerializer implements DeSerializer {
         if(DeSerializers.isBaseType(returnType)) {
             return src.listAsync(record -> DeSerializers.formatValue(returnType , record.get(0)));
         } else {
-            List<Method> setMethods = MethodOperation.getSetMethods(returnType);
-            return src.listAsync(record -> DeSerializers.formatJavaBean(returnType , setMethods , record.get(0)));
+            return src.listAsync(record -> DeSerializers.formatJavaBean(returnType , sqlMethod , record.get(0)));
         }
     }
 
     static final boolean shouldProcess(SqlMethod sqlMethod) {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
             GenericNode node = returnTypeInfo.getComponentTypes().get(0);
             Class<?> declareType = node.getDeclareType();

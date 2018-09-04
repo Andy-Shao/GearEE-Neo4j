@@ -1,7 +1,6 @@
 package com.github.andyshao.neo4j.io;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -11,7 +10,6 @@ import com.github.andyshao.lang.NotSupportConvertException;
 import com.github.andyshao.neo4j.model.SqlMethod;
 import com.github.andyshao.reflect.ConstructorOperation;
 import com.github.andyshao.reflect.GenericNode;
-import com.github.andyshao.reflect.MethodOperation;
 
 import lombok.Setter;
 
@@ -36,15 +34,14 @@ public class JavaBeanDeSerializer implements DeSerializer{
         com.github.andyshao.neo4j.annotation.DeSerializer annotation = declaringClass.getAnnotation(com.github.andyshao.neo4j.annotation.DeSerializer.class);
         if(annotation != null) return ConstructorOperation.newInstance(annotation.value()).deSerialize(src , sqlMethod);
         Class<?> returnType = DeSerializers.getReturnType(sqlMethod);
-        List<Method> setMethods = MethodOperation.getSetMethods(returnType);
         return src.nextAsync().thenApplyAsync(record -> {
             if(record == null) return Optional.empty();
-            return Optional.ofNullable(DeSerializers.formatJavaBean(returnType , setMethods , record.get(0)));
+            return Optional.ofNullable(DeSerializers.formatJavaBean(returnType , sqlMethod , record.get(0)));
         });
     }
 
     static final boolean shouldProcess(SqlMethod sqlMethod) {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
             GenericNode node = returnTypeInfo.getComponentTypes().get(0);
             Class<?> declareType = node.getDeclareType();

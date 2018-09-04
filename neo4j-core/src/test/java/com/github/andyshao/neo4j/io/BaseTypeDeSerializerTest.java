@@ -24,7 +24,7 @@ public class BaseTypeDeSerializerTest {
         ds.setNext(new DefaultDeSerializer());
         Object find = tx.runAsync("MATCH (n:Api) RETURN count(n)").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
-            sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(MethodOperation.getDeclaredMethod(BaseTypeDeSerializerTest.class , "types")));
+            sqlMethod.getSqlMethodRet().setReturnTypeInfo(MethodOperation.getReturnTypeInfo(MethodOperation.getDeclaredMethod(BaseTypeDeSerializerTest.class , "types")));
             return ds.deSerialize(src , sqlMethod);
         });
         CompletionStage<Void> commitAsync = tx.commitAsync();

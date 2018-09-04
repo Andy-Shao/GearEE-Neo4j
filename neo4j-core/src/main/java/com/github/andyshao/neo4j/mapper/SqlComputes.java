@@ -32,7 +32,7 @@ public final class SqlComputes {
     }
 
     public static boolean isPageReturn(SqlMethod sqlMethod) {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(returnTypeInfo.isGeneiric()) {
             GenericNode pageReturn = returnTypeInfo.getComponentTypes().get(0);
             if(pageReturn.getDeclareType().isAssignableFrom(PageReturn.class)) {

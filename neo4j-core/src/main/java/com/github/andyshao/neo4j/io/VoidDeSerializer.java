@@ -31,7 +31,7 @@ public class VoidDeSerializer implements DeSerializer {
     }
 
     static final boolean shouldProcess(SqlMethod sqlMethod) {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
             GenericNode node = returnTypeInfo.getComponentTypes().get(0);
             Class<?> declareType = node.getDeclareType();

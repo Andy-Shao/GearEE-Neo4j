@@ -24,7 +24,7 @@ public class ListDeSerializerTest {
         Object obj = tx.runAsync("MATCH (n:Api) RETURN n").thenComposeAsync(src -> {
             SqlMethod sqlMethod = new SqlMethod();
             Method declaredMethod = MethodOperation.getDeclaredMethod(ListDeSerializerTest.class , "types");
-            sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(declaredMethod));
+            sqlMethod.getSqlMethodRet().setReturnTypeInfo(MethodOperation.getReturnTypeInfo(declaredMethod));
             sqlMethod.setDefinition(declaredMethod);
             return ds.deSerialize(src , sqlMethod);
         });

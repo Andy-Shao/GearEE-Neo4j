@@ -151,7 +151,7 @@ public class PackageMapperScanner implements MapperScanner{
                                     method.getDeclaringClass(), method.getName()));
                         }
                         
-                        sqlMethod.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
+                        sqlMethod.getSqlMethodRet().setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
                         
                         List<GenericNode> parameterTypesInfo = MethodOperation.getParameterTypesInfo(method);
                         String[] paramNames = ParameterOperation.getMethodParamNamesByReflect(method);

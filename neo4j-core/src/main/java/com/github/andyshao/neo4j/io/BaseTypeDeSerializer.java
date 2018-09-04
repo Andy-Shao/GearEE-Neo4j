@@ -27,7 +27,7 @@ public class BaseTypeDeSerializer implements DeSerializer {
 
     @Override
     public CompletionStage<?> deSerialize(StatementResultCursor src , SqlMethod sqlMethod) throws NotSupportConvertException {
-        GenericNode returnTypeInfo = sqlMethod.getReturnTypeInfo();
+        GenericNode returnTypeInfo = sqlMethod.getSqlMethodRet().getReturnTypeInfo();
         if(!shouldProcess(returnTypeInfo)) return next.deSerialize(src , sqlMethod);
         Class<?> returnType = getReturnType(returnTypeInfo);
         return src.nextAsync().thenApplyAsync(record -> Optional.ofNullable(DeSerializers.formatValue(returnType , record.get(0))));
