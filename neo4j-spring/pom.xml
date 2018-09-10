@@ -5,7 +5,7 @@
     <groupId>com.github.Andy-Shao</groupId>
     <artifactId>GearEE-Neo4j-Spring</artifactId>
     <!--<version>4.0-SNAPSHOT</version>-->
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3.RELEASE</version>
     <packaging>jar</packaging>
     <name>Gear</name>
     <description>GearEE for Neo4jDB support</description>
@@ -39,7 +39,7 @@
     <properties>
         <java.version>1.8</java.version>
         <gear.build.sourceEncoding>UTF-8</gear.build.sourceEncoding>
-        <gear.maven-manager.version>1.0.5-SNAPSHOT</gear.maven-manager.version>
+        <gear.maven-manager.version>1.0.5.RELEASE</gear.maven-manager.version>
     </properties>
 
     <dependencyManagement>
