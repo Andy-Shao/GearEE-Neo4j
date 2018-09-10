@@ -25,6 +25,7 @@ import com.github.andyshao.neo4j.io.DeSerializer;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.spring.annotation.EnableNeo4jDao;
 import com.github.andyshao.neo4j.spring.conf.Neo4jPros.AuthTokenInfo;
+import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
 
 /**
  * 
@@ -67,8 +68,9 @@ public abstract class DefaultNeo4jConf implements ImportAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public DaoProcessor neo4jDaoProcessor(@Autowired SqlCompute sqlCompute , @Autowired DeSerializer deSerializer) {
-        return this.dc.daoProcessor(sqlCompute , deSerializer);
+    public DaoProcessor neo4jDaoProcessor(@Autowired SqlCompute sqlCompute , @Autowired DeSerializer deSerializer, 
+        @Autowired Driver neo4jDriver) {
+        return new SpringDaoProcessor(sqlCompute , deSerializer , neo4jDriver);
     }
 
     @Bean

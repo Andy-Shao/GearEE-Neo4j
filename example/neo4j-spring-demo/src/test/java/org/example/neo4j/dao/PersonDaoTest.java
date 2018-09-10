@@ -24,6 +24,9 @@ import com.github.andyshao.neo4j.dao.DaoContext;
 import com.github.andyshao.neo4j.model.PageReturn;
 import com.github.andyshao.neo4j.model.Pageable;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = Neo4jTestApplication.class)
@@ -87,9 +90,14 @@ public class PersonDaoTest {
     
     @Test
     public void testFindByAge() {
-        Transaction tx = this.driver.session().beginTransaction();
+        Session session = this.driver.session();
+        Transaction tx = session.beginTransaction();
         CompletionStage<List<Person>> findByAge = this.personDao.findByAge(18 , tx);
-        findByAge.thenAcceptAsync(ls -> tx.commitAsync());
+        findByAge.thenAcceptAsync(ls -> {
+            tx.commitAsync();
+            tx.close();
+            log.info("session status is: {}", session.isOpen());
+        });
         System.out.println(findByAge.toCompletableFuture().join());
     }
     
