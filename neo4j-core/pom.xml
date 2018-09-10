@@ -8,8 +8,8 @@
     <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Gear</name>
-    <description>GearEE for Zookeeper support</description>
-    <url>https://github.com/Andy-Shao/GearEE-ZK</url>
+    <description>GearEE for Neo4jDB support</description>
+    <url>https://github.com/Andy-Shao/GearEE-Neo4j</url>
     <inceptionYear>2018</inceptionYear>
     <licenses>
         <license>
@@ -27,9 +27,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/Andy-Shao/GearEE-ZK.git</connection>
-        <developerConnection>scm:git:https://github.com/Andy-Shao/GearEE-ZK.git</developerConnection>
-        <url>https://github.com/Andy-Shao/GearEE-ZK.git</url>
+        <connection>scm:git:https://github.com/Andy-Shao/GearEE-Neo4j.git</connection>
+        <developerConnection>scm:git:https://github.com/Andy-Shao/GearEE-Neo4j.git</developerConnection>
+        <url>https://github.com/Andy-Shao/GearEE-Neo4j.git</url>
     </scm>
     <issueManagement>
         <system>jira</system>
