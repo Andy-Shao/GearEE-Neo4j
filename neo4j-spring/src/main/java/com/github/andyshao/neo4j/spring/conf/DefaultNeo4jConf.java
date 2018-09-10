@@ -13,6 +13,7 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -26,6 +27,7 @@ import com.github.andyshao.neo4j.mapper.SqlCompute;
 import com.github.andyshao.neo4j.spring.annotation.EnableNeo4jDao;
 import com.github.andyshao.neo4j.spring.conf.Neo4jPros.AuthTokenInfo;
 import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
+import com.github.andyshao.neo4j.spring.tx.Neo4jTransactionAspect;
 
 /**
  * 
@@ -37,6 +39,7 @@ import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
  * @author Andy.Shao
  *
  */
+@Import(Neo4jTransactionAspect.class)
 public abstract class DefaultNeo4jConf implements ImportAware {
     private final DaoConfiguration dc = new DaoConfiguration();
     
