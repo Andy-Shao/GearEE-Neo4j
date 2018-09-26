@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  * Title:<br>
@@ -23,6 +25,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @author Andy.Shao
  *
  */
+@Slf4j
 @Aspect
 @Configuration
 @EnableAspectJAutoProxy
@@ -67,7 +70,12 @@ public class Neo4jTransactionAspect {
         if(tx == null) args[index] = transaction;
         Object obj = pjp.proceed(args);
         CompletionStage<?> cs = (CompletionStage<?>) obj;
-        if(index != -1) cs.thenAcceptAsync(o -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()));
+        if(index != -1) cs.thenAcceptAsync(o -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()))
+            .exceptionally(ex -> {
+                log.error("SQL process has an exception" , ex);
+                transaction.rollbackAsync().thenAcceptAsync(v -> session.closeAsync());
+                return null;
+            });
         return obj;
     }
 }

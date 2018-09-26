@@ -3,6 +3,7 @@ package com.github.andyshao.neo4j.dao.impl;
 import java.util.Optional;
 
 import org.neo4j.driver.v1.Transaction;
+import org.neo4j.driver.v1.Values;
 
 import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.dao.DaoProcessor;
@@ -43,7 +44,7 @@ public class SimpleDaoProcessor implements DaoProcessor{
         for(Object arg : param.getArgs()) {
             if(arg instanceof Transaction) tx = (Transaction) arg;
         }
-        Object obj = tx.runAsync(sql.getSql(), sql.getParameters())
+        Object obj = tx.runAsync(sql.getSql(), Values.value(sql.getParameters()))
                 .thenComposeAsync(src -> deSerializer.deSerialize(src , sqlMethod));
         return (T) obj;
     }

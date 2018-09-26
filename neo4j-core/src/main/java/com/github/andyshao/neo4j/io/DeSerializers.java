@@ -68,6 +68,8 @@ public final class DeSerializers {
         if(clazz.isAssignableFrom(ZonedDateTime.class)) return value.asZonedDateTime();
         if(clazz.isAssignableFrom(Date.class)) return LocalDateTimeOperation.toDate().convert(value.asLocalDateTime());
         if(clazz.isAssignableFrom(String.class)) return formatToString(value);
+        if(clazz.isAssignableFrom(Enum.class)) return MethodOperation.invoked(null , 
+            MethodOperation.getMethod(clazz , "valueOf" , String.class), value.asString());
         throw new NotSupportConvertException();
     }
     

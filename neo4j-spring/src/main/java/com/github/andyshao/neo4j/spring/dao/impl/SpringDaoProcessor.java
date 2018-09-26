@@ -7,6 +7,7 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResultCursor;
 import org.neo4j.driver.v1.Transaction;
+import org.neo4j.driver.v1.Values;
 
 import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.dao.DaoProcessor;
@@ -52,7 +53,7 @@ public class SpringDaoProcessor implements DaoProcessor{
         @SuppressWarnings("resource")
         final Session session = tx == null ? driver.session() : null;
         final Transaction transaction = session == null ? tx : session.beginTransaction();
-        CompletionStage<StatementResultCursor> runAsync = transaction.runAsync(sql.getSql(), sql.getParameters());
+        CompletionStage<StatementResultCursor> runAsync = transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()));
         if(session != null) runAsync.thenAcceptAsync(src -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()));
         Object obj = runAsync.thenComposeAsync(src -> deSerializer.deSerialize(src , sqlMethod));
         return (T) obj;

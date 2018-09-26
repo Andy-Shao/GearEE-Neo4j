@@ -41,9 +41,12 @@ public class MultiParamSqlFormatter implements SqlFormatter {
         return Optional.of(sql);
     }
 
+    @SuppressWarnings("rawtypes")
     private Object caculatePadding(Object param , List<String> exps, int index) {
         int currentIndex = index + 1;
-        if(exps.size() <= currentIndex) return param;
-        return caculatePadding(FieldOperation.getValueByGetMethod(param , exps.get(currentIndex)) , exps , currentIndex);
+        Object tmp = param;
+        if(tmp instanceof Enum) tmp = ((Enum) tmp).name();
+        if(exps.size() <= currentIndex) return tmp;
+        return caculatePadding(FieldOperation.getValueByGetMethod(tmp , exps.get(currentIndex)) , exps , currentIndex);
     }
 }
