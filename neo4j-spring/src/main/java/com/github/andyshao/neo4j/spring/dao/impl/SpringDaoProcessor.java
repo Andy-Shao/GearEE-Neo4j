@@ -56,12 +56,17 @@ public class SpringDaoProcessor implements DaoProcessor{
         final Session session = tx == null ? driver.session() : null;
         final Transaction transaction = session == null ? tx : session.beginTransaction();
         CompletionStage<StatementResultCursor> runAsync = transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()));
-        if(session != null) runAsync.thenAcceptAsync(src -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()))
-            .exceptionally(ex -> {
-                log.info("SQL PROCESS ERROR", ex);
-                return null;
-            });
-        Object obj = runAsync.thenComposeAsync(src -> deSerializer.deSerialize(src , sqlMethod));
+        Object obj = runAsync.thenComposeAsync(src -> deSerializer.deSerialize(src , sqlMethod))
+            .whenComplete((obj2,ex)->{
+            if(ex != null) {
+                log.error("SQL PROCESS ERROR", ex);
+                transaction.rollbackAsync().thenAcceptAsync(v -> {
+                    if(session != null) session.closeAsync();
+                });
+            } else {
+                if(session != null) transaction.commitAsync().whenComplete((v, ex2) -> session.closeAsync());
+            }
+        });
         return (T) obj;
     }
 }
