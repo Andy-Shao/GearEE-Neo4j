@@ -35,4 +35,10 @@ public class UserDaoTest {
         CompletionStage<Optional<User>> userInfo = this.userDao.create(user , null);
         System.out.println(userInfo.toCompletableFuture().join());
     }
+    
+    @Test
+    public void testError() {
+        CompletionStage<Optional<User>> cs = userDao.find(null);
+        System.out.println(cs.toCompletableFuture().join());
+    }
 }

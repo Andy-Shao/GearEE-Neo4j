@@ -20,6 +20,7 @@ import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
 import com.github.andyshao.neo4j.model.SqlMethod;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -30,6 +31,7 @@ import lombok.RequiredArgsConstructor;
  * @author Andy.Shao
  *
  */
+@Slf4j
 @RequiredArgsConstructor
 public class SpringDaoProcessor implements DaoProcessor{
     private final SqlCompute sqlCompute;
@@ -54,7 +56,11 @@ public class SpringDaoProcessor implements DaoProcessor{
         final Session session = tx == null ? driver.session() : null;
         final Transaction transaction = session == null ? tx : session.beginTransaction();
         CompletionStage<StatementResultCursor> runAsync = transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()));
-        if(session != null) runAsync.thenAcceptAsync(src -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()));
+        if(session != null) runAsync.thenAcceptAsync(src -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()))
+            .exceptionally(ex -> {
+                log.info("SQL PROCESS ERROR", ex);
+                return null;
+            });
         Object obj = runAsync.thenComposeAsync(src -> deSerializer.deSerialize(src , sqlMethod));
         return (T) obj;
     }

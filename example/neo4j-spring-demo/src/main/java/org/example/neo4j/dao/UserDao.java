@@ -31,4 +31,7 @@ public interface UserDao {
             return create(user, transaction);
         });
     }
+    
+    @Match(sql = "MATCH (u:User {username:'andy.shao'}) (u2:User {username:'andy.shao'}) RETURN u")
+    CompletionStage<Optional<User>> find(Transaction transaction);
 }

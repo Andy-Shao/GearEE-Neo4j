@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = Neo4jTestApplication.class)
@@ -29,6 +32,7 @@ public class ApiMatchCoreServiceTest {
     
     @Test
     public void testTrySaveWithRelationShip() {
+        log.info("do somethings...");
         ApiMatch apiMatch = new ApiMatch();
         apiMatch.setApiMatchName("api001");
         CompletionStage<Void> cs = this.coreService.trySaveWithRelationShip(apiMatch , "my.test" , "andy.shao" , null);
