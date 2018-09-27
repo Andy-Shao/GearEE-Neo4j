@@ -8,6 +8,7 @@ import org.example.neo4j.Neo4jTestApplication;
 import org.example.neo4j.domain.AuditRecord;
 import org.example.neo4j.domain.User;
 import org.example.neo4j.domain.vo.UserStatus;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class UserDaoTest {
     }
     
     @Test
+    @Ignore
     public void testError() {
         CompletionStage<Optional<User>> cs = userDao.find(null);
         System.out.println(cs.toCompletableFuture().join());
