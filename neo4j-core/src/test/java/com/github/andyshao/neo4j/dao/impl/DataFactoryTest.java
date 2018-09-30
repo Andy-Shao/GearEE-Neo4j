@@ -1,14 +1,14 @@
 package com.github.andyshao.neo4j.dao.impl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -27,7 +27,7 @@ public class DataFactoryTest {
     private static DaoFactory daoFactory;
     private static Map<String , Neo4jDaoInfo> scan;
     
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         DaoConfiguration dc = new DaoConfiguration();
         daoFactory = dc.daoFactory(dc.daoProcessor(dc.sqlCompute() , dc.deSerializer()));
@@ -39,11 +39,11 @@ public class DataFactoryTest {
     @Test
     public void testBuildDao() {
         ApiDao apiDao = (ApiDao) daoFactory.buildDao(scan.get("ApiDao"));
-        assertTrue(apiDao != null);
+        assertNotNull(apiDao);
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void testFindInfos() {
         ApiDao apiDao = (ApiDao) daoFactory.buildDao(scan.get("ApiDao"));
         try(Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));

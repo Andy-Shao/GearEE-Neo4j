@@ -2,7 +2,7 @@ package com.github.andyshao.neo4j.mapper.impl;
 
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.andyshao.neo4j.demo.ApiDao;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;

@@ -1,14 +1,14 @@
 package com.github.andyshao.neo4j.dao.impl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -25,7 +25,7 @@ import com.github.andyshao.neo4j.demo.ApiKey;
 public class DaoContextTest {
     private static DaoContext daoContext;
     
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         DaoConfiguration dc = new DaoConfiguration();
         DaoFactory daoFactory = dc.daoFactory(dc.daoProcessor(dc.sqlCompute() , dc.deSerializer()));
@@ -35,11 +35,11 @@ public class DaoContextTest {
     @Test
     public void testBuildDao() {
         ApiDao apiDao = daoContext.getDao(ApiDao.class);
-        assertTrue(apiDao != null);
+        assertNotNull(apiDao);
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void testApiDao() {
         ApiDao apiDao = daoContext.getDao(ApiDao.class);
         try(Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j" , "1303595"));
