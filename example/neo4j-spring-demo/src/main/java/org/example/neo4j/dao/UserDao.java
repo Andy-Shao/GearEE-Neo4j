@@ -26,7 +26,7 @@ public interface UserDao {
     
     default CompletionStage<Optional<User>> trySave(User user, Transaction transaction){
         return findByPk(user.getUsername() , transaction).thenComposeAsync(op -> {
-            if(op.isPresent()) return CompletableFuture.completedFuture(Optional.empty());
+            if(op.isPresent()) return CompletableFuture.completedFuture(op);
             
             return create(user, transaction);
         });
@@ -34,4 +34,7 @@ public interface UserDao {
     
     @Match(sql = "MATCH (u:User {username:'andy.shao'}) (u2:User {username:'andy.shao'}) RETURN u")
     CompletionStage<Optional<User>> find(Transaction transaction);
+    
+    @Create(sql = "MATCH (u:User {username:$un}), (s:System {systemAlias:$sysAlias}) CREATE (u)-[:own]->(s)")
+    CompletionStage<Void> addRelation(@Param("un") String username, @Param("sysAlias") String systemAlias, @Param("tx") Transaction transaction);
 }

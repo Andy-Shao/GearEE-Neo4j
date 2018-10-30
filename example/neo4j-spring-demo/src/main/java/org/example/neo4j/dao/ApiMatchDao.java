@@ -24,14 +24,12 @@ public interface ApiMatchDao {
     
     default CompletionStage<Optional<ApiMatch>> trySave(ApiMatch apiMatch, Transaction transaction){
         return findByPk(apiMatch.getApiMatchName() , transaction).thenComposeAsync(op -> {
-            if(op.isPresent()) return CompletableFuture.completedFuture(Optional.empty());
-            
-            return create(apiMatch , transaction);
+            return op.isPresent() ? CompletableFuture.completedFuture(op) : create(apiMatch , transaction);
         });
     }
     
     @Create(sql = "MATCH (a:ApiMatch {apiMatchName:$amn}), (s:System {systemAlias:$sa}), (u:User {username:$um}) "
-        + "CREATE (a)-[:Belongin]->(s), (u)-[:Require]->(a)")
+        + "CREATE (a)-[:Belongin]->(s), (u)-[:AddMatch]->(a)")
     CompletionStage<Void> addRelationShip(@Param("amn")String apiMatchName, @Param("sa")String systemAlias, 
         @Param("um")String username, @Param("tx")Transaction transaction);
 }

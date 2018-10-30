@@ -22,9 +22,7 @@ public interface SystemDao {
     
     default CompletionStage<Optional<SystemInfo>> trySave(@Param("sys")SystemInfo system, @Param("tx")Transaction transaction){
         return findByPk(system.getSystemAlias() , transaction).thenComposeAsync(op -> {
-            if(op.isPresent()) return CompletableFuture.completedFuture(Optional.empty());
-            
-            return create(system , transaction);
+            return op.isPresent() ? CompletableFuture.completedFuture(op) : create(system , transaction);
         });
     }
 }
