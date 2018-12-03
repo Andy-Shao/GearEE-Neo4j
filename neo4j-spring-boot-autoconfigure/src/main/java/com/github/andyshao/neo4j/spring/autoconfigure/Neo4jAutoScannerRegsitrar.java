@@ -14,7 +14,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.StringUtils;
 
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
-import com.github.andyshao.neo4j.spring.conf2.ClassPathNeo4jDaoScanner;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.spring.conf2;
+package com.github.andyshao.neo4j.spring.autoconfigure;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
