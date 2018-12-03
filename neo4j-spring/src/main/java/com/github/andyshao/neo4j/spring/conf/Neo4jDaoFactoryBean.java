@@ -6,6 +6,16 @@ import com.github.andyshao.neo4j.dao.DaoContext;
 
 import lombok.Setter;
 
+/**
+ * 
+ * Title:<br>
+ * Descript:<br>
+ * Copyright: Copryright(c) Dec 3, 2018<br>
+ * Encoding:UNIX UTF-8
+ * @author Andy.Shao
+ *
+ * @param <T>
+ */
 @Setter
 public class Neo4jDaoFactoryBean<T> implements FactoryBean<T>{
     private Class<T> daoInterface;

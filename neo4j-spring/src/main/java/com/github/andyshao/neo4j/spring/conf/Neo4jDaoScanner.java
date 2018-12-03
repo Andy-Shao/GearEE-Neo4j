@@ -13,6 +13,15 @@ import com.github.andyshao.neo4j.dao.DaoContext;
 
 import lombok.Setter;
 
+/**
+ * 
+ * Title:<br>
+ * Descript:<br>
+ * Copyright: Copryright(c) Nov 30, 2018<br>
+ * Encoding:UNIX UTF-8
+ * @author Andy.Shao
+ *
+ */
 public class Neo4jDaoScanner implements BeanDefinitionRegistryPostProcessor {
     @Setter
     private DaoContext daoContext;

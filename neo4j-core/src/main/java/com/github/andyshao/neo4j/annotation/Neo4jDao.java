@@ -22,5 +22,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Neo4jDao {
     Class<?> clipClass() default Object.class;
-    String name() default "";
+    String value() default "";
 }

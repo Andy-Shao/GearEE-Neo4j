@@ -77,8 +77,8 @@ public class PackageMapperScanner implements MapperScanner{
                 Neo4jDaoInfo result = new Neo4jDaoInfo();
                 result.setDaoClass(clazz);
                 Neo4jDao neo4jDao = clazz.getAnnotation(Neo4jDao.class);
-                if(neo4jDao.name().isEmpty()) result.setName(clazz.getSimpleName());
-                else result.setName(neo4jDao.name());
+                if(neo4jDao.value().isEmpty()) result.setName(clazz.getSimpleName());
+                else result.setName(neo4jDao.value());
                 HashMap<Class<?> , Class<?>> daoInterfaceMapping = Maps.newHashMap();
                 result.setDaoInterfaceMapping(daoInterfaceMapping);
                 parse(clazz , daoInterfaceMapping);
