@@ -11,7 +11,6 @@ import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportAware;
@@ -44,7 +43,6 @@ public abstract class DefaultNeo4jConf implements ImportAware {
     private final DaoConfiguration dc = new DaoConfiguration();
     
     @Bean
-    @ConditionalOnMissingBean
     public Neo4jDaoScanner neo4jDaoScanner(@Autowired DaoContext daoContext) {
         Neo4jDaoScanner neo4jDaoScanner = new Neo4jDaoScanner();
         neo4jDaoScanner.setDaoContext(daoContext);
@@ -58,32 +56,27 @@ public abstract class DefaultNeo4jConf implements ImportAware {
     protected abstract List<Package> scannerPackages();
     
     @Bean
-    @ConditionalOnMissingBean
     public DaoContext neo4jDaoContext(@Autowired DaoFactory daoFactory) {
         return this.dc.daoContext(scannerPackages() , daoFactory);
     }
     
     @Bean
-    @ConditionalOnMissingBean
     public DaoFactory neo4jDaoFactory(@Autowired DaoProcessor daoProcessor) {
         return this.dc.daoFactory(daoProcessor);
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public DaoProcessor neo4jDaoProcessor(@Autowired SqlCompute sqlCompute , @Autowired DeSerializer deSerializer, 
         @Autowired Driver neo4jDriver) {
         return new SpringDaoProcessor(sqlCompute , deSerializer , neo4jDriver);
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public DeSerializer neo4jDeSerializer() {
         return this.dc.deSerializer();
     }
 
     @Bean(destroyMethod = "close")
-    @ConditionalOnMissingBean
     public Driver neo4jDriver() {
         return GraphDatabase.driver(neo4jPros().getUrl() , neo4jAuthToken() , neo4jConfig());
     }
@@ -98,7 +91,6 @@ public abstract class DefaultNeo4jConf implements ImportAware {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public SqlCompute neo4jSqlCompute() {
         return this.dc.sqlCompute();
     }
