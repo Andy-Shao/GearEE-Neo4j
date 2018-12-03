@@ -11,6 +11,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -18,6 +20,7 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
 import com.github.andyshao.neo4j.spring.conf.Neo4jDaoFactoryBean;
+import com.github.andyshao.reflect.ClassOperation;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +60,9 @@ public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
         for(BeanDefinitionHolder holder : beanDefinitions) {
             definition = (GenericBeanDefinition) holder.getBeanDefinition();
             definition.setBeanClass(Neo4jDaoFactoryBean.class);
+            ScannedGenericBeanDefinition sgbd = (ScannedGenericBeanDefinition) definition;
+            AnnotationMetadata metadata = sgbd.getMetadata();
+            definition.getPropertyValues().add("daoInterface" , ClassOperation.forName(metadata.getClassName()));
             definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
         }
     }

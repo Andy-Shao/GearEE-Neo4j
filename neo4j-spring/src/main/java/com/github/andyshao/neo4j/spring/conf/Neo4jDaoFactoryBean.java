@@ -14,12 +14,12 @@ import lombok.Setter;
  * Encoding:UNIX UTF-8
  * @author Andy.Shao
  *
- * @param <T>
+ * @param <T> bean type
  */
 @Setter
 public class Neo4jDaoFactoryBean<T> implements FactoryBean<T>{
-    private Class<T> daoInterface;
     private DaoContext daoContext;
+    private Class<T> daoInterface;
     
     @Override
     public T getObject() throws Exception {

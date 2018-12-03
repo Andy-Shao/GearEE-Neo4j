@@ -1,0 +1,10 @@
+gear:
+   neo4j:
+      url: bolt://localhost:7687
+      authToken:
+         password: 1303595
+         username: neo4j
+         
+spring:
+   profiles:
+      active: dev
