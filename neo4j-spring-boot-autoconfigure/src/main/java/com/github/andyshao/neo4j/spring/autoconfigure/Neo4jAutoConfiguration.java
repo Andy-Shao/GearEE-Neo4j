@@ -1,24 +1,23 @@
-package com.github.andyshao.neo4j.spring.autoconf;
+package com.github.andyshao.neo4j.spring.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.neo4j.driver.v1.AuthToken;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportAware;
-import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import com.github.andyshao.neo4j.dao.DaoContext;
 import com.github.andyshao.neo4j.dao.DaoFactory;
@@ -26,9 +25,9 @@ import com.github.andyshao.neo4j.dao.DaoProcessor;
 import com.github.andyshao.neo4j.dao.conf.DaoConfiguration;
 import com.github.andyshao.neo4j.io.DeSerializer;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
-import com.github.andyshao.neo4j.spring.annotation.EnableNeo4jDao;
-import com.github.andyshao.neo4j.spring.autoconf.Neo4jPros.AuthTokenInfo;
 import com.github.andyshao.neo4j.spring.conf.Neo4jDaoScanner;
+import com.github.andyshao.neo4j.spring.conf2.Neo4jPros;
+import com.github.andyshao.neo4j.spring.conf2.Neo4jPros.AuthTokenInfo;
 import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
 
 /**
@@ -40,8 +39,11 @@ import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
  * @author Andy.Shao
  *
  */
+@Configuration
 @EnableConfigurationProperties(Neo4jPros.class)
-public class Neo4jDaoAutoConfiguration implements ImportAware{
+@Import(Neo4jAutoScannerRegsitrar.class)
+public class Neo4jAutoConfiguration implements BeanFactoryAware{
+    private List<String> packages;
     private final DaoConfiguration dc = new DaoConfiguration();
     @Autowired
     private Neo4jPros neo4jPros;
@@ -57,6 +59,7 @@ public class Neo4jDaoAutoConfiguration implements ImportAware{
     @Bean
     @ConditionalOnMissingBean
     public DaoContext neo4jDaoContext(@Autowired DaoFactory daoFactory) {
+        List<Package> scannerPackages = packages.stream().map(Package::getPackage).collect(Collectors.toList());
         return this.dc.daoContext(scannerPackages , daoFactory);
     }
     
@@ -99,17 +102,10 @@ public class Neo4jDaoAutoConfiguration implements ImportAware{
     public SqlCompute neo4jSqlCompute() {
         return this.dc.sqlCompute();
     }
-    
-    private List<Package> scannerPackages = Collections.emptyList();
 
     @Override
-    public void setImportMetadata(AnnotationMetadata importMetadata) {
-        Map<String , Object> enableAttrMap = importMetadata.getAnnotationAttributes(EnableNeo4jDao.class.getName());
-        AnnotationAttributes enableAttrs = AnnotationAttributes.fromMap(enableAttrMap);
-        Class<?>[] packageClasses = enableAttrs.getClassArray("packageClasses");
-        Set<Package> tmp = new HashSet<>();
-        for (Class<?> pkgClazz : packageClasses)
-            tmp.add(pkgClazz.getPackage());
-        this.scannerPackages = new ArrayList<>(tmp);
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.packages = AutoConfigurationPackages.get(beanFactory);
     }
+
 }

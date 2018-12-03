@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.spring.autoconf;
+package com.github.andyshao.neo4j.spring.conf2;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -43,7 +43,7 @@ public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
     }
 
     @Override
-    protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
+    public Set<BeanDefinitionHolder> doScan(String... basePackages) {
         Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
         
         if(beanDefinitions.isEmpty()) {

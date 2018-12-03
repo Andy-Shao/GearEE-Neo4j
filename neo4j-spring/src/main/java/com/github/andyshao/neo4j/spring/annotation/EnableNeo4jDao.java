@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.github.andyshao.neo4j.spring.autoconf.Neo4jDaoAutoConfiguration;
-import com.github.andyshao.neo4j.spring.autoconf.Neo4jDaoScannerRegistrar;
+import com.github.andyshao.neo4j.spring.conf2.Neo4jDaoAutoConfiguration;
+import com.github.andyshao.neo4j.spring.conf2.Neo4jDaoScannerRegistrar;
 
 /**
  * 
