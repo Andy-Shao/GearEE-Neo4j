@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.github.andyshao.neo4j.mapper.impl.PackageMapperScanner;
 import com.github.andyshao.neo4j.model.Neo4jDaoInfo;
-import com.github.andyshao.reflect.PackageOperation;
 
 /**
  * 
@@ -24,10 +24,14 @@ public class PackagesScanDaoContext extends AbstractDaoContext {
     
     public PackagesScanDaoContext(List<Package> pkg) {
         Map<String, Package> tmp = new HashMap<>();
+        Stream<Package> pkgStream = Arrays.stream(Package.getPackages());
         pkg.forEach(it -> {
-            Arrays.stream(PackageOperation.getPckages(it)).forEach(p -> {
-                tmp.put(p.getName() , p);
+            pkgStream.forEach(p -> {
+                if(p.getName().startsWith(it.getName())) tmp.put(p.getName() , p);
             });
+//            Arrays.stream(PackageOperation.getPckages(it)).forEach(p -> {
+//                tmp.put(p.getName() , p);
+//            });
         });
         tmp.forEach((pn,p) -> {
             PackageMapperScanner scanner = new PackageMapperScanner();
