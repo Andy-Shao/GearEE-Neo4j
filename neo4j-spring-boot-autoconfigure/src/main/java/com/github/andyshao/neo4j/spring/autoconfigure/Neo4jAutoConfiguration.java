@@ -28,7 +28,6 @@ import com.github.andyshao.neo4j.dao.DaoProcessor;
 import com.github.andyshao.neo4j.dao.conf.DaoConfiguration;
 import com.github.andyshao.neo4j.io.DeSerializer;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
-import com.github.andyshao.neo4j.spring.autoconfigure.Neo4jPros.AuthTokenInfo;
 import com.github.andyshao.neo4j.spring.conf.Neo4jDaoFactoryBean;
 import com.github.andyshao.neo4j.spring.conf.Neo4jDaoScanner;
 import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
