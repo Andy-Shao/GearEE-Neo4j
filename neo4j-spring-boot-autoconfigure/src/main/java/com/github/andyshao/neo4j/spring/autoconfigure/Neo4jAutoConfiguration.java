@@ -26,10 +26,11 @@ import com.github.andyshao.neo4j.dao.DaoContext;
 import com.github.andyshao.neo4j.dao.DaoFactory;
 import com.github.andyshao.neo4j.dao.DaoProcessor;
 import com.github.andyshao.neo4j.dao.conf.DaoConfiguration;
+import com.github.andyshao.neo4j.dao.impl.PackagesScanDaoContext;
 import com.github.andyshao.neo4j.io.DeSerializer;
 import com.github.andyshao.neo4j.mapper.SqlCompute;
+import com.github.andyshao.neo4j.spring.autoconfigure.Neo4jPros.AuthTokenInfo;
 import com.github.andyshao.neo4j.spring.conf.Neo4jDaoFactoryBean;
-import com.github.andyshao.neo4j.spring.conf.Neo4jDaoScanner;
 import com.github.andyshao.neo4j.spring.dao.impl.SpringDaoProcessor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,17 +66,12 @@ public class Neo4jAutoConfiguration implements BeanFactoryAware{
     
     @Bean
     @ConditionalOnMissingBean
-    public Neo4jDaoScanner neo4jDaoScanner(@Autowired DaoContext daoContext) {
-        Neo4jDaoScanner neo4jDaoScanner = new Neo4jDaoScanner();
-        neo4jDaoScanner.setDaoContext(daoContext);
-        return neo4jDaoScanner;
-    }
-    
-    @Bean
-    @ConditionalOnMissingBean
     public DaoContext neo4jDaoContext(@Autowired DaoFactory daoFactory) {
         List<Package> scannerPackages = packages.stream().map(Package::getPackage).collect(Collectors.toList());
-        return this.dc.daoContext(scannerPackages , daoFactory);
+//        return this.dc.daoContext(Collections.singletonList(Package.getPackage("org.example.neo4j.dao")) , daoFactory);
+        PackagesScanDaoContext scanner = new PackagesScanDaoContext(scannerPackages);
+        scanner.setDaoFactory(daoFactory);
+        return scanner;
     }
     
     @Bean
@@ -100,14 +96,12 @@ public class Neo4jAutoConfiguration implements BeanFactoryAware{
     @Bean(destroyMethod = "close")
     @ConditionalOnMissingBean
     public Driver neo4jDriver() {
-//        return GraphDatabase.driver(neo4jPros.getUrl() , neo4jAuthToken() , neo4jConfig());
-        return GraphDatabase.driver("bolt://localhost:7687", neo4jAuthToken(), neo4jConfig());
+        return GraphDatabase.driver(neo4jPros.getUrl() , neo4jAuthToken() , neo4jConfig());
     }
     
     protected AuthToken neo4jAuthToken() {
-//        AuthTokenInfo info = neo4jPros.getAuthToken();
-//        return AuthTokens.basic(info.getUsername() , info.getPassword() , info.getRealm());
-        return AuthTokens.basic("neo4j" , "1303595");
+        AuthTokenInfo info = neo4jPros.getAuthToken();
+        return AuthTokens.basic(info.getUsername() , info.getPassword() , info.getRealm());
     }
 
     protected Config neo4jConfig() {
