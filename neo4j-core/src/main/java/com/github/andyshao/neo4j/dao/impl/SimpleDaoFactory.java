@@ -10,6 +10,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import com.github.andyshao.asm.ApiConfs;
 import com.github.andyshao.asm.ClassVisitorOperation;
 import com.github.andyshao.lang.ClassAssembly;
 import com.github.andyshao.neo4j.dao.DaoClassTypeException;
@@ -49,7 +50,7 @@ public class SimpleDaoFactory implements DaoFactory {
         final String targetName = String.format("%s.impl.%sImpl" , daoClass.getPackage().getName(), daoClass.getSimpleName());
         final String classDesc = targetName.replace('.' , '/');
         final String daoDesc = daoClass.getName().replace('.' , '/');
-        final ClassSignature csig = new SignatureDetector(Opcodes.ASM6).getSignature(daoClass);
+        final ClassSignature csig = new SignatureDetector(ApiConfs.DEFAULT_ASM_VERSION).getSignature(daoClass);
         String classSignature = null;
         if(csig.classSignature != null) {
             classSignature = csig.classSignature + String.format("L%s;" , daoDesc);
