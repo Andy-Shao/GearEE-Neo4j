@@ -23,19 +23,6 @@ import reactor.core.publisher.Mono;
 public final class ReactorAdapter {
 	private ReactorAdapter() {}
 	
-	public static final <T> Mono<T> convertMono(CompletionStage<T> it) {
-		return Mono.create(ms -> {
-			it.whenCompleteAsync((ret, ex) -> {
-				if(Objects.nonNull(ex)) ms.error(ex);
-				else ms.success(ret);
-			});
-		});
-	}
-	
-	public static final <T> Flux<T> convertFlux(CompletionStage<T> it) {
-		return convertMono(it).flux();
-	}
-	
 	public static final <T> Flux<T> convertList(CompletionStage<List<T>> it) {
 		return Flux.create(fs -> {
 			it.whenCompleteAsync((ls, ex) -> {

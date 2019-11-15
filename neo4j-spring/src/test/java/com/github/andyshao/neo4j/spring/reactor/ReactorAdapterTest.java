@@ -5,6 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.github.andyshao.spring.reactor.MonoOperation;
+
 class ReactorAdapterTest {
 
 	@Test
@@ -13,7 +15,7 @@ class ReactorAdapterTest {
 			return "123";
 		});
 		
-		String ret = ReactorAdapter.convertMono(cf)
+		String ret = MonoOperation.fromCompletionStage(cf)
 			.block();
 		Assertions.assertThat(ret).isEqualTo("123");
 	}
