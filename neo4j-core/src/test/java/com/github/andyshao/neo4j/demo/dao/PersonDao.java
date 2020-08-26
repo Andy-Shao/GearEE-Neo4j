@@ -7,6 +7,7 @@ import com.github.andyshao.neo4j.demo.PersonId;
 import com.github.andyshao.neo4j.model.Pageable;
 import com.github.andyshao.reflect.annotation.Param;
 import com.github.andyshao.util.EntityOperation;
+import org.neo4j.driver.async.AsyncTransaction;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,51 +26,51 @@ import java.util.Objects;
 @Neo4jDao(clipClass = PersonDaoClips.class)
 public interface PersonDao {
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id = $pk.id RETURN n")
-    Mono<Person> findByPk(@Param("pk")PersonId id);
+    Mono<Person> findByPk(@Param("pk")PersonId id, AsyncTransaction transaction);
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.name = $name RETURN n")
-    Flux<Person> findByName(@Param("name")String name);
+    Flux<Person> findByName(@Param("name")String name, AsyncTransaction transaction);
 
     @Neo4jSql(sql = "CREATE (n:Person {id: p.id, name: p.name, age: p.age, gender: p.gender}) RETURN n")
-    Mono<Person> save(@Param("p")Person person);
+    Mono<Person> save(@Param("p")Person person, AsyncTransaction transaction);
 
-    default Mono<Person> saveOrUpdate(@Param("p")Person person) {
+    default Mono<Person> saveOrUpdate(@Param("p")Person person, AsyncTransaction transaction) {
         if(Objects.isNull(person.getId())) throw new IllegalArgumentException();
-        Mono<Person> inDb = findByPk(person);
+        Mono<Person> inDb = findByPk(person, transaction);
         return inDb.hasElement()
                 .flatMap(hasElement -> {
                     if(hasElement) {
                         return inDb
                                 .flatMap(p -> {
                                     EntityOperation.copyProperties(person, p, Collections.singletonList("id"));
-                                    return save(p);
+                                    return save(p, transaction);
                                 });
-                    } else return save(person);
+                    } else return save(person, transaction);
                 });
     }
 
     @Neo4jSql(isUseSqlClip = true, sqlClipName = "saveByList")
-    Flux<Person> saveByList(@Param("ps")List<Person> ps);
+    Flux<Person> saveByList(@Param("ps")List<Person> ps, AsyncTransaction transaction);
 
-    default Flux<Person> saveOrUpdateByList(@Param("ps")List<Person> persons) {
+    default Flux<Person> saveOrUpdateByList(@Param("ps")List<Person> persons, AsyncTransaction transaction) {
         return Flux.fromStream(persons.stream())
                 .flatMap(p -> {
-                    Mono<Person> inDb = findByPk(p);
+                    Mono<Person> inDb = findByPk(p, transaction);
                     return inDb.hasElement()
                             .flatMap(hasElement -> {
                                 if(hasElement) {
                                     return inDb.flatMap(person -> {
                                         EntityOperation.copyProperties(p, person, Collections.singletonList("id"));
-                                        return save(person);
+                                        return save(person, transaction);
                                     });
-                                } else return save(p);
+                                } else return save(p, transaction);
                             });
                 });
     }
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age.data RETURN n")
-    Flux<Person> findByAge(@Param("age")Pageable<Integer> age);
+    Flux<Person> findByAge(@Param("age")Pageable<Integer> age, AsyncTransaction transaction);
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age RETURN n")
-    Flux<Person> findByAge(@Param("age")Integer age);
+    Flux<Person> findByAge(@Param("age")Integer age, AsyncTransaction transaction);
 }
