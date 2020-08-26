@@ -39,24 +39,25 @@
         <system>jira</system>
         <url>https://issues.sonatype.org/browse/OSSRH-10785</url>
     </issueManagement>
-    
-    <properties>
-        <java.version>11</java.version>
-        <gear.build.sourceEncoding>UTF-8</gear.build.sourceEncoding>
-        <gear.maven-manager.version>2.0.0-SNAPSHOT</gear.maven-manager.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.github.Andy-Shao</groupId>
-                <artifactId>Gear-Maven-Manager</artifactId>
-                <version>${gear.maven-manager.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.Andy-Shao</groupId>
+            <artifactId>Gear</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <distributionManagement>
         <snapshotRepository>
