@@ -15,6 +15,10 @@ class Neo4jDaoAnalysisTest {
     @Test
     void analyseDao() {
         Neo4jDao neo4jDao = Neo4jDaoAnalysis.analyseDao(PersonDao.class);
+        testPersonDao(neo4jDao);
+    }
+
+    static void testPersonDao(Neo4jDao neo4jDao) {
         Assertions.assertThat(neo4jDao).isNotNull();
         Assertions.assertThat(neo4jDao.getEntityId()).isEqualTo("PersonDao");
         Assertions.assertThat(neo4jDao.getClipClass()).isEqualTo(PersonDaoClips.class);
@@ -27,5 +31,27 @@ class Neo4jDaoAnalysisTest {
         Assertions.assertThat(findByPk).isNotNull();
         Assertions.assertThat(findByPk.getSqlClip()).isNull();
         Assertions.assertThat(findByPk.isUseSqlClip()).isFalse();
+    }
+
+    @Test
+    void analyseDaoFromPackageRegex() {
+        List<Neo4jDao> neo4jDaoList = Neo4jDaoAnalysis.analyseDaoFromPackageRegex("com.github.andyshao.neo4j.demo.*");
+        Assertions.assertThat(neo4jDaoList.size()).isGreaterThan(0);
+        Neo4jDao personDao = neo4jDaoList.stream()
+                .filter(it -> Objects.equals(it.getEntityId(), "PersonDao"))
+                .findFirst()
+                .orElse(null);
+        testPersonDao(personDao);
+    }
+
+    @Test
+    void analyseDaoFromOnePackage() {
+        List<Neo4jDao> neo4jDaoList = Neo4jDaoAnalysis.analyseDaoFromOnePackage(PersonDao.class.getPackage());
+        Assertions.assertThat(neo4jDaoList.size()).isGreaterThan(0);
+        Neo4jDao personDao = neo4jDaoList.stream()
+                .filter(it -> Objects.equals(it.getEntityId(), "PersonDao"))
+                .findFirst()
+                .orElse(null);
+        testPersonDao(personDao);
     }
 }
