@@ -28,7 +28,7 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         String sqlString = neo4jSql.getSql();
         final Set<String> arguments = SqlAnalysis.findArguments(sqlString);
         final Map<String, Value> valueMap = Maps.newHashMap();
-        arguments.forEach(argument -> addValue(neo4jSql, valueMap, argument, args));
+        arguments.forEach(argument -> computeValue(neo4jSql, valueMap, argument, args));
         Optional<Pair<Integer, SqlParam>> pageableParam = SqlAnalysis.getPageableParam(neo4jSql);
         if(pageableParam.isPresent()) {
             Integer index = pageableParam.get().getFirst();
@@ -40,31 +40,31 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         return Optional.of(result);
     }
 
-    private static void addValue(Neo4jSql neo4jSql, Map<String, Value> valueMap, String argument, Object... args) {
+    private static void computeValue(Neo4jSql neo4jSql, Map<String, Value> valueMap, String argument, Object... args) {
         List<SqlParam> params = neo4jSql.getParams();
         for(int i=0; i<params.size(); i++) {
-            String argumentName = getArgumentName(argument);
+            String key = argument.substring(1);
             SqlParam sqlParam = params.get(i);
-            if(Objects.equals(sqlParam.getParamName(), argumentName)) {
-                addValue(valueMap, argumentName, argument, args[i]);
+            if(Objects.equals(sqlParam.getParamName(), getArgumentName(argument))) {
+                valueMap.put(key, computeValue(argument, args[i]));
                 break;
             }
         }
     }
 
     public static String getArgumentName(String argument) {
-        return splitFirst(argument).getFirst();
+        return splitFirst(argument).getFirst().substring(1);
     }
 
-    public static void addValue(Map<String, Value> valueMap, String key, String argument,
-                                 Object arg) {
+    public static Value computeValue(String argument, Object arg) {
         Pair<String, String> splitFirst = splitFirst(argument);
-        if(splitFirst.getSecondOps().isEmpty()) valueMap.put(key, Values.value(arg));
+        if(splitFirst.getSecondOps().isEmpty()) return Values.value(arg);
         else {
             String tail = splitFirst.getSecond();
             Pair<String, String> reSplitFirst = splitFirst(tail);
             String fieldName = reSplitFirst.getFirst();
-            addValue(valueMap, key, reSplitFirst.getSecond(), FieldOperation.getValueByGetMethod(arg, fieldName));
+            return computeValue(reSplitFirst.getSecond(),
+                    FieldOperation.getValueByGetMethod(arg, fieldName));
         }
     }
 
@@ -74,7 +74,7 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         if(index <= 0) return Pair.of(argument, null);
         else {
             if(index == (argument.length() - 1)) return Pair.of(argument.substring(0, index), null);
-            else return Pair.of(argument.substring(0, index), argument.substring(index));
+            else return Pair.of(argument.substring(0, index), argument.substring(index + 1));
         }
     }
 }

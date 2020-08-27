@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.lang.reflect.Parameter;
+import java.util.Objects;
 
 /**
  * Title: <br>
@@ -21,13 +22,14 @@ import java.lang.reflect.Parameter;
 @Setter
 public class SqlParam implements Serializable {
     public static final char SPLITTER = '_';
+    public static final char HEAD_CHAR = '$';
     private Parameter definition;
     private Param param;
     private String nativeName;
     private GenericNode returnTypeInfo;
 
     public String getParamName() {
-        String tmp = this.param.value();
+        String tmp = Objects.nonNull(this.param) ? this.param.value() : null;
         if(StringOperation.isEmptyOrNull(tmp)) return this.nativeName;
         else return tmp;
     }
