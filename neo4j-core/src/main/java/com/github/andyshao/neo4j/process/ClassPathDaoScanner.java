@@ -1,7 +1,7 @@
 package com.github.andyshao.neo4j.process;
 
-import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
+import com.github.andyshao.neo4j.domain.Neo4jDao;
 
 import java.util.Map;
 import java.util.stream.Collectors;

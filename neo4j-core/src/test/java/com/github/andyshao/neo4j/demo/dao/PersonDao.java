@@ -26,13 +26,13 @@ import java.util.Objects;
 @Neo4jDao(clipClass = PersonDaoClips.class)
 public interface PersonDao {
     /* This method is used to Junit testing. */
-    @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id = $pk.id RETURN n")
+    @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id = $pk_id RETURN n")
     Mono<Person> findByPk(@Param("pk")PersonId id, AsyncTransaction transaction);
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.name = $name RETURN n")
     Flux<Person> findByName(@Param("name")String name, AsyncTransaction transaction);
 
-    @Neo4jSql(sql = "CREATE (n:Person {id: p.id, name: p.name, age: p.age, gender: p.gender}) RETURN n")
+    @Neo4jSql(sql = "CREATE (n:Person {id: $p_id, name: $p_name, age: $p_age, gender: $p_gender}) RETURN n")
     Mono<Person> save(@Param("p")Person person, AsyncTransaction transaction);
 
     default Mono<Person> saveOrUpdate(@Param("p")Person person, AsyncTransaction transaction) {
@@ -69,7 +69,7 @@ public interface PersonDao {
                 });
     }
 
-    @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age.data RETURN n")
+    @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age_data RETURN n")
     Flux<Person> findByAge(@Param("age")Pageable<Integer> age, AsyncTransaction transaction);
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age RETURN n")

@@ -2,6 +2,9 @@ package com.github.andyshao.neo4j.process;
 
 import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
+import org.neo4j.driver.async.AsyncTransaction;
+
+import java.util.concurrent.CompletionStage;
 
 /**
  * Title: <br>
@@ -12,5 +15,5 @@ import com.github.andyshao.neo4j.domain.Neo4jSql;
  * @author Andy.Shao
  */
 public interface DaoProcessor {
-    <E> E processing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object...args);
+    <E> CompletionStage<E> processing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, AsyncTransaction transaction, Object...args);
 }

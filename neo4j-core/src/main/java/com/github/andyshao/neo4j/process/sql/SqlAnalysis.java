@@ -14,5 +14,5 @@ import java.util.Optional;
  * @author Andy.Shao
  */
 public interface SqlAnalysis {
-    Optional<String> parsing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object...args);
+    Optional<Sql> parsing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object...args);
 }

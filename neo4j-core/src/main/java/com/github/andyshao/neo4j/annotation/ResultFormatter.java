@@ -1,5 +1,7 @@
 package com.github.andyshao.neo4j.annotation;
 
+import com.github.andyshao.neo4j.process.serializer.Formatter;
+
 import java.lang.annotation.*;
 
 /**
@@ -13,8 +15,8 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface DeSerializer {
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface ResultFormatter {
     @SuppressWarnings("rawtypes")
-    Class<? extends com.github.andyshao.neo4j.process.serializer.DeSerializer> value();
+    Class<? extends Formatter> value();
 }

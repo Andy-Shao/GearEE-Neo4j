@@ -21,12 +21,12 @@ public class CreatePersonTest {
             Session session = driver.session()) {
             Entity entity = session.writeTransaction(tx -> {
                 String query = "CREATE "
-                    + "(n:Person {id: $id, name: $name, age: $age, gender: $gender}) "
+                    + "(n:Person {id: $id_id, name: $name, age: $age, gender: $gender}) "
                     + "-[:CreateUser]-> "
                     + "(u:User {username:$userName, age:$age}) "
                     + "RETURN n,u";
                 Result result = tx.run(query,
-                        Values.parameters("id", "ERHSBSYKAHV04SNIPHUPBDR",
+                        Values.parameters("id_id", "ERHSBSYKAHV04SNIPHUPBDR",
                                 "name", "ShaoWeiChuang",
                                 "userName", "andy.shao",
                                 "age", 28,

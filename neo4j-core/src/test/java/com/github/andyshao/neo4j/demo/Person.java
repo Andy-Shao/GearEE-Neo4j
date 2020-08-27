@@ -1,6 +1,5 @@
 package com.github.andyshao.neo4j.demo;
 
-import com.github.andyshao.neo4j.annotation.DeSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -19,6 +18,5 @@ import lombok.ToString;
 public class Person extends PersonId{
     private String name;
     private Integer age;
-    @DeSerializer(GenderDeSerializer.class)
     private Gender gender;
 }
