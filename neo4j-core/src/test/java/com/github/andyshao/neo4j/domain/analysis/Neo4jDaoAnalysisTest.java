@@ -1,9 +1,9 @@
-package com.github.andyshao.neo4j.analysis;
+package com.github.andyshao.neo4j.domain.analysis;
 
 import com.github.andyshao.neo4j.demo.dao.PersonDao;
 import com.github.andyshao.neo4j.demo.dao.PersonDaoClips;
-import com.github.andyshao.neo4j.model.Neo4jDao;
-import com.github.andyshao.neo4j.model.Neo4jSql;
+import com.github.andyshao.neo4j.domain.Neo4jDao;
+import com.github.andyshao.neo4j.domain.Neo4jSql;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

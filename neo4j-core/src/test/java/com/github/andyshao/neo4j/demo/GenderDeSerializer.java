@@ -1,6 +1,6 @@
 package com.github.andyshao.neo4j.demo;
 
-import com.github.andyshao.neo4j.io.DeSerializer;
+import com.github.andyshao.neo4j.process.serializer.DeSerializer;
 
 /**
  * Title: <br>

@@ -4,7 +4,7 @@ import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.Neo4jSql;
 import com.github.andyshao.neo4j.demo.Person;
 import com.github.andyshao.neo4j.demo.PersonId;
-import com.github.andyshao.neo4j.model.Pageable;
+import com.github.andyshao.neo4j.domain.Pageable;
 import com.github.andyshao.reflect.annotation.Param;
 import com.github.andyshao.util.EntityOperation;
 import org.neo4j.driver.async.AsyncTransaction;

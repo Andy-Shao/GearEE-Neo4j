@@ -1,7 +1,7 @@
-package com.github.andyshao.neo4j.analysis;
+package com.github.andyshao.neo4j.domain.analysis;
 
 import com.github.andyshao.lang.StringOperation;
-import com.github.andyshao.neo4j.model.Neo4jDao;
+import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.reflect.PackageOperation;
 import com.github.andyshao.util.stream.CollectorImpl;
 import com.google.common.collect.Lists;

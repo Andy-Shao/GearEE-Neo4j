@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.model;
+package com.github.andyshao.neo4j.domain;
 
 import com.google.common.collect.Lists;
 import lombok.AccessLevel;

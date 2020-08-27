@@ -16,5 +16,5 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 public @interface DeSerializer {
     @SuppressWarnings("rawtypes")
-    Class<? extends com.github.andyshao.neo4j.io.DeSerializer> value();
+    Class<? extends com.github.andyshao.neo4j.process.serializer.DeSerializer> value();
 }

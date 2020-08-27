@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.io;
+package com.github.andyshao.neo4j.process.serializer;
 
 /**
  * Title: <br>

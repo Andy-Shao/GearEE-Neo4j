@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.model;
+package com.github.andyshao.neo4j.domain;
 
 import com.github.andyshao.reflect.GenericNode;
 import com.github.andyshao.reflect.annotation.Param;

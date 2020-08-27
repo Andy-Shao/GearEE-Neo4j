@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.model;
+package com.github.andyshao.neo4j.domain;
 
 import com.google.common.collect.Lists;
 import lombok.AccessLevel;
@@ -21,6 +21,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Neo4jDao implements Serializable {
+    /** Unique ID */
     private String entityId;
     private Class<?> clipClass;
     @Setter(AccessLevel.PRIVATE)

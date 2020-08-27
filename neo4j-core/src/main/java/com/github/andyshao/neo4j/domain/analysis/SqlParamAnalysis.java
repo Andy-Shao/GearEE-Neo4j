@@ -1,7 +1,7 @@
-package com.github.andyshao.neo4j.analysis;
+package com.github.andyshao.neo4j.domain.analysis;
 
 import com.github.andyshao.neo4j.Neo4jException;
-import com.github.andyshao.neo4j.model.SqlParam;
+import com.github.andyshao.neo4j.domain.SqlParam;
 import com.github.andyshao.reflect.MethodOperation;
 import com.github.andyshao.reflect.annotation.Param;
 import com.google.common.cache.Cache;

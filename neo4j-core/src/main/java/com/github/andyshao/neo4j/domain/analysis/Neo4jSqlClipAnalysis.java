@@ -1,9 +1,9 @@
-package com.github.andyshao.neo4j.analysis;
+package com.github.andyshao.neo4j.domain.analysis;
 
 import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
-import com.github.andyshao.neo4j.model.Neo4jSqlClip;
+import com.github.andyshao.neo4j.domain.Neo4jSqlClip;
 import com.github.andyshao.reflect.MethodOperation;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
