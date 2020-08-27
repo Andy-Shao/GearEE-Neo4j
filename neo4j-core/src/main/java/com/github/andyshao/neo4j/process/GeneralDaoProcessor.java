@@ -6,6 +6,7 @@ import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.neo4j.process.serializer.Formatter;
 import com.github.andyshao.neo4j.process.sql.Sql;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
+import org.neo4j.driver.Values;
 import org.neo4j.driver.async.AsyncTransaction;
 
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class GeneralDaoProcessor implements DaoProcessor {
         Optional<Sql> sqlOpt = this.sqlAnalysis.parsing(neo4jDao, neo4jSql, args);
         if(sqlOpt.isEmpty()) throw new Neo4jException("Can not analysing sql!");
         Sql sql = sqlOpt.get();
-        return transaction.runAsync(sql.getSql(), sql.getParameters())
+        return transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()))
                 .thenComposeAsync(resultCursor -> formatter.format(neo4jSql, resultCursor));
     }
 }

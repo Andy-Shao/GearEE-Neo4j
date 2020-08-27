@@ -1,5 +1,7 @@
 package com.github.andyshao.neo4j.demo;
 
+import com.github.andyshao.neo4j.annotation.Serializer;
+import com.github.andyshao.neo4j.process.serializer.EnumSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -18,5 +20,6 @@ import lombok.ToString;
 public class Person extends PersonId{
     private String name;
     private Integer age;
+    @Serializer(EnumSerializer.class)
     private Gender gender;
 }

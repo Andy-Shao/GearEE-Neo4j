@@ -1,7 +1,7 @@
 package com.github.andyshao.neo4j.domain;
 
+import com.github.andyshao.reflect.GenericNode;
 import com.google.common.collect.Lists;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,8 +28,8 @@ public class Neo4jSql implements Serializable {
     private String sql;
     private boolean isUseSqlClip;
     private Neo4jSqlClip sqlClip;
-    @Getter(AccessLevel.PRIVATE)
     private List<SqlParam> params = Lists.newArrayList();
+    private GenericNode returnTypeInfo;
 
     public static boolean isLegalSql(Method method) {
         int modifiers = method.getModifiers();

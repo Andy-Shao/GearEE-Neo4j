@@ -1,7 +1,6 @@
 package com.github.andyshao.neo4j.domain;
 
 import com.google.common.collect.Lists;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,7 +22,6 @@ import java.util.List;
 public class Neo4jSqlClip implements Serializable {
     private String sqlClipName;
     private Method definition;
-    @Getter(AccessLevel.PRIVATE)
     private List<SqlParam> params = Lists.newArrayList();
     private Class<?> clipClass;
 

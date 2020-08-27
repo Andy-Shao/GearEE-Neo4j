@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.neo4j.driver.Value;
 
+import java.util.Map;
+
 /**
  * Title: <br>
  * Description: <br>
@@ -16,5 +18,5 @@ import org.neo4j.driver.Value;
 @Setter
 public class Sql {
     private String sql;
-    private Value parameters;
+    private Map<String, Value> parameters;
 }

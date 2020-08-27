@@ -65,6 +65,7 @@ public final class Neo4jSqlAnalysis {
         neo4jSql.setDaoClass(method.getDeclaringClass());
         neo4jSql.setDefinition(method);
         neo4jSql.setParams(SqlParamAnalysis.analyseSqlParamWithCache(method));
+        neo4jSql.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
         return neo4jSql;
     }
 }
