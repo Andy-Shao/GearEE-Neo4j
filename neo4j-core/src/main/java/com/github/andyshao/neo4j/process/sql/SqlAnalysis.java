@@ -22,7 +22,19 @@ import java.util.regex.Pattern;
  * @author Andy.Shao
  */
 public interface SqlAnalysis {
+    static SqlAnalysis DO_NOTHING = new SqlAnalysis() {
+        @Override
+        public Optional<Sql> parsing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object... args) {
+            return Optional.empty();
+        }
+
+        @Override
+        public boolean shouldProcess(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object... args) {
+            return true;
+        }
+    };
     Optional<Sql> parsing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object...args);
+    boolean shouldProcess(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object...args);
 
     static Set<String> findArguments(String query) {
         Set<String> ret = new HashSet<>();

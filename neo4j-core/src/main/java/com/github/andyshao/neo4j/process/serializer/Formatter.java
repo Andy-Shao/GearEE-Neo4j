@@ -15,5 +15,6 @@ import java.util.concurrent.CompletionStage;
  * @author Andy.Shao
  */
 public interface Formatter {
-    <T> CompletionStage<T> format(Neo4jSql neo4jSql, ResultCursor resultCursor) throws NotSupportConvertException;
+    <T> CompletionStage<T> format(Neo4jSql neo4jSql, ResultCursor resultCursor, Object...args)
+            throws NotSupportConvertException;
 }

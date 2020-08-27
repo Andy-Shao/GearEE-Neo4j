@@ -22,9 +22,16 @@ import java.util.*;
  * @author Andy.Shao
  */
 public class SqlAnalysisBySql implements SqlAnalysis {
+    private final SqlAnalysis sqlAnalysis;
+
+    public SqlAnalysisBySql(SqlAnalysis sqlAnalysis) {
+        this.sqlAnalysis = sqlAnalysis;
+    }
 
     @Override
     public Optional<Sql> parsing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object... args) {
+        if(!this.shouldProcess(neo4jDao, neo4jSql, args)) return this.sqlAnalysis.parsing(neo4jDao, neo4jSql, args);
+
         String sqlString = neo4jSql.getSql();
         final Set<String> arguments = SqlAnalysis.findArguments(sqlString);
         final Map<String, Value> valueMap = Maps.newHashMap();
@@ -40,6 +47,11 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         return Optional.of(result);
     }
 
+    @Override
+    public boolean shouldProcess(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object... args) {
+        return !neo4jSql.isUseSqlClip();
+    }
+
     private static void computeValue(Neo4jSql neo4jSql, Map<String, Value> valueMap, String argument, Object... args) {
         List<SqlParam> params = neo4jSql.getParams();
         for(int i=0; i<params.size(); i++) {
@@ -52,11 +64,11 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         }
     }
 
-    public static String getArgumentName(String argument) {
+    private static String getArgumentName(String argument) {
         return splitFirst(argument).getFirst().substring(1);
     }
 
-    public static Value computeValue(String argument, Object arg) {
+    private static Value computeValue(String argument, Object arg) {
         Pair<String, String> splitFirst = splitFirst(argument);
         if(splitFirst.getSecondOps().isEmpty()) return Values.value(arg);
         else {
@@ -68,7 +80,7 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         }
     }
 
-    public static Pair<String, String> splitFirst(String argument) {
+    private static Pair<String, String> splitFirst(String argument) {
         if(StringOperation.isEmptyOrNull(argument)) return Pair.of(null, null);
         int index = argument.indexOf(SqlParam.SPLITTER);
         if(index <= 0) return Pair.of(argument, null);

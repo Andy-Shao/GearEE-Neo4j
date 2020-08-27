@@ -37,6 +37,6 @@ public class GeneralDaoProcessor implements DaoProcessor {
         if(sqlOpt.isEmpty()) throw new Neo4jException("Can not analysing sql!");
         Sql sql = sqlOpt.get();
         return transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()))
-                .thenComposeAsync(resultCursor -> formatter.format(neo4jSql, resultCursor));
+                .thenComposeAsync(resultCursor -> formatter.format(neo4jSql, resultCursor, args));
     }
 }

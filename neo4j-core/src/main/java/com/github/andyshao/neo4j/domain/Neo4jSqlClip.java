@@ -1,5 +1,6 @@
 package com.github.andyshao.neo4j.domain;
 
+import com.github.andyshao.neo4j.process.sql.Sql;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +27,9 @@ public class Neo4jSqlClip implements Serializable {
     private Class<?> clipClass;
 
     public static boolean isLegalMethod(Method method) {
-        return Modifier.isStatic(method.getModifiers());
+        Class<?> returnType = method.getReturnType();
+        return Modifier.isStatic(method.getModifiers())
+                && (Sql.class.isAssignableFrom(returnType) || returnType.isAssignableFrom(String.class));
     }
 
     public static boolean isLegalClipClass(Class<?> clazz) {

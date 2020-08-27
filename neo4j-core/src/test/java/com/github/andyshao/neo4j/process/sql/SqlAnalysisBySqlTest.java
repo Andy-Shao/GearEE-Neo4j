@@ -18,7 +18,7 @@ class SqlAnalysisBySqlTest {
 
     @BeforeEach
     void before() {
-        this.sqlAnalysis = new SqlAnalysisBySql();
+        this.sqlAnalysis = new SqlAnalysisBySql(SqlAnalysis.DO_NOTHING);
     }
 
     @Test

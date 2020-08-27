@@ -52,6 +52,7 @@ public interface PersonDao {
                 });
     }
 
+    /* This method is used to be Junit testing. */
     @Neo4jSql(isUseSqlClip = true, sqlClipName = "saveByList")
     Flux<Person> saveByList(@Param("ps")List<Person> ps, AsyncTransaction transaction);
 
