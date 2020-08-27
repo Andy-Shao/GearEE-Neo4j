@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * Title: <br>
- * Description: <br>
+ * Description: All of methods must be <b style="color:blue;">public</b><br>
  * Copyright: Copyright(c) 2020/8/26
  * Encoding: UNIX UTF-8
  *
@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Neo4jSqlClips {
+public @interface Neo4jSqlClip {
     String sqlClipName() default "";
 }

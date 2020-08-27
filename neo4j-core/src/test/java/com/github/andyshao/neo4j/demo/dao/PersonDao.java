@@ -25,6 +25,7 @@ import java.util.Objects;
  */
 @Neo4jDao(clipClass = PersonDaoClips.class)
 public interface PersonDao {
+    /* This method is used to Junit testing. */
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id = $pk.id RETURN n")
     Mono<Person> findByPk(@Param("pk")PersonId id, AsyncTransaction transaction);
 
