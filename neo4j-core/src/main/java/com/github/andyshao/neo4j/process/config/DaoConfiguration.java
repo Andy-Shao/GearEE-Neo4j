@@ -1,9 +1,6 @@
 package com.github.andyshao.neo4j.process.config;
 
-import com.github.andyshao.neo4j.process.ClassPathAnnotationEntityScanner;
-import com.github.andyshao.neo4j.process.DaoProcessor;
-import com.github.andyshao.neo4j.process.EntityScanner;
-import com.github.andyshao.neo4j.process.GeneralDaoProcessor;
+import com.github.andyshao.neo4j.process.*;
 import com.github.andyshao.neo4j.process.serializer.BasicTypeFormatterResult;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.serializer.JavaBeanFormatterResult;
@@ -23,7 +20,8 @@ import com.github.andyshao.neo4j.process.sql.SqlAnalysisBySqlClip;
 public class DaoConfiguration {
 
     public EntityScanner entityScanner() {
-        return new ClassPathAnnotationEntityScanner();
+        ClassPathAnnotationEntityScanner classPathAnnotationEntityScanner = new ClassPathAnnotationEntityScanner();
+        return new CacheEntityScanner(classPathAnnotationEntityScanner);
     }
 
     public SqlAnalysis sqlAnalysis() {
