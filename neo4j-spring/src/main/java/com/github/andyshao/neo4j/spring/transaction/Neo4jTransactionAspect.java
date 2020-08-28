@@ -14,7 +14,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -51,38 +51,56 @@ public class Neo4jTransactionAspect {
         return process(pjp);
     }
 
+    @SuppressWarnings("unchecked")
     public Object process(ProceedingJoinPoint pjp) throws Throwable {
-        Object[] args = pjp.getArgs();
-        int index = -1;
-        AsyncTransaction tx = null;
+        final Object[] args = pjp.getArgs();
+        CompletionStage<AsyncTransaction> tx;
+        boolean hasTx;
+        if(Objects.isNull(args[args.length - 1])) {
+            tx = null;
+            hasTx = false;
+        } else {
+            tx = (CompletionStage<AsyncTransaction>) args[args.length - 1];
+            hasTx = true;
+        }
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Class<?>[] parameterTypes = signature.getParameterTypes();
-        for(int i=0; i<parameterTypes.length; i++) {
-            if(parameterTypes[i].isAssignableFrom(AsyncTransaction.class)) {
-                index = i;
-                tx = (AsyncTransaction) args[i];
-            }
+        final AsyncSession asyncSession = hasTx ? null : this.driver.asyncSession();
+        if(!hasTx) {
+            tx = asyncSession.beginTransactionAsync();
+            args[args.length - 1] = tx;
         }
-        @SuppressWarnings("resource")
-        final AsyncSession session = tx == null ? this.driver.asyncSession() : null;
-        final CompletionStage<AsyncTransaction> transaction = tx == null ? session.beginTransactionAsync() : CompletableFuture.completedStage(tx);
-        if(tx == null) args[index] = transaction.toCompletableFuture().join();
+
         Object obj = pjp.proceed(args);
 
+        final CompletionStage<AsyncTransaction> trx = tx;
         if(obj instanceof Mono) {
             Mono<?> cs = (Mono<?>) obj;
-            //TODO
+            if(!hasTx) cs = cs.doFinally(signalType -> finishingTransaction(asyncSession, trx, signalType));
+            obj = cs;
         } else if(obj instanceof Flux) {
             Flux<?> cs = (Flux<?>) obj;
-            //TODO
+            if(!hasTx) cs = cs.doFinally(signalType -> finishingTransaction(asyncSession, trx, signalType));
+            obj = cs;
         }
-//        CompletionStage<?> cs = (CompletionStage<?>) obj;
-//        if(index != -1) cs.thenAcceptAsync(o -> transaction.commitAsync().thenAcceptAsync(v -> session.closeAsync()))
-//                .exceptionally(ex -> {
-//                    log.error("SQL process has an exception" , ex);
-//                    transaction.rollbackAsync().thenAcceptAsync(v -> session.closeAsync());
-//                    return null;
-//                });
+
         return obj;
+    }
+
+    private void finishingTransaction(AsyncSession asyncSession, CompletionStage<AsyncTransaction> trx,
+                                      reactor.core.publisher.SignalType signalType) {
+        switch (signalType) {
+            case ON_ERROR:
+            case CANCEL:
+                trx.thenComposeAsync(transaction -> {
+                    return transaction.rollbackAsync()
+                            .thenComposeAsync(v -> asyncSession.closeAsync());
+                });
+            case ON_COMPLETE:
+                trx.thenComposeAsync(transaction -> {
+                    return transaction.commitAsync()
+                            .thenComposeAsync(v -> asyncSession.closeAsync());
+                });
+        }
     }
 }
