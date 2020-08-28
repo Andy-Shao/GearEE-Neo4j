@@ -2,13 +2,10 @@ package com.github.andyshao.neo4j.process.serializer;
 
 import com.github.andyshao.lang.NotSupportConvertException;
 import com.github.andyshao.lang.StringOperation;
-import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.domain.Neo4jEntity;
 import com.github.andyshao.neo4j.domain.Neo4jEntityField;
-import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.reflect.ClassOperation;
 import com.github.andyshao.reflect.ConstructorOperation;
-import com.github.andyshao.reflect.GenericNode;
 import com.github.andyshao.reflect.MethodOperation;
 import com.github.andyshao.time.LocalDateTimeOperation;
 import org.neo4j.driver.Value;
@@ -25,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 /**
@@ -39,16 +35,6 @@ import java.util.stream.Collectors;
  */
 public final class Deserializers {
     private Deserializers() {}
-    
-    public static final void checkReturnType(Neo4jSql neo4jSql) {
-        GenericNode returnTypeInfo = neo4jSql.getReturnTypeInfo();
-        if(!returnTypeInfo.getDeclareType().isAssignableFrom(CompletionStage.class)) {
-            throw new Neo4jException(String.format("the return type of %s.%s should be %s in first level" ,
-                neo4jSql.getDefinition().getDeclaringClass().getName(),
-                neo4jSql.getDefinition().getName(),
-                CompletionStage.class));
-        }
-    }
 
     public static final Object formatValue(Class<?> clazz, Value value) {
         if(value.isNull()) return null;
@@ -65,6 +51,7 @@ public final class Deserializers {
         if(clazz.isAssignableFrom(LocalTime.class)) return value.asLocalTime();
         if(clazz.isAssignableFrom(LocalDateTime.class)) return value.asLocalDateTime();
         if(clazz.isAssignableFrom(OffsetTime.class)) return value.asOffsetTime();
+        if(clazz.isAssignableFrom(OffsetDateTime.class)) return value.asOffsetDateTime();
         if(clazz.isAssignableFrom(IsoDuration.class)) return value.asIsoDuration();
         if(clazz.isAssignableFrom(ZonedDateTime.class)) return value.asZonedDateTime();
         if(clazz.isAssignableFrom(Date.class)) return LocalDateTimeOperation.toDate().convert(value.asLocalDateTime());
@@ -96,21 +83,12 @@ public final class Deserializers {
         if(declareType.isAssignableFrom(LocalTime.class)) return true;
         if(declareType.isAssignableFrom(LocalDateTime.class)) return true;
         if(declareType.isAssignableFrom(OffsetTime.class)) return true;
+        if(declareType.isAssignableFrom(OffsetDateTime.class)) return true;
         if(declareType.isAssignableFrom(IsoDuration.class)) return true;
         if(declareType.isAssignableFrom(ZonedDateTime.class)) return true;
         if(declareType.isAssignableFrom(Date.class)) return true;
         if(declareType.isAssignableFrom(String.class)) return true;
         return false;
-    }
-
-    public static final Class<?> getReturnType(Neo4jSql sqlMethod){
-        GenericNode node = sqlMethod.getReturnTypeInfo();
-        List<GenericNode> nodes = node.getComponentTypes();
-        GenericNode tmp = nodes.get(0);
-        Class<?> declareType = tmp.getDeclareType();
-        tmp = tmp.getComponentTypes().get(0);
-        declareType = tmp.getDeclareType();
-        return declareType;
     }
     
     public static final Object formatJavaBean(Class<?> returnType, Neo4jEntity neo4jEntity, Value val) {

@@ -30,6 +30,9 @@ public interface PersonDao {
     /* This method is used to Junit testing. */
     @Neo4jSql(sql = FIND_BY_PK)
     Mono<Person> findByPk(@Param("pk")PersonId id, AsyncTransaction transaction);
+    /* This method is used to Junit testing. */
+    @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id= $pk_id RETURN n.name")
+    Mono<String> findNameByPk(@Param("pk")PersonId id, AsyncTransaction transaction);
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.name = $name RETURN n")
     Flux<Person> findByName(@Param("name")String name, AsyncTransaction transaction);

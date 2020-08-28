@@ -16,7 +16,7 @@ import java.util.concurrent.CompletionStage;
 public abstract class FormatterResultResponsibilityLink implements FormatterResult {
     private final FormatterResult formatterResult;
 
-    protected FormatterResultResponsibilityLink(FormatterResult formatterResult) {
+    public FormatterResultResponsibilityLink(FormatterResult formatterResult) {
         this.formatterResult = formatterResult;
     }
 

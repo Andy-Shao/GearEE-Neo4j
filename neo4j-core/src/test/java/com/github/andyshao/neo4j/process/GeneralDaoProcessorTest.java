@@ -8,11 +8,9 @@ import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
 import com.github.andyshao.neo4j.driver.CreatePersonTest;
+import com.github.andyshao.neo4j.process.config.DaoConfiguration;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
-import com.github.andyshao.neo4j.process.serializer.JavaBeanFormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
-import com.github.andyshao.neo4j.process.sql.SqlAnalysisBySql;
-import com.github.andyshao.neo4j.process.sql.SqlAnalysisBySqlClip;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,10 +19,12 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.async.AsyncSession;
+import org.neo4j.driver.async.AsyncTransaction;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 @Slf4j
 class GeneralDaoProcessorTest extends IntegrationTest {
@@ -32,11 +32,11 @@ class GeneralDaoProcessorTest extends IntegrationTest {
 
     @BeforeEach
     void before() {
-        SqlAnalysis sqlAnalysis = new SqlAnalysisBySql(SqlAnalysis.DO_NOTHING);
-        sqlAnalysis = new SqlAnalysisBySqlClip(sqlAnalysis);
-        EntityScanner entityScanner = new ClassPathAnnotationEntityScanner();
-        FormatterResult formatterResult = new JavaBeanFormatterResult(FormatterResult.DO_NOTHING, entityScanner);
-        this.daoProcessor = new GeneralDaoProcessor(sqlAnalysis, formatterResult);
+        DaoConfiguration configuration = new DaoConfiguration();
+        SqlAnalysis sqlAnalysis = configuration.sqlAnalysis();
+        EntityScanner entityScanner = configuration.entityScanner();
+        FormatterResult formatterResult = configuration.formatterResult(entityScanner);
+        this.daoProcessor = configuration.daoProcessor(sqlAnalysis, formatterResult);
     }
 
     @Test
@@ -46,12 +46,17 @@ class GeneralDaoProcessorTest extends IntegrationTest {
                 .stream()
                 .filter(it -> Objects.equals(it.getDefinition().getName(), "findByPk"))
                 .findFirst();
+        Optional<Neo4jSql> findNameByPk = personDao.getSqls()
+                .stream()
+                .filter(it -> Objects.equals(it.getDefinition().getName(), "findNameByPk"))
+                .findFirst();
         try(Driver driver =
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
             AsyncSession asyncSession = driver.asyncSession();
-            Mono<Person> result = Mono.fromCompletionStage(asyncSession.beginTransactionAsync())
+            CompletionStage<AsyncTransaction> completionStage = asyncSession.beginTransactionAsync();
+            Mono<Person> result = Mono.fromCompletionStage(completionStage)
                     .flatMap(tx -> {
                         if (findByPkOpt.isPresent()) {
                             PersonId personId = new PersonId();
@@ -62,6 +67,18 @@ class GeneralDaoProcessorTest extends IntegrationTest {
             Person person = result.block();
             log.info(Objects.toString(person));
             Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
+
+            Mono<String> name = Mono.fromCompletionStage(completionStage)
+                    .flatMap(tx -> {
+                        if(findNameByPk.isPresent()) {
+                            PersonId personId = new PersonId();
+                            personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
+                            return this.daoProcessor.processing(personDao, findNameByPk.get(), tx, personId);
+                        } else return Mono.empty();
+                    });
+            String personName = name.block();
+            log.info(Objects.toString(personName));
+            Assertions.assertThat(personName).isEqualTo("ShaoWeiChuang");
         }
     }
 }
