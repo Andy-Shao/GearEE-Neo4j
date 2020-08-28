@@ -13,6 +13,7 @@ import java.lang.annotation.*;
  *
  * @author Andy.Shao
  */
+@Deprecated
 @Inherited
 @Documented
 @Target(ElementType.TYPE)
