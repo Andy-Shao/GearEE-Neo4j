@@ -3,7 +3,10 @@ package com.github.andyshao.neo4j.process.serializer;
 import com.github.andyshao.lang.NotSupportConvertException;
 import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.Neo4jException;
+import com.github.andyshao.neo4j.domain.Neo4jEntity;
+import com.github.andyshao.neo4j.domain.Neo4jEntityField;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
+import com.github.andyshao.reflect.ClassOperation;
 import com.github.andyshao.reflect.ConstructorOperation;
 import com.github.andyshao.reflect.GenericNode;
 import com.github.andyshao.reflect.MethodOperation;
@@ -20,7 +23,10 @@ import java.lang.reflect.Method;
 import java.time.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -63,7 +69,7 @@ public final class Deserializers {
         if(clazz.isAssignableFrom(ZonedDateTime.class)) return value.asZonedDateTime();
         if(clazz.isAssignableFrom(Date.class)) return LocalDateTimeOperation.toDate().convert(value.asLocalDateTime());
         if(clazz.isAssignableFrom(String.class)) return formatToString(value);
-        if(clazz.isAssignableFrom(Enum.class)) return MethodOperation.invoked(null , 
+        if(Enum.class.isAssignableFrom(clazz)) return MethodOperation.invoked(null ,
             MethodOperation.getMethod(clazz , "valueOf" , String.class), value.asString());
         throw new NotSupportConvertException();
     }
@@ -107,7 +113,10 @@ public final class Deserializers {
         return declareType;
     }
     
-    public static final Object formatJavaBean(Class<?> returnType, Neo4jSql sqlMethod, Value val) {
+    public static final Object formatJavaBean(Class<?> returnType, Neo4jEntity neo4jEntity, Value val) {
+        Map<String, Neo4jEntityField> entityFieldMap = neo4jEntity.getFields()
+                .stream()
+                .collect(Collectors.toMap(it -> it.getDefinition().getName(), it -> it));
         List<Method> setMethods = MethodOperation.getSetMethods(returnType);
         if(val.isNull()) return null;
         Entity entity = val.asEntity();
@@ -117,23 +126,13 @@ public final class Deserializers {
             String key = setMethod.getName();
             key = StringOperation.replaceFirst(key , "set" , "");
             key = key.substring(0 , 1).toLowerCase() + key.substring(1);
-            Object value = formatValue(setMethod.getParameterTypes()[0] , entity.get(key));
-            if(value != null) MethodOperation.invoked(tmp , setMethod , value);
-        }
-        return tmp;
-    }
-
-    @Deprecated
-    public static final Object formatJavaBean(Class<?> returnType , List<Method> setMethods , Value va) {
-        if(va.isNull()) return null;
-        Entity entity = va.asEntity();
-        if(entity.size() == 0) return null;
-        Object tmp = ConstructorOperation.newInstance(returnType);
-        for(Method setMethod : setMethods) {
-            String key = setMethod.getName();
-            key = StringOperation.replaceFirst(key , "set" , "");
-            key = key.substring(0 , 1).toLowerCase() + key.substring(1);
-            Object value = formatValue(setMethod.getParameterTypes()[0] , entity.get(key));
+            Neo4jEntityField entityField = entityFieldMap.get(key);
+            Class<? extends Deserializer> deserializerClass = entityField.getDeserializer();
+            Object value;
+            if(Objects.nonNull(deserializerClass)) {
+                Deserializer deserializer = ClassOperation.newInstance(deserializerClass);
+                value = deserializer.decode(entity.get(key));
+            } else value = formatValue(setMethod.getParameterTypes()[0] , entity.get(key));
             if(value != null) MethodOperation.invoked(tmp , setMethod , value);
         }
         return tmp;

@@ -2,7 +2,7 @@ package com.github.andyshao.neo4j.process;
 
 import com.github.andyshao.neo4j.domain.Neo4jEntity;
 
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * Title: <br>
@@ -13,5 +13,5 @@ import java.util.Map;
  * @author Andy.Shao
  */
 public interface EntityScanner {
-    Map<Class<?>, Neo4jEntity> scan();
+    Optional<Neo4jEntity> scan(Class<?> entityType);
 }

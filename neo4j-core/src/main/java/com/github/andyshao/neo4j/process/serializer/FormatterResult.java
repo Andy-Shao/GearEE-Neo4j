@@ -14,5 +14,11 @@ import java.util.concurrent.CompletionStage;
  * @author Andy.Shao
  */
 public interface FormatterResult {
+    static FormatterResult DO_NOTHING = new FormatterResult() {
+        public <E> E decode(CompletionStage<ResultCursor> queryTask, Neo4jSql neo4jSql, Object... args){
+            return null;
+        }
+    };
+
     <E> E decode(CompletionStage<ResultCursor> queryTask, Neo4jSql neo4jSql, Object...args);
 }
