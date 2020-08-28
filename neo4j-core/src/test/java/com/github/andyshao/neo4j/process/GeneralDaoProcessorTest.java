@@ -14,10 +14,12 @@ class GeneralDaoProcessorTest extends IntegrationTest {
     void before() {
         SqlAnalysis sqlAnalysis = new SqlAnalysisBySql(SqlAnalysis.DO_NOTHING);
         sqlAnalysis = new SqlAnalysisBySqlClip(sqlAnalysis);
+        //TODO
         this.daoProcessor = new GeneralDaoProcessor(sqlAnalysis, null);
     }
 
     @Test
     void processing() {
+        //TODO
     }
 }
