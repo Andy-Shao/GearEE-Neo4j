@@ -80,4 +80,7 @@ public interface PersonDao {
 
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age RETURN n")
     Flux<Person> findByAge(@Param("age")Integer age, AsyncTransaction transaction);
+
+    @Neo4jSql(sql = "MATCH (n:Person) WHERE n.age = $age AND n.name = $name RETURN n")
+    Flux<Person> findByAgeAndName(@Param("age")Integer age, @Param("name")String name, AsyncTransaction transaction);
 }
