@@ -173,13 +173,12 @@ public class SimpleDaoFactory implements DaoFactory {
                 mv.visitVarInsn(Opcodes.ALOAD, 0);
                 mv.visitFieldInsn(Opcodes.GETFIELD, classDesc, NEO4j_DAO_NAME, NEO4j_DAO_DESC);
                 mv.visitVarInsn(Opcodes.ALOAD, parameterCount + 4); //sqlDefinition
-                mv.visitVarInsn(Opcodes.ALOAD, parameterCount); //transaction
                 mv.visitVarInsn(Opcodes.ALOAD, parameterCount + 3); //args
                 mv.visitMethodInsn(
                         Opcodes.INVOKEINTERFACE,
                         "com/github/andyshao/neo4j/process/DaoProcessor",
                         "processing",
-                        "(Lcom/github/andyshao/neo4j/domain/Neo4jDao;Lcom/github/andyshao/neo4j/domain/Neo4jSql;Lorg/neo4j/driver/async/AsyncTransaction;[Ljava/lang/Object;)Ljava/lang/Object;",
+                        "(Lcom/github/andyshao/neo4j/domain/Neo4jDao;Lcom/github/andyshao/neo4j/domain/Neo4jSql;[Ljava/lang/Object;)Ljava/lang/Object;",
                         true);
                 if(method.getReturnType().isAssignableFrom(Mono.class))
                     mv.visitTypeInsn(Opcodes.CHECKCAST, "reactor/core/publisher/Mono");
