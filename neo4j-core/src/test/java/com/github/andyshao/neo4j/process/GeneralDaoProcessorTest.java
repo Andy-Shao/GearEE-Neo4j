@@ -56,26 +56,22 @@ class GeneralDaoProcessorTest extends IntegrationTest {
         ){
             AsyncSession asyncSession = driver.asyncSession();
             CompletionStage<AsyncTransaction> completionStage = asyncSession.beginTransactionAsync();
-            Mono<Person> result = Mono.fromCompletionStage(completionStage)
-                    .flatMap(tx -> {
-                        if (findByPkOpt.isPresent()) {
-                            PersonId personId = new PersonId();
-                            personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
-                            return this.daoProcessor.processing(personDao, findByPkOpt.get(), tx, personId);
-                        } else return Mono.empty();
-                    });
+            Mono<Person> result;
+            if (findByPkOpt.isPresent()) {
+                PersonId personId = new PersonId();
+                personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
+                result = this.daoProcessor.processing(personDao, findByPkOpt.get(), personId, completionStage);
+            } else result = Mono.empty();
             Person person = result.block();
             log.info(Objects.toString(person));
             Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
 
-            Mono<String> name = Mono.fromCompletionStage(completionStage)
-                    .flatMap(tx -> {
-                        if(findNameByPk.isPresent()) {
-                            PersonId personId = new PersonId();
-                            personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
-                            return this.daoProcessor.processing(personDao, findNameByPk.get(), tx, personId);
-                        } else return Mono.empty();
-                    });
+            Mono<String> name;
+            if(findNameByPk.isPresent()) {
+                PersonId personId = new PersonId();
+                personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
+                name = this.daoProcessor.processing(personDao, findNameByPk.get(), personId, completionStage);
+            } else name = Mono.empty();
             String personName = name.block();
             log.info(Objects.toString(personName));
             Assertions.assertThat(personName).isEqualTo("ShaoWeiChuang");

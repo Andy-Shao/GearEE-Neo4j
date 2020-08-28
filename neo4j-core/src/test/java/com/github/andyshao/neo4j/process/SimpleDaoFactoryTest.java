@@ -18,7 +18,6 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.async.AsyncSession;
-import org.neo4j.driver.async.AsyncTransaction;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -45,10 +44,9 @@ class SimpleDaoFactoryTest extends IntegrationTest {
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
             AsyncSession asyncSession = driver.asyncSession();
-            AsyncTransaction tx = asyncSession.beginTransactionAsync().toCompletableFuture().join();
             PersonId personId = new PersonId();
             personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
-            Mono<Person> findByPk = personDao.findByPk(personId, tx);
+            Mono<Person> findByPk = personDao.findByPk(personId, asyncSession.beginTransactionAsync());
             findByPk
                     .doOnNext(person -> {
                         log.info(Objects.toString(person));

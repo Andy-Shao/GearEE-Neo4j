@@ -32,13 +32,15 @@ public class GeneralDaoProcessor implements DaoProcessor {
         this.formatterResult = formatterResult;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <E> E processing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, AsyncTransaction transaction,
-                                             Object... args) {
+    public <E> E processing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, Object... args) {
         Optional<Sql> sqlOpt = this.sqlAnalysis.parsing(neo4jDao, neo4jSql, args);
         if(sqlOpt.isEmpty()) throw new Neo4jException("Can not analysing sql!");
         Sql sql = sqlOpt.get();
-        CompletionStage<ResultCursor> queryTask = transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()));
+        CompletionStage<AsyncTransaction> transaction = (CompletionStage<AsyncTransaction>) args[args.length - 1];
+        CompletionStage<ResultCursor> queryTask =
+                transaction.thenCompose(tx -> tx.runAsync(sql.getSql(), Values.value(sql.getParameters())));
         Class<? extends FormatterResult> selfDeserializerClass = neo4jSql.getDeserializer();
         if(Objects.nonNull(selfDeserializerClass)) {
             FormatterResult selfFormatterResult = ClassOperation.newInstance(selfDeserializerClass);

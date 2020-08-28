@@ -39,4 +39,8 @@ public class DaoConfiguration {
     public DaoProcessor daoProcessor(SqlAnalysis sqlAnalysis, FormatterResult formatterResult) {
         return new GeneralDaoProcessor(sqlAnalysis, formatterResult);
     }
+
+    public DaoFactory daoFactory(DaoProcessor daoProcessor) {
+        return new SimpleDaoFactory(daoProcessor);
+    }
 }

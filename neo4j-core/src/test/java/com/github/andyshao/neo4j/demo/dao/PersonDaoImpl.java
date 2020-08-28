@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Title: <br>
@@ -31,74 +32,74 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     @Override
-    public Mono<Person> findByPk(PersonId id, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {PersonId.class, AsyncTransaction.class};
+    public Mono<Person> findByPk(PersonId id, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {PersonId.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findByPk", argTypes);
         Object[] args = {id, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Mono<String> findNameByPk(PersonId id, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {PersonId.class, AsyncTransaction.class};
+    public Mono<String> findNameByPk(PersonId id, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {PersonId.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findNameByPk", argTypes);
         Object[] args = {id, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Flux<Person> findByName(String name, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {String.class, AsyncTransaction.class};
+    public Flux<Person> findByName(String name, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {String.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findByName", argTypes);
         Object[] args = {name, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Mono<Person> save(Person person, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {Person.class, AsyncTransaction.class};
+    public Mono<Person> save(Person person, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {Person.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("save", argTypes);
         Object[] args = {person, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Flux<Person> saveByList(List<Person> ps, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {List.class, AsyncTransaction.class};
+    public Flux<Person> saveByList(List<Person> ps, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {List.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("saveByList", argTypes);
         Object[] args = {ps, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Flux<Person> findByAge(Pageable<Integer> age, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {Pageable.class, AsyncTransaction.class};
+    public Flux<Person> findByAge(Pageable<Integer> age, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {Pageable.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findByAge", argTypes);
         Object[] args = {age, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Flux<Person> findByAge(Integer age, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {Integer.class, AsyncTransaction.class};
+    public Flux<Person> findByAge(Integer age, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {Integer.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findByAge", argTypes);
         Object[] args = {age, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 
     @Override
-    public Flux<Person> findByAgeAndName(Integer age, String name, AsyncTransaction transaction) {
-        Class<?>[] argTypes = {Integer.class, String.class, AsyncTransaction.class};
+    public Flux<Person> findByAgeAndName(Integer age, String name, CompletionStage<AsyncTransaction> transaction) {
+        Class<?>[] argTypes = {Integer.class, String.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findByAgeAndName", argTypes);
         Object[] args = {age, name, transaction};
         Neo4jSql sqlDefinition = neo4jSql.get();
-        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, transaction, args);
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
     }
 }

@@ -15,7 +15,6 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.async.AsyncSession;
-import reactor.core.publisher.Mono;
 
 /**
  * Title: <br>
@@ -46,12 +45,9 @@ public class PersonDaoImplTest extends IntegrationTest {
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
             AsyncSession asyncSession = driver.asyncSession();
-            Person person = Mono.fromCompletionStage(asyncSession.beginTransactionAsync())
-                    .flatMap(tx -> {
-                        PersonId id = new PersonId();
-                        id.setId("ERHSBSYKAHV04SNIPHUPBDR");
-                        return this.personDao.findByPk(id, tx);
-                    })
+            PersonId id = new PersonId();
+            id.setId("ERHSBSYKAHV04SNIPHUPBDR");
+            Person person = this.personDao.findByPk(id, asyncSession.beginTransactionAsync())
                     .block();
             Assertions.assertThat(person).isNotNull();
         }
