@@ -32,7 +32,7 @@ public class Neo4jDaoScanner implements BeanDefinitionRegistryPostProcessor {
         for(Map.Entry<String, Neo4jDao> daoEntry : daoMap.entrySet()) {
             BeanDefinitionBuilder beanDefinBuilder = BeanDefinitionBuilder.genericBeanDefinition(Neo4jDaoFactoryBean.class);
             beanDefinBuilder.addPropertyValue("daoInterface" , daoEntry.getValue().getClass().getInterfaces()[0]);
-            beanDefinBuilder.addPropertyValue("daoContext" , this.daoFactory);
+            beanDefinBuilder.addPropertyValue("daoFactory" , this.daoFactory);
             registry.registerBeanDefinition(daoEntry.getKey() , beanDefinBuilder.getBeanDefinition());
         }
     }

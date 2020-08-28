@@ -29,8 +29,7 @@ import java.util.Set;
 @Import({Neo4jDaoAnalysis.class})
 public abstract class Neo4jConfiguration implements ImportAware {
     private final DaoConfiguration dc = new DaoConfiguration();
-
-    protected abstract Set<Package> scannerPackages();
+//    private Set<Package> scannerPackages = Sets.newHashSet();
 
     protected Neo4jPros neo4jPros() {
         return new Neo4jPros.Neo4jProsBuilder().build();
@@ -45,10 +44,11 @@ public abstract class Neo4jConfiguration implements ImportAware {
         return AuthTokens.basic(info.getUsername() , info.getPassword() , info.getRealm());
     }
 
+    protected abstract  Set<Package> scannerPackages();
+
     @Bean
     public DaoScanner daoScanner() {
-        Set<Package> packages = scannerPackages();
-        return new ClassPathAnnotationDaoScanner(packages.toArray(new Package[0]));
+        return new ClassPathAnnotationDaoScanner(scannerPackages().toArray(new Package[0]));
     }
 
     @Bean(destroyMethod = "close")
@@ -86,8 +86,8 @@ public abstract class Neo4jConfiguration implements ImportAware {
         Map<String , Object> enableAttrMap = importMetadata.getAnnotationAttributes(EnableNeo4jDao.class.getName());
         AnnotationAttributes enableAttrs = AnnotationAttributes.fromMap(enableAttrMap);
         Class<?>[] packageClasses = enableAttrs.getClassArray("packageClasses");
-        Set<Package> tmp = new HashSet<>();
+        Set<Package> scannerPackages = new HashSet<>();
         for (Class<?> pkgClazz : packageClasses)
-            tmp.add(pkgClazz.getPackage());
+            scannerPackages.add(pkgClazz.getPackage());
     }
 }
