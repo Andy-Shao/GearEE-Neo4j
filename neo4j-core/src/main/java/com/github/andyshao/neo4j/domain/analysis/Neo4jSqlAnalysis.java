@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.domain.analysis;
 
 import com.github.andyshao.lang.StringOperation;
 import com.github.andyshao.neo4j.Neo4jException;
+import com.github.andyshao.neo4j.annotation.FormatterResult;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.neo4j.domain.Neo4jSqlClip;
 import com.github.andyshao.reflect.MethodOperation;
@@ -66,6 +67,8 @@ public final class Neo4jSqlAnalysis {
         neo4jSql.setDefinition(method);
         neo4jSql.setParams(SqlParamAnalysis.analyseSqlParamWithCache(method));
         neo4jSql.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
+        FormatterResult formatterResult = method.getAnnotation(FormatterResult.class);
+        if(Objects.nonNull(formatterResult)) neo4jSql.setDeserializer(formatterResult.value());
         return neo4jSql;
     }
 }

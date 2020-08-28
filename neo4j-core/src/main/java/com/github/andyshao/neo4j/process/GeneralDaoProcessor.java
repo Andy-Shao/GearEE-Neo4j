@@ -3,12 +3,15 @@ package com.github.andyshao.neo4j.process;
 import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
-import com.github.andyshao.neo4j.process.serializer.Formatter;
+import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.Sql;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
+import com.github.andyshao.reflect.ClassOperation;
 import org.neo4j.driver.Values;
 import org.neo4j.driver.async.AsyncTransaction;
+import org.neo4j.driver.async.ResultCursor;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -22,21 +25,24 @@ import java.util.concurrent.CompletionStage;
  */
 public class GeneralDaoProcessor implements DaoProcessor {
     private final SqlAnalysis sqlAnalysis;
-    private final Formatter formatter;
+    private final FormatterResult formatterResult;
 
-    public GeneralDaoProcessor(SqlAnalysis sqlAnalysis, Formatter formatter) {
+    public GeneralDaoProcessor(SqlAnalysis sqlAnalysis, FormatterResult formatterResult) {
         this.sqlAnalysis = sqlAnalysis;
-        this.formatter = formatter;
+        this.formatterResult = formatterResult;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <E> CompletionStage<E> processing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, AsyncTransaction transaction,
+    public <E> E processing(Neo4jDao neo4jDao, Neo4jSql neo4jSql, AsyncTransaction transaction,
                                              Object... args) {
         Optional<Sql> sqlOpt = this.sqlAnalysis.parsing(neo4jDao, neo4jSql, args);
         if(sqlOpt.isEmpty()) throw new Neo4jException("Can not analysing sql!");
         Sql sql = sqlOpt.get();
-        return transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()))
-                .thenComposeAsync(resultCursor -> formatter.format(neo4jSql, resultCursor, args));
+        CompletionStage<ResultCursor> queryTask = transaction.runAsync(sql.getSql(), Values.value(sql.getParameters()));
+        Class<? extends FormatterResult> selfDeserializerClass = neo4jSql.getDeserializer();
+        if(Objects.nonNull(selfDeserializerClass)) {
+            FormatterResult selfFormatterResult = ClassOperation.newInstance(selfDeserializerClass);
+            return selfFormatterResult.decode(queryTask, neo4jSql, args);
+        } else return this.formatterResult.decode(queryTask, neo4jSql, args);
     }
 }

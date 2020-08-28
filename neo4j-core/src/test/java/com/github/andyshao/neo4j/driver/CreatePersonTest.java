@@ -23,8 +23,9 @@ public class CreatePersonTest {
                 String query = "CREATE "
                     + "(n:Person {id: $id_id, name: $name, age: $age, gender: $gender}) "
                     + "-[:CreateUser]-> "
-                    + "(u:User {username:$userName, age:$age}) "
-                    + "RETURN n,u";
+                    + "(u:User {username:$userName, age:$age}), "
+                    + "(n2:Person {id: 2, name: 'name02', age: 02, gender: 'FEMALE'})"
+                    + "RETURN n,u,n2";
                 Result result = tx.run(query,
                         Values.parameters("id_id", "ERHSBSYKAHV04SNIPHUPBDR",
                                 "name", "ShaoWeiChuang",

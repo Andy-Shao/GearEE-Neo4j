@@ -1,22 +1,20 @@
 package com.github.andyshao.neo4j.annotation;
 
-import com.github.andyshao.neo4j.process.serializer.Formatter;
-
 import java.lang.annotation.*;
 
 /**
  * Title: <br>
  * Description: <br>
- * Copyright: Copyright(c) 2020/8/26
+ * Copyright: Copyright(c) 2020/8/27
  * Encoding: UNIX UTF-8
  *
  * @author Andy.Shao
  */
 @Inherited
 @Documented
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface ResultFormatter {
+public @interface Deserializer {
     @SuppressWarnings("rawtypes")
-    Class<? extends Formatter> value();
+    Class<? extends com.github.andyshao.neo4j.process.serializer.Deserializer> value();
 }

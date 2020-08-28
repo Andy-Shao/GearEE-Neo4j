@@ -1,6 +1,6 @@
 package com.github.andyshao.neo4j.domain;
 
-import com.github.andyshao.neo4j.process.serializer.DeSerializer;
+import com.github.andyshao.neo4j.process.serializer.Deserializer;
 import com.github.andyshao.neo4j.process.serializer.Serializer;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,5 +23,5 @@ public class Neo4jEntityField {
     @SuppressWarnings("rawtypes")
     private Class<? extends Serializer> serializer;
     @SuppressWarnings("rawtypes")
-    private Class<? extends DeSerializer> deSerializer;
+    private Class<? extends Deserializer> deserializer;
 }

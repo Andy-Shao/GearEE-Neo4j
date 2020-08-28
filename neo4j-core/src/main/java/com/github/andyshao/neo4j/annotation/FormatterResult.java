@@ -5,16 +5,16 @@ import java.lang.annotation.*;
 /**
  * Title: <br>
  * Description: <br>
- * Copyright: Copyright(c) 2020/8/27
+ * Copyright: Copyright(c) 2020/8/26
  * Encoding: UNIX UTF-8
  *
  * @author Andy.Shao
  */
 @Inherited
 @Documented
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DeSerializer {
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface FormatterResult {
     @SuppressWarnings("rawtypes")
-    Class<? extends com.github.andyshao.neo4j.process.serializer.DeSerializer> value();
+    Class<? extends com.github.andyshao.neo4j.process.serializer.FormatterResult> value();
 }

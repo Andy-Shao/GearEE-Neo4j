@@ -1,6 +1,6 @@
 package com.github.andyshao.neo4j.domain.analysis;
 
-import com.github.andyshao.neo4j.annotation.DeSerializer;
+import com.github.andyshao.neo4j.annotation.Deserializer;
 import com.github.andyshao.neo4j.annotation.Serializer;
 import com.github.andyshao.neo4j.domain.Neo4jEntityField;
 import com.github.andyshao.reflect.FieldOperation;
@@ -38,7 +38,7 @@ public final class Neo4jEntityFieldAnalysis {
     }
 
     private static void addDeSerializer(Neo4jEntityField entityField) {
-        DeSerializer deSerializer = entityField.getDefinition().getAnnotation(DeSerializer.class);
-        if(Objects.nonNull(deSerializer)) entityField.setDeSerializer(deSerializer.value());
+        Deserializer deSerializer = entityField.getDefinition().getAnnotation(Deserializer.class);
+        if(Objects.nonNull(deSerializer)) entityField.setDeserializer(deSerializer.value());
     }
 }
