@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Title: <br>
@@ -24,10 +26,25 @@ public class Neo4jDao implements Serializable {
     private String entityId;
     private Class<?> clipClass;
     private List<Neo4jSql> sqls = Lists.newArrayList();
+    private Class<?> daoClass;
 
     public static boolean isLegalDao(Class<?> clazz) {
         com.github.andyshao.neo4j.annotation.Neo4jDao annotation =
                 clazz.getAnnotation(com.github.andyshao.neo4j.annotation.Neo4jDao.class);
         return Modifier.isInterface(clazz.getModifiers()) && Objects.nonNull(annotation);
+    }
+
+    public Optional<Neo4jSql> findNeo4jSql(String sqlName, Class<?>...argTypes) {
+        return this.sqls
+                .stream()
+                .filter(it -> {
+                    Method definition = it.getDefinition();
+                    boolean isSameName = Objects.equals(sqlName, definition.getName());
+                    if(isSameName) {
+                        Class<?>[] parameterTypes = definition.getParameterTypes();
+                        return Objects.deepEquals(parameterTypes, argTypes);
+                    } else return false;
+                })
+                .findFirst();
     }
 }

@@ -40,6 +40,7 @@ public class JavaBeanFormatterResult extends FormatterResultResponsibilityLink {
             result = Mono.fromCompletionStage(queryTask)
                     .flatMap(resultCursor -> Mono.fromCompletionStage(resultCursor.listAsync()))
                     .map(records -> {
+                        if(records.isEmpty()) return Mono.empty();
                         Record record = records.get(0);
                         return Deserializers.formatJavaBean(entityType, neo4jEntity, record.get(0));
                     });
