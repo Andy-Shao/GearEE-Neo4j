@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @author Andy.Shao
  */
-public class Neo4jDaoScanner implements BeanDefinitionRegistryPostProcessor {
+public class Neo4jDaoDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
     @Setter
     private DaoScanner daoScanner;
     @Setter
@@ -31,7 +31,7 @@ public class Neo4jDaoScanner implements BeanDefinitionRegistryPostProcessor {
         Map<String, Neo4jDao> daoMap = this.daoScanner.scan();
         for(Map.Entry<String, Neo4jDao> daoEntry : daoMap.entrySet()) {
             BeanDefinitionBuilder beanDefinBuilder = BeanDefinitionBuilder.genericBeanDefinition(Neo4jDaoFactoryBean.class);
-            beanDefinBuilder.addPropertyValue("daoInterface" , daoEntry.getValue().getClass().getInterfaces()[0]);
+            beanDefinBuilder.addPropertyValue("daoInterface" , daoEntry.getValue().getDaoClass());
             beanDefinBuilder.addPropertyValue("daoFactory" , this.daoFactory);
             registry.registerBeanDefinition(daoEntry.getKey() , beanDefinBuilder.getBeanDefinition());
         }

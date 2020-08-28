@@ -1,11 +1,11 @@
 package com.github.andyshao.neo4j.spring.config;
 
-import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
 import com.github.andyshao.neo4j.process.*;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
 import com.github.andyshao.neo4j.spring.annotation.EnableNeo4jDao;
+import com.github.andyshao.neo4j.spring.transaction.Neo4jTransactionAspect;
 import org.neo4j.driver.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +26,8 @@ import java.util.Set;
  *
  * @author Andy.Shao
  */
-@Import({Neo4jDaoAnalysis.class})
-public abstract class Neo4jConfiguration implements ImportAware {
+@Import({Neo4jTransactionAspect.class})
+public abstract class DefaultNeo4jConfiguration implements ImportAware {
     private final DaoConfiguration dc = new DaoConfiguration();
 //    private Set<Package> scannerPackages = Sets.newHashSet();
 
@@ -79,6 +79,15 @@ public abstract class Neo4jConfiguration implements ImportAware {
     @Bean
     public DaoFactory daoFactory(DaoProcessor daoProcessor) {
         return this.dc.daoFactory(daoProcessor);
+    }
+
+    @Bean
+    public Neo4jDaoDefinitionRegistryPostProcessor neo4jDaoDefinitionRegistryPostProcessor(
+            @Autowired DaoScanner daoScanner, @Autowired DaoFactory daoFactory) {
+        Neo4jDaoDefinitionRegistryPostProcessor scanner = new Neo4jDaoDefinitionRegistryPostProcessor();
+        scanner.setDaoFactory(daoFactory);
+        scanner.setDaoScanner(daoScanner);
+        return scanner;
     }
 
     @Override

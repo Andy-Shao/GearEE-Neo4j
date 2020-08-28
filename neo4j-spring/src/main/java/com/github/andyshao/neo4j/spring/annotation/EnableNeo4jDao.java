@@ -1,6 +1,6 @@
 package com.github.andyshao.neo4j.spring.annotation;
 
-import com.github.andyshao.neo4j.spring.config.Neo4jConfiguration;
+import com.github.andyshao.neo4j.spring.config.DefaultNeo4jConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({Neo4jConfiguration.class})
+@Import({DefaultNeo4jConfiguration.class})
 public @interface EnableNeo4jDao {
     Class<?>[] packageClasses();
 }
