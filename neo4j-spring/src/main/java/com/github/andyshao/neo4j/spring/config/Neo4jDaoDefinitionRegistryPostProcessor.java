@@ -31,8 +31,10 @@ public class Neo4jDaoDefinitionRegistryPostProcessor implements BeanDefinitionRe
         Map<String, Neo4jDao> daoMap = this.daoScanner.scan();
         for(Map.Entry<String, Neo4jDao> daoEntry : daoMap.entrySet()) {
             BeanDefinitionBuilder beanDefinBuilder = BeanDefinitionBuilder.genericBeanDefinition(Neo4jDaoFactoryBean.class);
-            beanDefinBuilder.addPropertyValue("daoInterface" , daoEntry.getValue().getDaoClass());
+            Neo4jDao neo4jDao = daoEntry.getValue();
+            beanDefinBuilder.addPropertyValue("daoInterface" , neo4jDao.getDaoClass());
             beanDefinBuilder.addPropertyValue("daoFactory" , this.daoFactory);
+            beanDefinBuilder.addPropertyValue("neo4jDao", neo4jDao);
             registry.registerBeanDefinition(daoEntry.getKey() , beanDefinBuilder.getBeanDefinition());
         }
     }

@@ -13,7 +13,7 @@ import java.lang.annotation.*;
  *
  * @author Andy.Shao
  */
-@Deprecated
+@Deprecated(since = "2.0.0.RELEASE")
 @Inherited
 @Documented
 @Target(ElementType.TYPE)
