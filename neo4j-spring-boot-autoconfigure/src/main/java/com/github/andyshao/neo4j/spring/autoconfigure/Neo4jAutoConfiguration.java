@@ -4,7 +4,6 @@ import com.github.andyshao.neo4j.process.*;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
-import com.github.andyshao.neo4j.spring.config.Neo4jDaoFactoryBean;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.springframework.beans.BeansException;
