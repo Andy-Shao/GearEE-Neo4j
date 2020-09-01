@@ -25,12 +25,18 @@ public final class Neo4jDaoAnalysis {
         Neo4jDao neo4jDao = new Neo4jDao();
         com.github.andyshao.neo4j.annotation.Neo4jDao annotation =
                 clazz.getAnnotation(com.github.andyshao.neo4j.annotation.Neo4jDao.class);
-        if(StringOperation.isEmptyOrNull(annotation.value())) neo4jDao.setEntityId(clazz.getSimpleName());
-        else neo4jDao.setEntityId(annotation.value());
+        if(StringOperation.isEmptyOrNull(annotation.value())) neo4jDao.setDaoId(computeDaoId(clazz.getSimpleName()));
+        else neo4jDao.setDaoId(computeDaoId(annotation.value()));
         if(!Objects.equals(annotation.clipClass(), Object.class)) neo4jDao.setClipClass(annotation.clipClass());
         neo4jDao.setSqls(Neo4jSqlAnalysis.analyseSqlWithCache(clazz));
         neo4jDao.setDaoClass(clazz);
         return neo4jDao;
+    }
+
+    private static String computeDaoId(String value) {
+        String head = value.substring(0, 1);
+        String tail = value.substring(1);
+        return head.toLowerCase() + tail;
     }
 
     public static final List<Neo4jDao> analyseDaoFromOnePackage(Package pkg) {
@@ -40,6 +46,7 @@ public final class Neo4jDaoAnalysis {
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     public static final List<Neo4jDao> analyseDaoFromPackageRegex(String regex) {
         return Arrays.stream(PackageOperation.getPackages(regex))
                 .map(Neo4jDaoAnalysis::analyseDaoFromOnePackage)

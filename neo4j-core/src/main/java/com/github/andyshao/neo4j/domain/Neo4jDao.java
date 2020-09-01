@@ -23,7 +23,7 @@ import java.util.Optional;
 @Setter
 public class Neo4jDao implements Serializable {
     /** Unique ID */
-    private String entityId;
+    private String daoId;
     private Class<?> clipClass;
     private List<Neo4jSql> sqls = Lists.newArrayList();
     private Class<?> daoClass;

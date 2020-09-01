@@ -34,11 +34,11 @@ public class ClassPathAnnotationDaoScanner implements DaoScanner{
         if(Objects.nonNull(this.packageRegexes)) {
             return Arrays.stream(this.packageRegexes)
                 .flatMap(packageRegex -> Neo4jDaoAnalysis.analyseDaoFromPackageRegex(packageRegex).stream())
-                .collect(Collectors.toMap(Neo4jDao::getEntityId, it -> it));
+                .collect(Collectors.toMap(Neo4jDao::getDaoId, it -> it));
         } else if(Objects.nonNull(this.pkgs)) {
             return Arrays.stream(this.pkgs)
                     .flatMap(pkg -> Neo4jDaoAnalysis.analyseDaoFromOnePackage(pkg).stream())
-                    .collect(Collectors.toMap(Neo4jDao::getEntityId, it -> it));
+                    .collect(Collectors.toMap(Neo4jDao::getDaoId, it -> it));
         }
         return Maps.newHashMap();
     }

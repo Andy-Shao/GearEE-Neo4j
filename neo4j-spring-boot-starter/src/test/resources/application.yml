@@ -1,0 +1,12 @@
+logging:
+  level:
+    root: info
+
+integration:
+  test: false
+
+gear:
+  neo4j:
+    authToken:
+      username: neo4j
+      password: 1303595
