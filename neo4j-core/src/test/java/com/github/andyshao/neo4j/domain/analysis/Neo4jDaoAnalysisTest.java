@@ -20,7 +20,7 @@ class Neo4jDaoAnalysisTest {
 
     static void testPersonDao(Neo4jDao neo4jDao) {
         Assertions.assertThat(neo4jDao).isNotNull();
-        Assertions.assertThat(neo4jDao.getDaoId()).isEqualTo("PersonDao");
+        Assertions.assertThat(neo4jDao.getDaoId()).isEqualTo("personDao");
         Assertions.assertThat(neo4jDao.getClipClass()).isEqualTo(PersonDaoClips.class);
         List<Neo4jSql> sqls = neo4jDao.getSqls();
         Assertions.assertThat(sqls.size()).isGreaterThan(0);
@@ -38,7 +38,7 @@ class Neo4jDaoAnalysisTest {
         List<Neo4jDao> neo4jDaoList = Neo4jDaoAnalysis.analyseDaoFromPackageRegex("com.github.andyshao.neo4j.demo.*");
         Assertions.assertThat(neo4jDaoList.size()).isGreaterThan(0);
         Neo4jDao personDao = neo4jDaoList.stream()
-                .filter(it -> Objects.equals(it.getDaoId(), "PersonDao"))
+                .filter(it -> Objects.equals(it.getDaoId(), "personDao"))
                 .findFirst()
                 .orElse(null);
         testPersonDao(personDao);
@@ -49,7 +49,7 @@ class Neo4jDaoAnalysisTest {
         List<Neo4jDao> neo4jDaoList = Neo4jDaoAnalysis.analyseDaoFromOnePackage(PersonDao.class.getPackage());
         Assertions.assertThat(neo4jDaoList.size()).isGreaterThan(0);
         Neo4jDao personDao = neo4jDaoList.stream()
-                .filter(it -> Objects.equals(it.getDaoId(), "PersonDao"))
+                .filter(it -> Objects.equals(it.getDaoId(), "personDao"))
                 .findFirst()
                 .orElse(null);
         testPersonDao(personDao);

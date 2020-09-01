@@ -2,14 +2,20 @@ package com.github.andyshao.neo4j.spring.autoconfigure;
 
 import com.github.andyshao.neo4j.process.DaoFactory;
 import com.github.andyshao.neo4j.process.DaoProcessor;
+import com.github.andyshao.neo4j.process.DaoScanner;
 import com.github.andyshao.neo4j.process.EntityScanner;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
+import com.github.andyshao.neo4j.spring.process.ClassPathAnnotationDaoScanner;
 import com.github.andyshao.neo4j.spring.transaction.Neo4jTransactionAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * Title: <br>
@@ -32,10 +39,23 @@ import javax.annotation.PostConstruct;
 @AutoConfigureOrder
 @EnableConfigurationProperties(Neo4jPros.class)
 @Import({Neo4jTransactionAspect.class})
-public class Neo4jAutoConfiguration {
+public class Neo4jAutoConfiguration implements BeanFactoryAware {
     private final DaoConfiguration dc = new DaoConfiguration();
     @Autowired
     private Neo4jPros neo4jPros;
+    private volatile BeanFactory beanFactory;
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DaoScanner daoScanner() {
+        List<String> autoConfigurationPackages = AutoConfigurationPackages.get(this.beanFactory);
+        return new ClassPathAnnotationDaoScanner(autoConfigurationPackages.toArray(new String[0]));
+    }
 
     @Configuration
     @Import(Neo4jAutoScannerRegister.class)

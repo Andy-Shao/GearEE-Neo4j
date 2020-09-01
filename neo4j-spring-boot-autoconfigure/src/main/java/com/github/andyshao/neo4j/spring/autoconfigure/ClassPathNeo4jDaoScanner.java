@@ -1,8 +1,6 @@
 package com.github.andyshao.neo4j.spring.autoconfigure;
 
-import com.github.andyshao.neo4j.domain.Neo4jDao;
-import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
-import com.github.andyshao.neo4j.spring.config.Neo4jDaoFactoryBean;
+import com.github.andyshao.neo4j.spring.annotation.Neo4jDaoBeanNameGenerator;
 import com.github.andyshao.reflect.ClassOperation;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +11,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
-import org.springframework.context.annotation.AnnotationBeanNameGenerator;
-import org.springframework.context.annotation.AnnotationScopeMetadataResolver;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
-import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -42,8 +37,7 @@ import java.util.Set;
 public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
     private Class<? extends Annotation> annotationClass;
     private Class<?> markerInterface;
-    private BeanNameGenerator beanNameGenerator = AnnotationBeanNameGenerator.INSTANCE;
-    private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
+    private BeanNameGenerator beanNameGenerator = Neo4jDaoBeanNameGenerator.INSTANCE;
 
     public ClassPathNeo4jDaoScanner(BeanDefinitionRegistry registry) {
         super(registry, Boolean.FALSE);
@@ -55,16 +49,15 @@ public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
         for(String pkg : basePackages) {
             Set<BeanDefinition> candidates = findCandidateComponents(pkg);
             candidates.forEach(candidate -> {
-                //TODO
-                Neo4jDao neo4jDao = Neo4jDaoAnalysis.analyseDao(ClassOperation.forName(candidate.getBeanClassName()));
-                BeanDefinitionBuilder beanDefinBuilder =
+                String beanName = this.beanNameGenerator.generateBeanName(candidate, this.getRegistry());
+                Class<?> beanClass = ClassOperation.forName(candidate.getBeanClassName());
+                BeanDefinitionBuilder beanDefinitionBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(Neo4jDaoFactoryBean.class);
-                beanDefinBuilder.addPropertyValue("neo4jDao", neo4jDao);
-                beanDefinBuilder.addPropertyValue("daoInterface", neo4jDao.getDaoClass());
-                beanDefinBuilder.addAutowiredProperty("daoFactory");
-                AbstractBeanDefinition beanDefinition = beanDefinBuilder.getBeanDefinition();
-                getRegistry().registerBeanDefinition(neo4jDao.getDaoId(), beanDefinition);
-                beanDefinitions.add(new BeanDefinitionHolder(beanDefinition, neo4jDao.getDaoId()));
+                beanDefinitionBuilder.addPropertyValue("daoInterface", beanClass);
+                beanDefinitionBuilder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
+                AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+                getRegistry().registerBeanDefinition(beanName, beanDefinition);
+                beanDefinitions.add(new BeanDefinitionHolder(beanDefinition, beanName));
             });
         }
 

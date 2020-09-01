@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.spring.autoconfigure;
 
 import com.github.andyshao.neo4j.process.DaoFactory;
 import com.github.andyshao.neo4j.process.DaoScanner;
+import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @author Andy.Shao
  */
+@Setter
 public class Neo4jDaoFactoryBean<T> implements FactoryBean<T> {
     private Class<?> daoInterface;
     private final DaoFactory daoFactory;
