@@ -1,9 +1,11 @@
 package com.github.andyshao.neo4j.spring.autoconfigure;
 
+import com.github.andyshao.lang.ArrayWrapper;
 import com.github.andyshao.neo4j.process.*;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
+import com.github.andyshao.reflect.ArrayOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.springframework.beans.BeansException;
@@ -67,8 +69,11 @@ public class Neo4jAutoConfiguration implements BeanFactoryAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public DaoScanner daoScanner() {
-        return new ClassPathAnnotationDaoScanner(this.packages.toArray(new String[0]));
+    public DaoScanner daoScanner(@Autowired Neo4jPros pros) {
+        String[] packageRegexes = this.packages.toArray(new String[0]);
+        if(ArrayOperation.isEmptyOrNull(ArrayWrapper.wrap(pros.getDao().getPkgRegexes())))
+            packageRegexes = pros.getDao().getPkgRegexes();
+        return new ClassPathAnnotationDaoScanner(packageRegexes);
     }
 
     @Bean(destroyMethod = "close")
