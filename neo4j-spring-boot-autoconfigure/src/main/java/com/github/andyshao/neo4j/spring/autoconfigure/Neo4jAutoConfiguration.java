@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Title: <br>
  * Description: <br>
@@ -29,21 +31,21 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @AutoConfigureOrder
 @EnableConfigurationProperties(Neo4jPros.class)
-@Import({Neo4jTransactionAspect.class, Neo4jAutoScannerRegister.class})
+@Import({Neo4jTransactionAspect.class})
 public class Neo4jAutoConfiguration {
     private final DaoConfiguration dc = new DaoConfiguration();
     @Autowired
     private Neo4jPros neo4jPros;
 
-//    @Configuration
-//    @Import(Neo4jAutoScannerRegister.class)
-//    @ConditionalOnMissingBean(Neo4jDaoFactoryBean.class)
-//    public static class Neo4jScanMissing {
-//        @PostConstruct
-//        public void afterPropertiesSet() {
-//            log.debug("No {} found.", Neo4jDaoFactoryBean.class);
-//        }
-//    }
+    @Configuration
+    @Import(Neo4jAutoScannerRegister.class)
+    @ConditionalOnMissingBean(Neo4jDaoFactoryBean.class)
+    public static class Neo4jScanMissing {
+        @PostConstruct
+        public void afterPropertiesSet() {
+            log.debug("No {} found.", Neo4jDaoFactoryBean.class);
+        }
+    }
 
     protected AuthToken neo4jAuthToken() {
         Neo4jPros.AuthTokenInfo info = neo4jPros.getAuthToken();

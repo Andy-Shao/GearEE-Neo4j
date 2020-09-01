@@ -34,9 +34,7 @@ public class ClassPathAnnotationDaoScanner implements DaoScanner {
     public Map<String, Neo4jDao> scan() {
         if(Objects.nonNull(this.basePackages)) {
             //TODO
-            return Arrays.stream(this.basePackages)
-                    .flatMap(packageRegex -> Neo4jDaoAnalysis.analyseDaoFromPackageRegex(packageRegex).stream())
-                    .collect(Collectors.toMap(Neo4jDao::getDaoId, it -> it));
+            return null;
         } else if(Objects.nonNull(this.pkgs)) {
             return Arrays.stream(this.pkgs)
                     .flatMap(pkg -> Neo4jDaoAnalysis.analyseDaoFromOnePackage(pkg).stream())

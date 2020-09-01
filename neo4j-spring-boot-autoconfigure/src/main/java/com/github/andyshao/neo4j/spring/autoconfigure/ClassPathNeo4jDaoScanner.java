@@ -55,6 +55,7 @@ public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
         for(String pkg : basePackages) {
             Set<BeanDefinition> candidates = findCandidateComponents(pkg);
             candidates.forEach(candidate -> {
+                //TODO
                 Neo4jDao neo4jDao = Neo4jDaoAnalysis.analyseDao(ClassOperation.forName(candidate.getBeanClassName()));
                 BeanDefinitionBuilder beanDefinBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(Neo4jDaoFactoryBean.class);
