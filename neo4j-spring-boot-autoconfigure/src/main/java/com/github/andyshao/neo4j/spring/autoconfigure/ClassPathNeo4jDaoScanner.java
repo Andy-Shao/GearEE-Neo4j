@@ -1,5 +1,8 @@
 package com.github.andyshao.neo4j.spring.autoconfigure;
 
+import com.github.andyshao.neo4j.domain.Neo4jDao;
+import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
+import com.github.andyshao.neo4j.spring.config.Neo4jDaoFactoryBean;
 import com.github.andyshao.reflect.ClassOperation;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -7,16 +10,18 @@ import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
+import org.springframework.context.annotation.AnnotationScopeMetadataResolver;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -46,55 +51,23 @@ public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
 
     @Override
     public Set<BeanDefinitionHolder> doScan(String... basePackages) {
-//        Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
-//
-//        if(beanDefinitions.isEmpty()) {
-//            log.warn("No Neo4j dao was found in '{}' package. Please check your configuration", Arrays.toString(basePackages));
-//        } else processBeanDefinition(beanDefinitions);
-//        return beanDefinitions;
-
-        Assert.notEmpty(basePackages, "At least one base package must be specified");
-        Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
-        for (String basePackage : basePackages) {
-            Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
-            for (BeanDefinition candidate : candidates) {
-                ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
-                candidate.setScope(scopeMetadata.getScopeName());
-                String beanName = this.beanNameGenerator.generateBeanName(candidate, this.getRegistry());
-                BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
-                processBeanDefinition(definitionHolder);
-                if (candidate instanceof AbstractBeanDefinition) {
-                    postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
-                }
-                if (candidate instanceof AnnotatedBeanDefinition) {
-                    AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
-                }
-                if (checkCandidate(beanName, candidate)) {
-//                    definitionHolder =
-//                            AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.getRegistry());
-//                    beanDefinitions.add(definitionHolder);
-//                    registerBeanDefinition(definitionHolder, this.getRegistry());
-                    registerBeanDefinition(definitionHolder, this.getRegistry());
-                }
-            }
+        LinkedHashSet<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
+        for(String pkg : basePackages) {
+            Set<BeanDefinition> candidates = findCandidateComponents(pkg);
+            candidates.forEach(candidate -> {
+                Neo4jDao neo4jDao = Neo4jDaoAnalysis.analyseDao(ClassOperation.forName(candidate.getBeanClassName()));
+                BeanDefinitionBuilder beanDefinBuilder =
+                        BeanDefinitionBuilder.genericBeanDefinition(Neo4jDaoFactoryBean.class);
+                beanDefinBuilder.addPropertyValue("neo4jDao", neo4jDao);
+                beanDefinBuilder.addPropertyValue("daoInterface", neo4jDao.getDaoClass());
+                beanDefinBuilder.addAutowiredProperty("daoFactory");
+                AbstractBeanDefinition beanDefinition = beanDefinBuilder.getBeanDefinition();
+                getRegistry().registerBeanDefinition(neo4jDao.getDaoId(), beanDefinition);
+                beanDefinitions.add(new BeanDefinitionHolder(beanDefinition, neo4jDao.getDaoId()));
+            });
         }
+
         return beanDefinitions;
-    }
-    
-    private void processBeanDefinition(Set<BeanDefinitionHolder> beanDefinitions) {
-        GenericBeanDefinition definition;
-        for(BeanDefinitionHolder holder : beanDefinitions) {
-            processBeanDefinition(holder);
-        }
-    }
-
-    private void processBeanDefinition(BeanDefinitionHolder holder) {
-        GenericBeanDefinition definition;
-        definition = (GenericBeanDefinition) holder.getBeanDefinition();
-        String beanClassName = definition.getBeanClassName();
-        definition.setBeanClass(Neo4jDaoFactoryBean.class);
-        definition.getPropertyValues().add("daoInterface" , ClassOperation.forName(beanClassName));
-        definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
     }
 
     @Override
