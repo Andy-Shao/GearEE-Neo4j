@@ -20,7 +20,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class Neo4jPros {
     private String url = "neo4j://localhost:7687";
     private AuthTokenInfo authToken = new AuthTokenInfo();
-    private Neo4jDao dao = new Neo4jDao();
 
     @Getter
     @Setter
@@ -28,11 +27,5 @@ public class Neo4jPros {
         private String username = "neo4j";
         private String password = "neo4j";
         private String realm;
-    }
-
-    @Getter
-    @Setter
-    public static class Neo4jDao {
-        private String[] pkgRegexes;
     }
 }

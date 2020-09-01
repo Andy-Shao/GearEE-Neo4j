@@ -1,11 +1,10 @@
 package com.github.andyshao.neo4j.spring.autoconfigure;
 
-import com.github.andyshao.lang.ArrayWrapper;
 import com.github.andyshao.neo4j.process.*;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
-import com.github.andyshao.reflect.ArrayOperation;
+import com.github.andyshao.neo4j.spring.transaction.Neo4jTransactionAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.springframework.beans.BeansException;
@@ -35,6 +34,7 @@ import java.util.List;
 @Configuration
 @AutoConfigureOrder
 @EnableConfigurationProperties(Neo4jPros.class)
+@Import(Neo4jTransactionAspect.class)
 public class Neo4jAutoConfiguration implements BeanFactoryAware {
     private final DaoConfiguration dc = new DaoConfiguration();
     private List<String> packages;
@@ -70,10 +70,7 @@ public class Neo4jAutoConfiguration implements BeanFactoryAware {
     @Bean
     @ConditionalOnMissingBean
     public DaoScanner daoScanner(@Autowired Neo4jPros pros) {
-        String[] packageRegexes = this.packages.toArray(new String[0]);
-        if(ArrayOperation.isEmptyOrNull(ArrayWrapper.wrap(pros.getDao().getPkgRegexes())))
-            packageRegexes = pros.getDao().getPkgRegexes();
-        return new ClassPathAnnotationDaoScanner(packageRegexes);
+        return new ClassPathAnnotationDaoScanner(this.packages.toArray(new String[0]));
     }
 
     @Bean(destroyMethod = "close")

@@ -14,9 +14,14 @@ import org.springframework.beans.factory.FactoryBean;
  * @author Andy.Shao
  */
 public class Neo4jDaoFactoryBean<T> implements FactoryBean<T> {
-    private Class<T> daoInterface;
-    private DaoFactory daoFactory;
-    private DaoScanner daoScanner;
+    private Class<?> daoInterface;
+    private final DaoFactory daoFactory;
+    private final DaoScanner daoScanner;
+
+    public Neo4jDaoFactoryBean(DaoFactory daoFactory, DaoScanner daoScanner) {
+        this.daoFactory = daoFactory;
+        this.daoScanner = daoScanner;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

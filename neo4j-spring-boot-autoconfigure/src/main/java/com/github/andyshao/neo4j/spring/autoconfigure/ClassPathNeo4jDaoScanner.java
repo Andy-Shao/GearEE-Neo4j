@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -56,8 +57,12 @@ public class ClassPathNeo4jDaoScanner extends ClassPathBeanDefinitionScanner {
             definition = (GenericBeanDefinition) holder.getBeanDefinition();
             String beanClassName = definition.getBeanClassName();
             definition.setBeanClass(Neo4jDaoFactoryBean.class);
+            final ConstructorArgumentValues constructorArgumentValues = definition.getConstructorArgumentValues();
+//            constructorArgumentValues.addIndexedArgumentValue(0, ClassOperation.forName(beanClassName));
+//            constructorArgumentValues.addIndexedArgumentValue(1, null);
+//            constructorArgumentValues.addIndexedArgumentValue(2, null);
             definition.getPropertyValues().add("daoInterface" , ClassOperation.forName(beanClassName));
-            definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+            definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
         }
     }
 

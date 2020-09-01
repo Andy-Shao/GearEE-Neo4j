@@ -3,11 +3,18 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.Andy-Shao</groupId>
-    <artifactId>GearEE-Neo4j</artifactId>
+    <artifactId>GearEE-Neo4j-example</artifactId>
     <!--<version>4.0-SNAPSHOT</version>-->
     <version>2.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>GearEE-Neo4j</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.3.RELEASE</version>
+    </parent>
+
+    <packaging>jar</packaging>
+    <name>GearEE-Neo4j-example</name>
     <description>GearEE for Neo4jDB support</description>
     <url>https://github.com/Andy-Shao/GearEE-Neo4j</url>
     <inceptionYear>2018</inceptionYear>
@@ -39,26 +46,62 @@
     <properties>
         <java.version>11</java.version>
         <gear.build.sourceEncoding>UTF-8</gear.build.sourceEncoding>
-        <gear.maven-manager.version>2.0.0-SNAPSHOT</gear.maven-manager.version>
+        <gear.dependencies.version>2.0.0-SNAPSHOT</gear.dependencies.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.github.Andy-Shao</groupId>
-                <artifactId>Gear-Maven-Manager</artifactId>
-                <version>${gear.maven-manager.version}</version>
+                <artifactId>Gear-dependencies</artifactId>
+                <version>${gear.dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <modules>
-        <module>neo4j-core</module>
-        <module>neo4j-spring</module>
-        <module>neo4j-spring-boot-autoconfigure</module>
-        <module>neo4j-spring-boot-starter</module>
-    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.Andy-Shao</groupId>
+            <artifactId>GearEE-Neo4j-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <distributionManagement>
         <snapshotRepository>
