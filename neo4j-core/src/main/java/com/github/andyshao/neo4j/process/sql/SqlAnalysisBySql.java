@@ -1,10 +1,12 @@
 package com.github.andyshao.neo4j.process.sql;
 
 import com.github.andyshao.lang.StringOperation;
+import com.github.andyshao.neo4j.annotation.Serializer;
 import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.neo4j.domain.Pageable;
 import com.github.andyshao.neo4j.domain.SqlParam;
+import com.github.andyshao.reflect.ClassOperation;
 import com.github.andyshao.reflect.FieldOperation;
 import com.github.andyshao.util.stream.Pair;
 import com.google.common.collect.Maps;
@@ -75,9 +77,26 @@ public class SqlAnalysisBySql implements SqlAnalysis {
             String tail = splitFirst.getSecond();
             Pair<String, String> reSplitFirst = splitFirst(tail);
             String fieldName = reSplitFirst.getFirst();
-            return computeValue(reSplitFirst.getSecond(),
-                    FieldOperation.getValueByGetMethod(arg, fieldName));
+            return computeValue(reSplitFirst.getSecond(), formatArg(arg, fieldName));
         }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static Object formatArg(Object arg, String fieldName) {
+        Object realArg = FieldOperation.getValueByGetMethod(arg, fieldName);
+        final Serializer annotation = FieldOperation.superGetDeclaredField(arg.getClass(), fieldName)
+                .getAnnotation(Serializer.class);
+        if(Objects.nonNull(annotation)) {
+            com.github.andyshao.neo4j.process.serializer.Serializer serializer =
+                    ClassOperation.newInstance(annotation.value());
+            realArg = serializer.encode(realArg);
+        } else {
+            if(realArg instanceof Enum) {
+                realArg = ((Enum) realArg).name();
+            }
+        }
+
+        return realArg;
     }
 
     private static Pair<String, String> splitFirst(String argument) {

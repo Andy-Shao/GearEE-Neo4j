@@ -41,6 +41,15 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     @Override
+    public Mono<Person> findByPk2(PersonId id, CompletionStage<AsyncTransaction> tx) {
+        Class<?>[] argTypes = {PersonId.class, CompletionStage.class};
+        Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findByPk2", argTypes);
+        Object[] args = {id, tx};
+        Neo4jSql sqlDefinition = neo4jSql.get();
+        return this.daoProcessor.processing(this.neo4jDao, sqlDefinition, args);
+    }
+
+    @Override
     public Mono<String> findNameByPk(PersonId id, CompletionStage<AsyncTransaction> transaction) {
         Class<?>[] argTypes = {PersonId.class, CompletionStage.class};
         Optional<Neo4jSql> neo4jSql = this.neo4jDao.findNeo4jSql("findNameByPk", argTypes);

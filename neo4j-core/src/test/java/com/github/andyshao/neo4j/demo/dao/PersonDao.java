@@ -1,9 +1,11 @@
 package com.github.andyshao.neo4j.demo.dao;
 
+import com.github.andyshao.neo4j.annotation.FormatterResult;
 import com.github.andyshao.neo4j.annotation.Neo4jDao;
 import com.github.andyshao.neo4j.annotation.Neo4jSql;
 import com.github.andyshao.neo4j.demo.Person;
 import com.github.andyshao.neo4j.demo.PersonId;
+import com.github.andyshao.neo4j.demo.process.PersonFormatterResult;
 import com.github.andyshao.neo4j.domain.Pageable;
 import com.github.andyshao.reflect.annotation.Param;
 import com.github.andyshao.util.EntityOperation;
@@ -31,6 +33,11 @@ public interface PersonDao {
     /* This method is used to Junit testing. */
     @Neo4jSql(sql = FIND_BY_PK)
     Mono<Person> findByPk(@Param("pk")PersonId id, CompletionStage<AsyncTransaction> transaction);
+
+    @Neo4jSql(sql = FIND_BY_PK)
+    @FormatterResult(PersonFormatterResult.class)
+    Mono<Person> findByPk2(@Param("pk") PersonId id, CompletionStage<AsyncTransaction> tx);
+
     /* This method is used to Junit testing. */
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id= $pk_id RETURN n.name")
     Mono<String> findNameByPk(@Param("pk")PersonId id, CompletionStage<AsyncTransaction> transaction);
