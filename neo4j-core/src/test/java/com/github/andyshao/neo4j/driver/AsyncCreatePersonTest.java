@@ -4,6 +4,7 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.async.AsyncSession;
+import org.neo4j.driver.async.AsyncTransaction;
 import org.neo4j.driver.async.ResultCursor;
 import reactor.core.publisher.Mono;
 
@@ -21,19 +22,22 @@ public class AsyncCreatePersonTest {
 
     public static final String QUERY = "CREATE (n:Person {id:1, age:32, name:'Andy.Shao', gender:'MALE'}) RETURN n";
 
+    @SuppressWarnings("Convert2MethodRef")
     public static void main(String[] args) {
         try(Driver driver =
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
             final AsyncSession asyncSession = driver.asyncSession();
-//            final CompletionStage<AsyncTransaction> transation = asyncSession.beginTransactionAsync();
-//            final CompletionStage<ResultCursor> result =
-//                    transation.thenCompose(tx -> tx.runAsync(QUERY));
+            final CompletionStage<AsyncTransaction> transation = asyncSession.beginTransactionAsync();
+            final CompletionStage<ResultCursor> result =
+                    transation.thenCompose(tx -> tx.runAsync(QUERY));
 
-            final CompletionStage<ResultCursor> result = asyncSession.writeTransactionAsync(tx -> tx.runAsync(QUERY));
+//            final CompletionStage<ResultCursor> result = asyncSession.writeTransactionAsync(tx -> tx.runAsync(QUERY));
 
-            Mono.fromCompletionStage(result).block();
+            Mono.fromCompletionStage(result)
+                    .then(Mono.fromCompletionStage(transation.thenCompose(tx -> tx.commitAsync())))
+                    .block();
         }
     }
 }

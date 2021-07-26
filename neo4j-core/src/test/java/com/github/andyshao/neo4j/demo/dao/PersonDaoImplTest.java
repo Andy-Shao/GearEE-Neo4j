@@ -77,6 +77,7 @@ public class PersonDaoImplTest extends IntegrationTest {
             final Mono<Person> saved = this.personDao.save(person, tx);
             person = saved.block();
             Assertions.assertThat(person).isNotNull();
+            Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)).block();
         }
     }
 
@@ -106,7 +107,7 @@ public class PersonDaoImplTest extends IntegrationTest {
             final Mono<Person> saved = personDao.save(person, tx);
             person = saved.block();
             Assertions.assertThat(person).isNotNull();
-            Mono.fromCompletionStage(asyncSession.closeAsync());
+            Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)).block();
         }
     }
 }
