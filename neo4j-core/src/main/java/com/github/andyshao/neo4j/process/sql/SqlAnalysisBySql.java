@@ -86,7 +86,7 @@ public class SqlAnalysisBySql implements SqlAnalysis {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Object formatArg(Neo4jEntity neo4jEntity, Object arg,final String fieldName) {
+    private static Object formatArg(Neo4jEntity neo4jEntity, Object arg, final String fieldName) {
         final Object originArg = FieldOperation.getValueByGetMethod(arg, fieldName);
         return neo4jEntity.getFields()
                 .stream()
