@@ -27,6 +27,9 @@ public class Neo4jDao implements Serializable {
     private Class<?> clipClass;
     private List<Neo4jSql> sqls = Lists.newArrayList();
     private Class<?> daoClass;
+    private Class<?> entityClass;
+    private Neo4jEntity neo4jEntity;
+    private Class<?> pkClass;
 
     public static boolean isLegalDao(Class<?> clazz) {
         com.github.andyshao.neo4j.annotation.Neo4jDao annotation =

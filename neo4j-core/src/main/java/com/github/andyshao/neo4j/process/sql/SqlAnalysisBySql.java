@@ -1,11 +1,8 @@
 package com.github.andyshao.neo4j.process.sql;
 
 import com.github.andyshao.lang.StringOperation;
-import com.github.andyshao.neo4j.annotation.Serializer;
-import com.github.andyshao.neo4j.domain.Neo4jDao;
-import com.github.andyshao.neo4j.domain.Neo4jSql;
-import com.github.andyshao.neo4j.domain.Pageable;
-import com.github.andyshao.neo4j.domain.SqlParam;
+import com.github.andyshao.neo4j.domain.*;
+import com.github.andyshao.neo4j.process.serializer.Serializer;
 import com.github.andyshao.reflect.ClassOperation;
 import com.github.andyshao.reflect.FieldOperation;
 import com.github.andyshao.util.stream.Pair;
@@ -37,7 +34,7 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         String sqlString = neo4jSql.getSql();
         final Set<String> arguments = SqlAnalysis.findArguments(sqlString);
         final Map<String, Value> valueMap = Maps.newHashMap();
-        arguments.forEach(argument -> computeValue(neo4jSql, valueMap, argument, args));
+        arguments.forEach(argument -> computeValue(neo4jDao.getNeo4jEntity(), neo4jSql, valueMap, argument, args));
         Optional<Pair<Integer, SqlParam>> pageableParam = SqlAnalysis.getPageableParam(neo4jSql);
         if(pageableParam.isPresent()) {
             Integer index = pageableParam.get().getFirst();
@@ -54,13 +51,13 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         return !neo4jSql.isUseSqlClip();
     }
 
-    private static void computeValue(Neo4jSql neo4jSql, Map<String, Value> valueMap, String argument, Object... args) {
+    private static void computeValue(Neo4jEntity entity, Neo4jSql neo4jSql, Map<String, Value> valueMap, String argument, Object... args) {
         List<SqlParam> params = neo4jSql.getParams();
         for(int i=0; i<params.size(); i++) {
             String key = argument.substring(1);
             SqlParam sqlParam = params.get(i);
             if(Objects.equals(sqlParam.getParamName(), getArgumentName(argument))) {
-                valueMap.put(key, computeValue(argument, args[i]));
+                valueMap.put(key, computeValue(entity, neo4jSql, valueMap, argument, args[i]));
                 break;
             }
         }
@@ -70,33 +67,37 @@ public class SqlAnalysisBySql implements SqlAnalysis {
         return splitFirst(argument).getFirst().substring(1);
     }
 
-    private static Value computeValue(String argument, Object arg) {
+    private static Value computeValue(Neo4jEntity neo4jEntity, Neo4jSql neo4jSql, Map<String, Value> valueMap, String argument, Object arg) {
         Pair<String, String> splitFirst = splitFirst(argument);
-        if(splitFirst.getSecondOps().isEmpty()) return Values.value(arg);
+        if(splitFirst.getSecondOps().isEmpty()) return value(arg);
         else {
             String tail = splitFirst.getSecond();
             Pair<String, String> reSplitFirst = splitFirst(tail);
             String fieldName = reSplitFirst.getFirst();
-            return computeValue(reSplitFirst.getSecond(), formatArg(arg, fieldName));
+            return computeValue(neo4jEntity, neo4jSql, valueMap, reSplitFirst.getSecond(), formatArg(neo4jEntity, arg, fieldName));
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Object formatArg(Object arg, String fieldName) {
-        Object realArg = FieldOperation.getValueByGetMethod(arg, fieldName);
-        final Serializer annotation = FieldOperation.superGetDeclaredField(arg.getClass(), fieldName)
-                .getAnnotation(Serializer.class);
-        if(Objects.nonNull(annotation)) {
-            com.github.andyshao.neo4j.process.serializer.Serializer serializer =
-                    ClassOperation.newInstance(annotation.value());
-            realArg = serializer.encode(realArg);
-        } else {
-            if(realArg instanceof Enum) {
-                realArg = ((Enum) realArg).name();
-            }
-        }
+    @SuppressWarnings("rawtypes")
+    private static Value value(Object arg) {
+        Object realArg = arg;
+        if(arg instanceof Enum) realArg = ((Enum) arg).name();
+        return Values.value(realArg);
+    }
 
-        return realArg;
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static Object formatArg(Neo4jEntity neo4jEntity, Object arg,final String fieldName) {
+        final Object originArg = FieldOperation.getValueByGetMethod(arg, fieldName);
+        return neo4jEntity.getFields()
+                .stream()
+                .filter(f -> Objects.equals(f.getDefinition().getName(), fieldName))
+                .filter(f -> Objects.nonNull(f.getSerializer()))
+                .<Object>map(f -> {
+                    Serializer serializer = ClassOperation.newInstance(f.getSerializer());
+                    return serializer.encode(originArg);
+                })
+                .findFirst()
+                .orElse(originArg);
     }
 
     private static Pair<String, String> splitFirst(String argument) {

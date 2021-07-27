@@ -26,7 +26,7 @@ import java.util.concurrent.CompletionStage;
  *
  * @author Andy.Shao
  */
-@Neo4jDao(clipClass = PersonDaoClips.class)
+@Neo4jDao(clipClass = PersonDaoClips.class, eneity = Person.class, pk = PersonId.class)
 public interface PersonDao {
     String FIND_BY_PK = "MATCH (n:Person) WHERE n.id = $pk_id RETURN n";
 

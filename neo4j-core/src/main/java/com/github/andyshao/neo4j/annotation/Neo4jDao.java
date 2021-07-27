@@ -17,4 +17,6 @@ import java.lang.annotation.*;
 public @interface Neo4jDao {
     Class<?> clipClass() default Object.class;
     String value() default "";
+    Class<?> eneity();
+    Class<?> pk();
 }

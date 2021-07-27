@@ -30,6 +30,9 @@ public final class Neo4jDaoAnalysis {
         if(!Objects.equals(annotation.clipClass(), Object.class)) neo4jDao.setClipClass(annotation.clipClass());
         neo4jDao.setSqls(Neo4jSqlAnalysis.analyseSqlWithCache(clazz));
         neo4jDao.setDaoClass(clazz);
+        neo4jDao.setEntityClass(annotation.eneity());
+        neo4jDao.setPkClass(annotation.pk());
+        Neo4jEntityAnalysis.analyseNeo4jEntity(annotation.eneity()).ifPresent(neo4jDao::setNeo4jEntity);
         return neo4jDao;
     }
 
