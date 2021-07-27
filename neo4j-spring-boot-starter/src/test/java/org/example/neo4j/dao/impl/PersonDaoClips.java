@@ -20,7 +20,7 @@ import java.util.Objects;
  * @author Andy.Shao
  */
 public class PersonDaoClips {
-    @Neo4jSqlClip(sqlClipName = "saveOrUpdate")
+    @Neo4jSqlClip
     public static final Sql saveOrUpdate(@Param("p")Person person) {
         final Sql sql = new Sql();
         sql.setParameters(Maps.newHashMap());

@@ -40,7 +40,8 @@ public final class Neo4jSqlClipAnalysis {
                 .collect(Collectors.toMap(method -> {
                     com.github.andyshao.neo4j.annotation.Neo4jSqlClip neo4jSqlClipAnnotation =
                             method.getAnnotation(com.github.andyshao.neo4j.annotation.Neo4jSqlClip.class);
-                    return neo4jSqlClipAnnotation.sqlClipName();
+                    final String sqlClipName = neo4jSqlClipAnnotation.sqlClipName();
+                    return sqlClipName.isEmpty() ? method.getName() : sqlClipName;
                 }, method -> {
                     com.github.andyshao.neo4j.annotation.Neo4jSqlClip neo4jSqlClipAnnotation =
                             method.getAnnotation(com.github.andyshao.neo4j.annotation.Neo4jSqlClip.class);
