@@ -19,7 +19,7 @@ import java.util.concurrent.CompletionStage;
  *
  * @author Andy.Shao
  */
-@Neo4jDao(value = "peopleDao", eneity = Person.class, pk = PersonId.class, clipClass = PersonDaoClips.class)
+@Neo4jDao(value = "peopleDao", eneity = Person.class, pk = String.class, clipClass = PersonDaoClips.class)
 public interface PersonDao {
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id = $pk_id RETURN n")
     Mono<Person> findByPk(@Param("pk") PersonId id, CompletionStage<AsyncTransaction> transaction);
