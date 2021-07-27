@@ -54,17 +54,24 @@ public class Neo4jTransactionAspect {
     @SuppressWarnings("unchecked")
     public Object process(ProceedingJoinPoint pjp) throws Throwable {
         final Object[] args = pjp.getArgs();
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        Class<?>[] parameterTypes = signature.getParameterTypes();
+        if(!parameterTypes[parameterTypes.length - 1].isInstance(CompletionStage.class)) {
+            return pjp.proceed(args);
+        }
+
         CompletionStage<AsyncTransaction> tx;
         boolean hasTx;
-        if(Objects.isNull(args[args.length - 1])) {
+        if(Objects.isNull(args) || args.length == 0) {
+            return pjp.proceed(args);
+        }
+        else if(Objects.isNull(args[args.length - 1])) {
             tx = null;
             hasTx = false;
         } else {
             tx = (CompletionStage<AsyncTransaction>) args[args.length - 1];
             hasTx = true;
         }
-        MethodSignature signature = (MethodSignature) pjp.getSignature();
-        Class<?>[] parameterTypes = signature.getParameterTypes();
         final AsyncSession asyncSession = hasTx ? null : this.driver.asyncSession();
         if(!hasTx) {
             tx = asyncSession.beginTransactionAsync();
