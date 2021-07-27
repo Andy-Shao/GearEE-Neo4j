@@ -92,14 +92,14 @@ public class Neo4jTransactionAspect {
         switch (signalType) {
             case ON_ERROR:
             case CANCEL:
-                trx.thenComposeAsync(transaction -> {
+                trx.thenCompose(transaction -> {
                     return transaction.rollbackAsync()
-                            .thenComposeAsync(v -> asyncSession.closeAsync());
+                            .thenCompose(v -> asyncSession.closeAsync());
                 });
             case ON_COMPLETE:
-                trx.thenComposeAsync(transaction -> {
+                trx.thenCompose(transaction -> {
                     return transaction.commitAsync()
-                            .thenComposeAsync(v -> asyncSession.closeAsync());
+                            .thenCompose(v -> asyncSession.closeAsync());
                 });
         }
     }

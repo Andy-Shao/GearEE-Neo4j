@@ -2,6 +2,7 @@ package org.example.neo4j.service;
 
 import org.assertj.core.api.Assertions;
 import org.example.neo4j.IntegrationTest;
+import org.example.neo4j.domain.Gender;
 import org.example.neo4j.domain.Person;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,17 @@ public class AdmirationServiceTest extends IntegrationTest {
         Person person = admin.block();
         Assertions.assertThat(person).isNotNull();
         Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
+    }
+
+    @Test
+    void save() {
+        final Person person = new Person();
+        person.setId("ERHSBSYKAHV04SNIPHUPBDR");
+        person.setAge(32);
+        person.setName("Weichuang.Shao");
+        person.setGender(Gender.MALE);
+        final Mono<Person> saved = this.admirationService.save(person, null);
+        Assertions.assertThat(saved).isNotNull();
+        saved.block();
     }
 }

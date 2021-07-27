@@ -22,4 +22,7 @@ import java.util.concurrent.CompletionStage;
 public interface PersonDao {
     @Neo4jSql(sql = "MATCH (n:Person) WHERE n.id = $pk_id RETURN n")
     Mono<Person> findByPk(@Param("pk") PersonId id, CompletionStage<AsyncTransaction> transaction);
+
+    @Neo4jSql(sql = "CREATE (n:Person {id: $p_id, name: $p_name, age: $p_age, gender: $p_gender}) RETURN n")
+    Mono<Person> save(@Param("p") Person person, CompletionStage<AsyncTransaction> tx);
 }

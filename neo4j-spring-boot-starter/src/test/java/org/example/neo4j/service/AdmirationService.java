@@ -30,4 +30,8 @@ public class AdmirationService {
         id.setId("ERHSBSYKAHV04SNIPHUPBDR");
         return this.personDao.findByPk(id, tx);
     }
+
+    public Mono<Person> save(Person person, CompletionStage<AsyncTransaction> tx) {
+        return this.personDao.save(person, tx);
+    }
 }
