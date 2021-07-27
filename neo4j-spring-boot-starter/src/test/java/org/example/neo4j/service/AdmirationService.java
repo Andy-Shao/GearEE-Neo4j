@@ -34,4 +34,8 @@ public class AdmirationService {
     public Mono<Person> save(Person person, CompletionStage<AsyncTransaction> tx) {
         return this.personDao.save(person, tx);
     }
+
+    public Mono<Person> saveOrUpdate(Person person, CompletionStage<AsyncTransaction> tx) {
+        return this.personDao.saveOrUpdate(person, tx);
+    }
 }

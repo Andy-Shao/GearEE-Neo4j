@@ -39,4 +39,16 @@ public class AdmirationServiceTest extends IntegrationTest {
         Assertions.assertThat(saved).isNotNull();
         saved.block();
     }
+
+    @Test
+    void saveOrUpdate() {
+        final Person person = new Person();
+        person.setId("ERHSBSYKAHV04SNIPHUPBDR");
+        person.setAge(32);
+        person.setName("Andy.Shao");
+        person.setGender(Gender.MALE);
+        final Mono<Person> saved = this.admirationService.saveOrUpdate(person, null);
+        Assertions.assertThat(saved).isNotNull();
+        saved.block();
+    }
 }
