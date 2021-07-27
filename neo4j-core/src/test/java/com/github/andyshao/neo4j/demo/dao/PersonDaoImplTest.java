@@ -59,6 +59,21 @@ public class PersonDaoImplTest extends IntegrationTest {
     }
 
     @Test
+    void findByPk2() {
+        try(Driver driver =
+                    GraphDatabase.driver(CreatePersonTest.URL,
+                            AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
+        ){
+            final AsyncSession asyncSession = driver.asyncSession();
+            PersonId id = new PersonId();
+            id.setId("ERHSBSYKAHV04SNIPHUPBDR");
+            final Person person = this.personDao.findByPk2(id, asyncSession.beginTransactionAsync())
+                    .block();
+            Assertions.assertThat(person).isNotNull();
+        }
+    }
+
+    @Test
     void save() {
         try(Driver driver =
                     GraphDatabase.driver(CreatePersonTest.URL,
@@ -75,36 +90,6 @@ public class PersonDaoImplTest extends IntegrationTest {
 
             final CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
             final Mono<Person> saved = this.personDao.save(person, tx);
-            person = saved.block();
-            Assertions.assertThat(person).isNotNull();
-            Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)).block();
-        }
-    }
-
-    public static void main(String[] args) {
-        DaoConfiguration configuration = new DaoConfiguration();
-        Neo4jDao neo4jDao = Neo4jDaoAnalysis.analyseDao(PersonDao.class);
-        DaoProcessor daoProcessor =
-                configuration.daoProcessor(
-                        configuration.sqlAnalysis(),
-                        configuration.formatterResult(configuration.entityScanner()));
-        final PersonDao personDao = new PersonDaoImpl(daoProcessor, neo4jDao);
-
-        try(Driver driver =
-                    GraphDatabase.driver(CreatePersonTest.URL,
-                            AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
-        ){
-            AsyncSession asyncSession = driver.asyncSession();
-            PersonId id = new PersonId();
-            id.setId("ERHSBSYKAHV04SNIPHUPBDR");
-            Person person = new Person();
-            person.setId(id.getId());
-            person.setAge(32);
-            person.setName("Andy.Shao");
-            person.setGender(Gender.FEMALE);
-
-            final CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
-            final Mono<Person> saved = personDao.save(person, tx);
             person = saved.block();
             Assertions.assertThat(person).isNotNull();
             Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)).block();

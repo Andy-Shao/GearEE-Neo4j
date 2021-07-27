@@ -4,6 +4,7 @@ import com.github.andyshao.neo4j.demo.Person;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import org.neo4j.driver.async.ResultCursor;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletionStage;
 
@@ -19,6 +20,10 @@ public class PersonFormatterResult implements FormatterResult {
     @SuppressWarnings("unchecked")
     @Override
     public <E> E decode(CompletionStage<ResultCursor> queryTask, Neo4jSql neo4jSql, Object... args) {
-        return (E) new Person();
+        return (E) Mono.create(ms -> {
+            final Person person = new Person();
+            person.setId("456");
+            ms.success(person);
+        });
     }
 }
