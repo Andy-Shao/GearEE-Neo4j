@@ -16,6 +16,7 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.async.AsyncSession;
 import org.neo4j.driver.async.AsyncTransaction;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -44,11 +45,21 @@ public class PersonDaoImplTest extends IntegrationTest {
     }
 
     @Test
+    void findByName() {
+        try(Driver driver = buildDriver();) {
+            final AsyncSession asyncSession = driver.asyncSession();
+            final CompletionStage<AsyncTransaction> transaction = asyncSession.beginTransactionAsync();
+            final Flux<Person> read = this.personDao.findByName("andy", transaction);
+            StepVerifier.create(read.map(PersonId::getId))
+                    .expectAccessibleContext();
+            Mono.fromCompletionStage(transaction.thenCompose(AsyncTransaction::commitAsync))
+                    .block();
+        }
+    }
+
+    @Test
     void findByPk() {
-        try(Driver driver =
-                    GraphDatabase.driver(CreatePersonTest.URL,
-                            AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
-        ){
+        try(Driver driver = buildDriver();){
             AsyncSession asyncSession = driver.asyncSession();
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
@@ -64,10 +75,7 @@ public class PersonDaoImplTest extends IntegrationTest {
 
     @Test
     void findByPk2() {
-        try(Driver driver =
-                    GraphDatabase.driver(CreatePersonTest.URL,
-                            AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
-        ){
+        try(Driver driver = buildDriver();){
             final AsyncSession asyncSession = driver.asyncSession();
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
@@ -81,12 +89,14 @@ public class PersonDaoImplTest extends IntegrationTest {
         }
     }
 
+    private Driver buildDriver() {
+        return GraphDatabase.driver(CreatePersonTest.URL,
+                AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
+    }
+
     @Test
     void save() {
-        try(Driver driver =
-                    GraphDatabase.driver(CreatePersonTest.URL,
-                            AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
-        ){
+        try(Driver driver = buildDriver();){
             AsyncSession asyncSession = driver.asyncSession();
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
