@@ -7,6 +7,7 @@ import org.example.neo4j.domain.Person;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 /**
  * Title: <br>
@@ -23,9 +24,12 @@ public class AdmirationServiceTest extends IntegrationTest {
     @Test
     void findAdmin() {
         Mono<Person> admin = this.admirationService.findAdmin(null);
-        Person person = admin.block();
-        Assertions.assertThat(person).isNotNull();
-        Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
+        StepVerifier.create(admin)
+                .assertNext(person -> {
+                    Assertions.assertThat(person).isNotNull();
+                    Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
+                })
+                .verifyComplete();
     }
 
     @Test
@@ -36,8 +40,8 @@ public class AdmirationServiceTest extends IntegrationTest {
         person.setName("Weichuang.Shao");
         person.setGender(Gender.MALE);
         final Mono<Person> saved = this.admirationService.save(person, null);
-        Assertions.assertThat(saved).isNotNull();
-        saved.block();
+        StepVerifier.create(saved)
+                .expectAccessibleContext();
     }
 
     @Test
@@ -48,7 +52,7 @@ public class AdmirationServiceTest extends IntegrationTest {
         person.setName("Andy.Shao");
         person.setGender(Gender.MALE);
         final Mono<Person> saved = this.admirationService.saveOrUpdate(person, null);
-        Assertions.assertThat(saved).isNotNull();
-        saved.block();
+        StepVerifier.create(saved)
+                .expectAccessibleContext();
     }
 }

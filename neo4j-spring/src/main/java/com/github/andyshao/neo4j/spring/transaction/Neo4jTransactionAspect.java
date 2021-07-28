@@ -56,7 +56,8 @@ public class Neo4jTransactionAspect {
         final Object[] args = pjp.getArgs();
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Class<?>[] parameterTypes = signature.getParameterTypes();
-        if(!parameterTypes[parameterTypes.length - 1].isInstance(CompletionStage.class)) {
+        //NOTE: Generic type testing cannot use the instanceof
+        if(!Objects.equals(parameterTypes[parameterTypes.length-1].getName(), CompletionStage.class.getName())) {
             return pjp.proceed(args);
         }
 

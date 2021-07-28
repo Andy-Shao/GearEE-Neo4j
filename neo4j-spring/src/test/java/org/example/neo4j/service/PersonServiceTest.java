@@ -6,6 +6,7 @@ import org.example.neo4j.domain.Person;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 /**
  * Title: <br>
@@ -22,8 +23,12 @@ public class PersonServiceTest extends IntegrationTest {
     @Test
     void findAdmin() {
         Mono<Person> admin = this.personService.findAdmin(null);
-        Person person = admin.block();
-        Assertions.assertThat(person).isNotNull();
-        Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
+        StepVerifier.create(admin)
+                .assertNext(person -> {
+                    Assertions.assertThat(person).isNotNull();
+                    Assertions.assertThat(person.getId()).isEqualTo("ERHSBSYKAHV04SNIPHUPBDR");
+                })
+                .expectComplete()
+                .verify();
     }
 }

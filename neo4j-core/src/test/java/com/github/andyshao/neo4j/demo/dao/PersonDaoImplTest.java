@@ -9,7 +9,6 @@ import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
 import com.github.andyshao.neo4j.driver.CreatePersonTest;
 import com.github.andyshao.neo4j.process.DaoProcessor;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.AuthTokens;
@@ -18,6 +17,7 @@ import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.async.AsyncSession;
 import org.neo4j.driver.async.AsyncTransaction;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.concurrent.CompletionStage;
 
@@ -52,9 +52,13 @@ public class PersonDaoImplTest extends IntegrationTest {
             AsyncSession asyncSession = driver.asyncSession();
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
-            Person person = this.personDao.findByPk(id, asyncSession.beginTransactionAsync())
-                    .block();
-            Assertions.assertThat(person).isNotNull();
+            final CompletionStage<AsyncTransaction> transaction = asyncSession.beginTransactionAsync();
+            final Mono<Person> read = this.personDao.findByPk(id, transaction);
+            StepVerifier.create(read)
+                    .expectAccessibleContext();
+            StepVerifier.create(Mono.fromCompletionStage(transaction.thenCompose(AsyncTransaction::commitAsync)))
+                    .expectComplete()
+                    .verify();
         }
     }
 
@@ -67,9 +71,13 @@ public class PersonDaoImplTest extends IntegrationTest {
             final AsyncSession asyncSession = driver.asyncSession();
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
-            final Person person = this.personDao.findByPk2(id, asyncSession.beginTransactionAsync())
-                    .block();
-            Assertions.assertThat(person).isNotNull();
+            final CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
+            final Mono<Person> read = this.personDao.findByPk2(id, tx);
+            StepVerifier.create(read)
+                    .expectAccessibleContext();
+            StepVerifier.create(Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)))
+                    .expectComplete()
+                    .verify();
         }
     }
 
@@ -90,9 +98,13 @@ public class PersonDaoImplTest extends IntegrationTest {
 
             final CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
             final Mono<Person> saved = this.personDao.save(person, tx);
-            person = saved.block();
-            Assertions.assertThat(person).isNotNull();
-            Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)).block();
+            StepVerifier.create(saved)
+                    .expectNext(person)
+                    .expectComplete()
+                    .verify();
+            StepVerifier.create(Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)))
+                    .expectComplete()
+                    .verify();
         }
     }
 }
