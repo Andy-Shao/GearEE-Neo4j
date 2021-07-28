@@ -9,6 +9,7 @@ import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
 import com.github.andyshao.neo4j.driver.CreatePersonTest;
 import com.github.andyshao.neo4j.process.DaoProcessor;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.AuthTokens;
@@ -50,8 +51,12 @@ public class PersonDaoImplTest extends IntegrationTest {
             final AsyncSession asyncSession = driver.asyncSession();
             final CompletionStage<AsyncTransaction> transaction = asyncSession.beginTransactionAsync();
             final Flux<Person> read = this.personDao.findByName("andy", transaction);
-            StepVerifier.create(read.map(PersonId::getId))
-                    .expectAccessibleContext();
+            StepVerifier.create(read.collectList())
+                    .assertNext(ls -> {
+                        Assertions.assertThat(ls).isNotNull();
+                        Assertions.assertThat(ls).isEmpty();
+                    })
+                    .verifyComplete();
             Mono.fromCompletionStage(transaction.thenCompose(AsyncTransaction::commitAsync))
                     .block();
         }
@@ -66,7 +71,7 @@ public class PersonDaoImplTest extends IntegrationTest {
             final CompletionStage<AsyncTransaction> transaction = asyncSession.beginTransactionAsync();
             final Mono<Person> read = this.personDao.findByPk(id, transaction);
             StepVerifier.create(read)
-                    .expectAccessibleContext();
+                    .expectComplete();
             StepVerifier.create(Mono.fromCompletionStage(transaction.thenCompose(AsyncTransaction::commitAsync)))
                     .expectComplete()
                     .verify();
@@ -82,7 +87,7 @@ public class PersonDaoImplTest extends IntegrationTest {
             final CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
             final Mono<Person> read = this.personDao.findByPk2(id, tx);
             StepVerifier.create(read)
-                    .expectAccessibleContext();
+                    .expectComplete();
             StepVerifier.create(Mono.fromCompletionStage(tx.thenCompose(AsyncTransaction::commitAsync)))
                     .expectComplete()
                     .verify();
