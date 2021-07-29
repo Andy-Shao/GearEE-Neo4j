@@ -4,6 +4,8 @@ import com.github.andyshao.lang.NotSupportConvertException;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.Values;
 
+import java.util.Objects;
+
 /**
  * Title: <br>
  * Description: <br>
@@ -17,6 +19,7 @@ import org.neo4j.driver.Values;
 public class EnumSerializer<T extends Enum> implements Serializer<T> {
     @Override
     public Value encode(T data) throws NotSupportConvertException {
+        if(Objects.isNull(data)) return Values.NULL;
         return Values.value(data.name());
     }
 }
