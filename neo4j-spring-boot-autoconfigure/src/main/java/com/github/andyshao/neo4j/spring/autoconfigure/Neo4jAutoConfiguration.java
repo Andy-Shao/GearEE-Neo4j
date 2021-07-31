@@ -1,6 +1,6 @@
 package com.github.andyshao.neo4j.spring.autoconfigure;
 
-import com.github.andyshao.neo4j.process.DaoFactory;
+import com.github.andyshao.neo4j.process.dao.DaoFactory;
 import com.github.andyshao.neo4j.process.DaoProcessor;
 import com.github.andyshao.neo4j.process.DaoScanner;
 import com.github.andyshao.neo4j.process.EntityScanner;

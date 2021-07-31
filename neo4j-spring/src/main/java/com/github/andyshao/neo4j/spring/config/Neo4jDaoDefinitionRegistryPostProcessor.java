@@ -1,7 +1,7 @@
 package com.github.andyshao.neo4j.spring.config;
 
 import com.github.andyshao.neo4j.domain.Neo4jDao;
-import com.github.andyshao.neo4j.process.DaoFactory;
+import com.github.andyshao.neo4j.process.dao.DaoFactory;
 import com.github.andyshao.neo4j.process.DaoScanner;
 import lombok.Setter;
 import org.springframework.beans.BeansException;

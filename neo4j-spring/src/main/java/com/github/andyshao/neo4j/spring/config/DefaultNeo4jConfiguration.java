@@ -2,6 +2,7 @@ package com.github.andyshao.neo4j.spring.config;
 
 import com.github.andyshao.neo4j.process.*;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
+import com.github.andyshao.neo4j.process.dao.DaoFactory;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
 import com.github.andyshao.neo4j.spring.annotation.EnableNeo4jDao;

@@ -1,10 +1,11 @@
-package com.github.andyshao.neo4j.process;
+package com.github.andyshao.neo4j.process.dao;
 
 import com.github.andyshao.asm.ApiConfs;
 import com.github.andyshao.asm.ClassVisitorOperation;
 import com.github.andyshao.lang.ClassAssembly;
 import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.domain.Neo4jDao;
+import com.github.andyshao.neo4j.process.DaoProcessor;
 import com.github.andyshao.reflect.ConstructorOperation;
 import com.github.andyshao.reflect.SignatureDetector;
 import org.objectweb.asm.*;

@@ -1,4 +1,4 @@
-package com.github.andyshao.neo4j.process;
+package com.github.andyshao.neo4j.process.dao;
 
 import com.github.andyshao.neo4j.Neo4jException;
 import com.github.andyshao.neo4j.domain.Neo4jDao;
