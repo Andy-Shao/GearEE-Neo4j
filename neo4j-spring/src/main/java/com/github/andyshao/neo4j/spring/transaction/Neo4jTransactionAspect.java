@@ -84,11 +84,11 @@ public class Neo4jTransactionAspect {
         final CompletionStage<AsyncTransaction> trx = tx;
         if(obj instanceof Mono) {
             Mono<?> cs = (Mono<?>) obj;
-            if(!hasTx) cs = cs.doFinally(signalType -> finishingTransaction(asyncSession, trx, signalType));
+            if(hasTx) cs = cs.doFinally(signalType -> finishingTransaction(asyncSession, trx, signalType));
             obj = cs;
         } else if(obj instanceof Flux) {
             Flux<?> cs = (Flux<?>) obj;
-            if(!hasTx) cs = cs.doFinally(signalType -> finishingTransaction(asyncSession, trx, signalType));
+            if(hasTx) cs = cs.doFinally(signalType -> finishingTransaction(asyncSession, trx, signalType));
             obj = cs;
         }
 
