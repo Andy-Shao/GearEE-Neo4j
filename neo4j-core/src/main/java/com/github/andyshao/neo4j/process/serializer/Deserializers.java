@@ -88,6 +88,7 @@ public final class Deserializers {
         if(declareType.isAssignableFrom(ZonedDateTime.class)) return true;
         if(declareType.isAssignableFrom(Date.class)) return true;
         if(declareType.isAssignableFrom(String.class)) return true;
+        if(declareType.isAssignableFrom(Void.class)) return true;
         return false;
     }
     
