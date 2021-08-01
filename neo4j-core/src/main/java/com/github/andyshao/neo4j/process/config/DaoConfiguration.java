@@ -1,8 +1,8 @@
 package com.github.andyshao.neo4j.process.config;
 
 import com.github.andyshao.neo4j.process.*;
+import com.github.andyshao.neo4j.process.dao.CGlibDaoFactory;
 import com.github.andyshao.neo4j.process.dao.DaoFactory;
-import com.github.andyshao.neo4j.process.dao.SimpleDaoFactory;
 import com.github.andyshao.neo4j.process.serializer.BasicTypeFormatterResult;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.serializer.JavaBeanFormatterResult;
@@ -43,7 +43,7 @@ public class DaoConfiguration {
     }
 
     public DaoFactory daoFactory(DaoProcessor daoProcessor) {
-        return new SimpleDaoFactory(daoProcessor);
-//        return new CGlibDaoFactory(daoProcessor);
+//        return new SimpleDaoFactory(daoProcessor);
+        return new CGlibDaoFactory(daoProcessor);
     }
 }

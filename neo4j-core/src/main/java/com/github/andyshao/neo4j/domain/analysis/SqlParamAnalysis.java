@@ -36,7 +36,7 @@ public final class SqlParamAnalysis {
                     sqlParam.setNativeName(parameter.getName());
                     Param annotation = parameter.getAnnotation(Param.class);
                     sqlParam.setParam(annotation);
-                    sqlParam.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
+                    sqlParam.setReturnTypeInfo(MethodOperation.getReturnTypeInfoByNative(method));
                     return sqlParam;
                 })
                 .collect(Collectors.toList());

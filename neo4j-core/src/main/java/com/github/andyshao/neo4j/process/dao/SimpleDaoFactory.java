@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
  *
  * @author Andy.Shao
  */
+@Deprecated
 public class SimpleDaoFactory implements DaoFactory {
     private static final String CONSTRUCT_DESC = "(Lcom/github/andyshao/neo4j/process/DaoProcessor;Lcom/github/andyshao/neo4j/domain/Neo4jDao;)V";
     private static final String DAO_PROCESS_NAME = "daoProcessor";

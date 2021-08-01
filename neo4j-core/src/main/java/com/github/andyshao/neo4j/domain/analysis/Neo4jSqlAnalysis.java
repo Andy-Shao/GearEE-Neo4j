@@ -66,7 +66,7 @@ public final class Neo4jSqlAnalysis {
         neo4jSql.setDaoClass(method.getDeclaringClass());
         neo4jSql.setDefinition(method);
         neo4jSql.setParams(SqlParamAnalysis.analyseSqlParamWithCache(method));
-        neo4jSql.setReturnTypeInfo(MethodOperation.getReturnTypeInfo(method));
+        neo4jSql.setReturnTypeInfo(MethodOperation.getReturnTypeInfoByNative(method));
         FormatterResult formatterResult = method.getAnnotation(FormatterResult.class);
         if(Objects.nonNull(formatterResult)) neo4jSql.setDeserializer(formatterResult.value());
         return neo4jSql;
