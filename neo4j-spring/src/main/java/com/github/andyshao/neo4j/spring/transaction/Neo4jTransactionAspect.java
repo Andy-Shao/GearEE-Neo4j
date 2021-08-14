@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
 
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
@@ -78,7 +79,16 @@ public class Neo4jTransactionAspect {
             args[args.length - 1] = tx;
         }
 
-        Object obj = pjp.proceed(args);
+        Object obj = null;
+
+        try {
+            obj = pjp.proceed(args);
+        } catch (Throwable e) {
+            if(!hasTx) {
+                finishingTransaction(asyncSession, tx, SignalType.ON_ERROR);
+            }
+            throw e;
+        }
 
         final CompletionStage<AsyncTransaction> trx = tx;
         if(obj instanceof Mono) {
