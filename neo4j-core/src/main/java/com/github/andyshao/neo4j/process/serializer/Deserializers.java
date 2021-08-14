@@ -58,7 +58,7 @@ public final class Deserializers {
         if(clazz.isAssignableFrom(String.class)) return formatToString(value);
         if(Enum.class.isAssignableFrom(clazz)) return MethodOperation.invoked(null ,
             MethodOperation.getMethod(clazz , "valueOf" , String.class), value.asString());
-        throw new NotSupportConvertException();
+        throw new NotSupportConvertException("The class type is out of the default Deserializers!");
     }
     
     public static final String formatToString(Value value) {
