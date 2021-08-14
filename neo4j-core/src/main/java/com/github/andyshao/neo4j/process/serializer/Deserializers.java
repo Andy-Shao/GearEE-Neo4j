@@ -56,8 +56,8 @@ public final class Deserializers {
         if(Enum.class.isAssignableFrom(clazz)) return MethodOperation.invoked(null ,
             MethodOperation.getMethod(clazz , "valueOf" , String.class), value.asString());
 
-        if(clazz.isAssignableFrom(List.class)) return value.asList();
-        if(clazz.isAssignableFrom(Collection.class)) return formatCollection(clazz, value);
+        if(List.class.isAssignableFrom(clazz)) return value.asList();
+        if(Collection.class.isAssignableFrom(clazz)) return formatCollection(clazz, value);
         throw new NotSupportConvertException("The class type is out of the default Deserializers!");
     }
 
