@@ -104,6 +104,7 @@ public class Neo4jTransactionAspect {
                 });
                 break;
             case ON_COMPLETE:
+            case CANCEL:
                 trx.thenCompose(transaction -> {
                     return transaction.commitAsync()
                             .thenCompose(v -> asyncSession.closeAsync());
