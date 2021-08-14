@@ -18,10 +18,7 @@ import org.neo4j.driver.types.IsoDuration;
 
 import java.lang.reflect.Method;
 import java.time.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,9 +55,18 @@ public final class Deserializers {
         if(clazz.isAssignableFrom(String.class)) return formatToString(value);
         if(Enum.class.isAssignableFrom(clazz)) return MethodOperation.invoked(null ,
             MethodOperation.getMethod(clazz , "valueOf" , String.class), value.asString());
+
+        if(clazz.isAssignableFrom(List.class)) return value.asList();
+        if(clazz.isAssignableFrom(Collection.class)) return formatCollection(clazz, value);
         throw new NotSupportConvertException("The class type is out of the default Deserializers!");
     }
-    
+
+    private static Object formatCollection(Class<?> clazz, Value value) {
+        Collection<Object> result = (Collection<Object>) ClassOperation.newInstance(clazz);
+        result.addAll(value.asList());
+        return result;
+    }
+
     public static final String formatToString(Value value) {
         if(value instanceof StringValue) return value.asString();
         else if(value instanceof IntegerValue) return String.valueOf(value.asInt());
