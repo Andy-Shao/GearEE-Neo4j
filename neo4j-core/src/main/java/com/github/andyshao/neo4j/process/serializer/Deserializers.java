@@ -36,11 +36,17 @@ public final class Deserializers {
     public static final Object formatValue(Class<?> clazz, Value value) {
         if(value.isNull()) return null;
         if(clazz.isAssignableFrom(Integer.class)) return (Integer)value.asInt();
+        if(clazz.isAssignableFrom(int.class)) return value.asInt();
         if(clazz.isAssignableFrom(Short.class)) return Short.valueOf(value.asString());
+        if(clazz.isAssignableFrom(short.class)) return Short.valueOf((value.asString()));
         if(clazz.isAssignableFrom(Character.class)) return (Character)value.asString().charAt(0);
+        if(clazz.isAssignableFrom(char.class)) return (Character)value.asString().charAt(0);
         if(clazz.isAssignableFrom(Float.class)) return (Float)value.asFloat();
+        if(clazz.isAssignableFrom(float.class)) return value.asFloat();
         if(clazz.isAssignableFrom(Double.class)) return (Double)value.asDouble();
+        if(clazz.isAssignableFrom(double.class)) return value.asDouble();
         if(clazz.isAssignableFrom(Long.class)) return (Long)value.asLong();
+        if(clazz.isAssignableFrom(long.class)) return value.asLong();
         if(clazz.isAssignableFrom(Number.class)) return value.asNumber();
         if(clazz.isAssignableFrom(Boolean.class)) return (Boolean)value.asBoolean();
         if(clazz.isAssignableFrom(byte[].class)) return value.asByteArray();
@@ -77,13 +83,20 @@ public final class Deserializers {
 
     public static final boolean isBaseType(Class<?> declareType) {
         if(declareType.isAssignableFrom(Integer.class)) return true;
+        if(declareType.isAssignableFrom(int.class)) return true;
         if(declareType.isAssignableFrom(Short.class)) return true;
+        if(declareType.isAssignableFrom(short.class)) return true;
         if(declareType.isAssignableFrom(Character.class)) return true;
+        if(declareType.isAssignableFrom(char.class)) return true;
         if(declareType.isAssignableFrom(Float.class)) return true;
+        if(declareType.isAssignableFrom(float.class)) return true;
         if(declareType.isAssignableFrom(Double.class)) return true;
+        if(declareType.isAssignableFrom(double.class)) return true;
         if(declareType.isAssignableFrom(Long.class)) return true;
+        if(declareType.isAssignableFrom(long.class)) return true;
         if(declareType.isAssignableFrom(Number.class)) return true;
         if(declareType.isAssignableFrom(Boolean.class)) return true;
+        if(declareType.isAssignableFrom(boolean.class)) return true;
         if(declareType.isAssignableFrom(byte[].class)) return true;
         if(declareType.isAssignableFrom(LocalDate.class)) return true;
         if(declareType.isAssignableFrom(LocalTime.class)) return true;
