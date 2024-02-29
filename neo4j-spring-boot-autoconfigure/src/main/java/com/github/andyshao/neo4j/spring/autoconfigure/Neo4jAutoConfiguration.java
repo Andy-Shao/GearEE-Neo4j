@@ -1,14 +1,15 @@
 package com.github.andyshao.neo4j.spring.autoconfigure;
 
-import com.github.andyshao.neo4j.process.dao.DaoFactory;
 import com.github.andyshao.neo4j.process.DaoProcessor;
 import com.github.andyshao.neo4j.process.DaoScanner;
 import com.github.andyshao.neo4j.process.EntityScanner;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
+import com.github.andyshao.neo4j.process.dao.DaoFactory;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
 import com.github.andyshao.neo4j.spring.process.ClassPathAnnotationDaoScanner;
 import com.github.andyshao.neo4j.spring.transaction.Neo4jTransactionAspect;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;
 import org.springframework.beans.BeansException;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**

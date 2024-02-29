@@ -5,7 +5,7 @@
     <groupId>com.github.Andy-Shao</groupId>
     <artifactId>GearEE-Neo4j</artifactId>
     <!--<version>4.0-SNAPSHOT</version> -->
-    <version>2.0.3.RELEASE</version>
+    <version>3.0.0.RELEASE</version>
     <packaging>pom</packaging>
     <name>GearEE-Neo4j</name>
     <description>GearEE for Neo4jDB support</description>
@@ -37,9 +37,9 @@
     </issueManagement>
     
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <gear.build.sourceEncoding>UTF-8</gear.build.sourceEncoding>
-        <gear.maven-manager.version>2.0.5.RELEASE</gear.maven-manager.version>
+        <gear.maven-manager.version>3.0.0.RELEASE</gear.maven-manager.version>
     </properties>
 
     <dependencyManagement>
@@ -75,11 +75,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -90,6 +91,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -103,6 +105,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -112,6 +115,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
                 <configuration>
                     <encoding>${gear.build.sourceEncoding}</encoding>
                 </configuration>
@@ -119,6 +123,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
                 <configuration>
                     <charset>${gear.build.sourceEncoding}</charset>
                     <encoding>${gear.build.sourceEncoding}</encoding>
@@ -136,6 +141,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <goals>

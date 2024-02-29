@@ -6,8 +6,8 @@ import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.Neo4jSql;
 import com.github.andyshao.neo4j.process.DaoProcessor;
 import com.github.andyshao.reflect.ArrayOperation;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.InvocationHandler;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.InvocationHandler;
 
 import java.lang.reflect.Method;
 
