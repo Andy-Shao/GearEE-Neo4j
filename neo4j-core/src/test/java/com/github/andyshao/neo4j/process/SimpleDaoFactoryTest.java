@@ -8,8 +8,8 @@ import com.github.andyshao.neo4j.domain.Neo4jDao;
 import com.github.andyshao.neo4j.domain.analysis.Neo4jDaoAnalysis;
 import com.github.andyshao.neo4j.driver.CreatePersonTest;
 import com.github.andyshao.neo4j.process.config.DaoConfiguration;
+import com.github.andyshao.neo4j.process.dao.CGlibDaoFactory;
 import com.github.andyshao.neo4j.process.dao.DaoFactory;
-import com.github.andyshao.neo4j.process.dao.SimpleDaoFactory;
 import com.github.andyshao.neo4j.process.serializer.FormatterResult;
 import com.github.andyshao.neo4j.process.sql.SqlAnalysis;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ class SimpleDaoFactoryTest extends IntegrationTest {
         DaoConfiguration daoConfiguration = new DaoConfiguration();
         SqlAnalysis sqlAnalysis = daoConfiguration.sqlAnalysis();
         FormatterResult formatterResult = daoConfiguration.formatterResult(daoConfiguration.entityScanner());
-        this.daoFactory = new SimpleDaoFactory(daoConfiguration.daoProcessor(sqlAnalysis, formatterResult));
+        this.daoFactory = new CGlibDaoFactory(daoConfiguration.daoProcessor(sqlAnalysis, formatterResult));
     }
 
     @Test
@@ -45,7 +45,7 @@ class SimpleDaoFactoryTest extends IntegrationTest {
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
-            AsyncSession asyncSession = driver.asyncSession();
+            AsyncSession asyncSession = driver.session(AsyncSession.class);
             PersonId personId = new PersonId();
             personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
             Mono<Person> findByPk = personDao.findByPk(personId, asyncSession.beginTransactionAsync());

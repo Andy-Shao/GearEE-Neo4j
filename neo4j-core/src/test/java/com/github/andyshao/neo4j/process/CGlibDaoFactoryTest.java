@@ -45,7 +45,7 @@ class CGlibDaoFactoryTest extends IntegrationTest {
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
-            AsyncSession asyncSession = driver.asyncSession();
+            AsyncSession asyncSession = driver.session(AsyncSession.class);
             PersonId personId = new PersonId();
             personId.setId("ERHSBSYKAHV04SNIPHUPBDR");
             Mono<Person> findByPk = personDao.findByPk(personId, asyncSession.beginTransactionAsync());

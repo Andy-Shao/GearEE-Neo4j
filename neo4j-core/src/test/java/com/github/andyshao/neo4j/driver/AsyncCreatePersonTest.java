@@ -28,7 +28,7 @@ public class AsyncCreatePersonTest {
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
-            final AsyncSession asyncSession = driver.asyncSession();
+            final AsyncSession asyncSession = driver.session(AsyncSession.class);
             final CompletionStage<AsyncTransaction> transation = asyncSession.beginTransactionAsync();
             final CompletionStage<ResultCursor> result =
                     transation.thenCompose(tx -> tx.runAsync(QUERY));

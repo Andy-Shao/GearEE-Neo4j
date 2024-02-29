@@ -27,7 +27,7 @@ public class Neo4jConfiguration extends DefaultNeo4jConfiguration {
     protected Neo4jPros neo4jPros() {
         return Neo4jPros.builder()
                 .authToken(Neo4jPros.AuthTokenInfo.builder()
-                        .password("1303595")
+                        .password("password")
                         .build())
                 .build();
     }

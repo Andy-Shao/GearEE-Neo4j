@@ -54,7 +54,7 @@ class GeneralDaoProcessorTest extends IntegrationTest {
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
-            AsyncSession asyncSession = driver.asyncSession();
+            AsyncSession asyncSession = driver.session(AsyncSession.class);
             CompletionStage<AsyncTransaction> completionStage = asyncSession.beginTransactionAsync();
             Mono<Person> result;
             if (findByPkOpt.isPresent()) {

@@ -73,7 +73,7 @@ public class Neo4jTransactionAspect {
             tx = (CompletionStage<AsyncTransaction>) args[args.length - 1];
             hasTx = true;
         }
-        final AsyncSession asyncSession = hasTx ? null : this.driver.asyncSession();
+        final AsyncSession asyncSession = hasTx ? null : this.driver.session(AsyncSession.class);
         if(!hasTx) {
             tx = asyncSession.beginTransactionAsync();
             args[args.length - 1] = tx;

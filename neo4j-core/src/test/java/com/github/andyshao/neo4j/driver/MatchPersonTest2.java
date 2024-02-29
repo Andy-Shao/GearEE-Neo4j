@@ -28,7 +28,7 @@ public class MatchPersonTest2 {
                     GraphDatabase.driver(CreatePersonTest.URL,
                             AuthTokens.basic(CreatePersonTest.USER_NAME, CreatePersonTest.PASSWORD));
         ){
-            AsyncSession asyncSession = driver.asyncSession();
+            AsyncSession asyncSession = driver.session(AsyncSession.class);
             CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
             CompletionStage<List<Record>> rs = tx
                     .thenComposeAsync(transaction -> {

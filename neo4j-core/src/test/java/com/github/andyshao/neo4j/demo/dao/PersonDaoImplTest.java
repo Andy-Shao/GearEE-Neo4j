@@ -48,7 +48,7 @@ public class PersonDaoImplTest extends IntegrationTest {
     @Test
     void findByName() {
         try(Driver driver = buildDriver();) {
-            final AsyncSession asyncSession = driver.asyncSession();
+            final AsyncSession asyncSession = driver.session(AsyncSession.class);
             final CompletionStage<AsyncTransaction> transaction = asyncSession.beginTransactionAsync();
             final Flux<Person> read = this.personDao.findByName("andy", transaction);
             StepVerifier.create(read.collectList())
@@ -65,7 +65,7 @@ public class PersonDaoImplTest extends IntegrationTest {
     @Test
     void findByPk() {
         try(Driver driver = buildDriver();){
-            AsyncSession asyncSession = driver.asyncSession();
+            AsyncSession asyncSession = driver.session(AsyncSession.class);
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
             final CompletionStage<AsyncTransaction> transaction = asyncSession.beginTransactionAsync();
@@ -81,7 +81,7 @@ public class PersonDaoImplTest extends IntegrationTest {
     @Test
     void findByPk2() {
         try(Driver driver = buildDriver();){
-            final AsyncSession asyncSession = driver.asyncSession();
+            final AsyncSession asyncSession = driver.session(AsyncSession.class);
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
             final CompletionStage<AsyncTransaction> tx = asyncSession.beginTransactionAsync();
@@ -102,7 +102,7 @@ public class PersonDaoImplTest extends IntegrationTest {
     @Test
     void save() {
         try(Driver driver = buildDriver();){
-            AsyncSession asyncSession = driver.asyncSession();
+            AsyncSession asyncSession = driver.session(AsyncSession.class);
             PersonId id = new PersonId();
             id.setId("ERHSBSYKAHV04SNIPHUPBDR");
             Person person = new Person();
